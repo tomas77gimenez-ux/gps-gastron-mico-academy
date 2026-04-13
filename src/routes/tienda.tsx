@@ -4,62 +4,13 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 const products = [
-  {
-    id: "mentoria-individual",
-    title: "Mentoría Individual",
-    description: "Sesión 1-on-1 personalizada para resolver los desafíos de tu restaurante.",
-    price: "$500",
-    type: "mentorship",
-    icon: Users,
-  },
-  {
-    id: "mentoria-grupal",
-    title: "Mentoría Grupal",
-    description: "Sesión grupal con otros dueños de restaurantes. Aprende de experiencias compartidas.",
-    price: "$197",
-    type: "mentorship",
-    icon: Users,
-  },
-  {
-    id: "dre",
-    title: "DRE - Estado de Resultados",
-    description: "Planilla profesional para controlar el estado de resultados de tu restaurante.",
-    price: "$97",
-    type: "download",
-    icon: Download,
-  },
-  {
-    id: "sup",
-    title: "SUP - Sistema Único de Pedidos",
-    description: "Herramienta para optimizar y sistematizar tus pedidos a proveedores.",
-    price: "$67",
-    type: "download",
-    icon: Download,
-  },
-  {
-    id: "food-cost-calc",
-    title: "Calculadora de Food Cost",
-    description: "Calcula el costo real de cada plato y optimiza tu menú.",
-    price: "$47",
-    type: "download",
-    icon: Download,
-  },
-  {
-    id: "desafio-rentabilidad",
-    title: "El Desafío de la Rentabilidad",
-    description: "Curso completo con acceso de por vida. Transforma la rentabilidad de tu restaurante.",
-    price: "$297",
-    type: "course",
-    icon: BookOpen,
-  },
-  {
-    id: "libro-gps",
-    title: "Libro GPS Gastronômico",
-    description: "La guía definitiva en formato libro. Disponible en Amazon.",
-    price: "Ver en Amazon",
-    type: "external",
-    icon: ExternalLink,
-  },
+  { id: "mentoria-individual", title: "Mentoría Individual", description: "Sesión 1-on-1 personalizada para resolver los desafíos de tu restaurante.", price: "$500", type: "mentorship", icon: Users },
+  { id: "mentoria-grupal", title: "Mentoría Grupal", description: "Sesión grupal con otros dueños de restaurantes. Aprende de experiencias compartidas.", price: "$197", type: "mentorship", icon: Users },
+  { id: "dre", title: "DRE - Estado de Resultados", description: "Planilla profesional para controlar el estado de resultados de tu restaurante.", price: "$97", type: "download", icon: Download },
+  { id: "sup", title: "SUP - Sistema Único de Pedidos", description: "Herramienta para optimizar y sistematizar tus pedidos a proveedores.", price: "$67", type: "download", icon: Download },
+  { id: "food-cost-calc", title: "Calculadora de Food Cost", description: "Calcula el costo real de cada plato y optimiza tu menú.", price: "$47", type: "download", icon: Download },
+  { id: "desafio-rentabilidad", title: "El Desafío de la Rentabilidad", description: "Curso completo con acceso de por vida. Transforma la rentabilidad de tu restaurante.", price: "$297", type: "course", icon: BookOpen },
+  { id: "libro-gps", title: "Libro GPS Gastronômico", description: "La guía definitiva en formato libro. Disponible en Amazon.", price: "Ver en Amazon", type: "external", icon: ExternalLink },
 ];
 
 export const Route = createFileRoute("/tienda")({
@@ -86,7 +37,7 @@ function TiendaPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 transition-colors"
+              className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 hover:shadow-[0_0_30px_oklch(0.70_0.18_45/8%)] transition-all duration-300"
             >
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
                 <product.icon className="w-5 h-5 text-primary" />
@@ -95,7 +46,7 @@ function TiendaPage() {
               <p className="text-sm text-muted-foreground mb-4 flex-1">{product.description}</p>
               <div className="flex items-center justify-between">
                 <span className="text-lg font-bold text-primary">{product.price}</span>
-                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90">
+                <Button size="sm" className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
                   <ShoppingCart className="w-4 h-4 mr-1.5" />
                   Comprar
                 </Button>
