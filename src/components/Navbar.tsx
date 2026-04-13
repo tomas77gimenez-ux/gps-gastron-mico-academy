@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
@@ -15,12 +15,15 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/90 backdrop-blur-xl border-b border-border">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <span className="text-gradient-gold font-display text-xl font-bold tracking-tight">
+            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-sm font-display">G</span>
+            </div>
+            <span className="text-gradient-brand font-display text-lg font-bold tracking-tight">
               GPS Gastronômico
             </span>
           </Link>
@@ -34,9 +37,9 @@ export function Navbar() {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-primary/10 text-primary"
+                      ? "bg-primary/15 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -48,13 +51,19 @@ export function Navbar() {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               <Search className="w-5 h-5" />
             </button>
+            <Link
+              to="/asistente"
+              className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" />
+            </Link>
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -70,7 +79,7 @@ export function Navbar() {
             <input
               type="text"
               placeholder="Buscar cursos, productos..."
-              className="w-full px-4 py-2.5 bg-secondary rounded-lg text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              className="w-full px-4 py-2.5 bg-secondary rounded-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
               autoFocus
             />
           </div>
@@ -89,9 +98,9 @@ export function Navbar() {
                   key={item.to}
                   to={item.to}
                   onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                  className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-primary/10 text-primary"
+                      ? "bg-primary/15 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -100,6 +109,14 @@ export function Navbar() {
                 </Link>
               );
             })}
+            <Link
+              to="/asistente"
+              onClick={() => setMobileOpen(false)}
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" />
+              Asistente IA
+            </Link>
           </div>
         </div>
       )}
