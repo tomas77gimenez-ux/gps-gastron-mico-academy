@@ -54,7 +54,7 @@ export function CourseCard({ course }: CourseCardProps) {
         <p className="text-xs text-muted-foreground">
           {course.lessons} lecciones · {course.instructor}
         </p>
-      </Link>
+      </a>
     </motion.div>
   );
 }
