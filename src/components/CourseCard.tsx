@@ -1,6 +1,5 @@
 import { Play, BookOpen } from "lucide-react";
 import { motion } from "framer-motion";
-import { motion } from "framer-motion";
 
 export interface CourseCardData {
   id: string;
