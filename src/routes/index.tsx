@@ -1,19 +1,31 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { HeroBanner } from "@/components/HeroBanner";
+import { CourseRow } from "@/components/CourseRow";
+import { featuredCourse, courseRows } from "@/lib/mock-data";
 
 export const Route = createFileRoute("/")({
-  component: Index,
+  component: HomePage,
+  head: () => ({
+    meta: [
+      { title: "GPS Gastronômico — Gestión · Procesos · Sustentabilidad" },
+      { name: "description", content: "Plataforma de formación para profesionales gastronómicos. Cursos, herramientas y mentoría para transformar tu restaurante." },
+      { property: "og:title", content: "GPS Gastronômico" },
+      { property: "og:description", content: "Plataforma de formación para profesionales gastronómicos." },
+    ],
+  }),
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
+function HomePage() {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#fcfbf8' }}>
-      <img data-lovable-blank-page-placeholder="REMOVE_THIS" src="/placeholder.svg" alt="Your app will live here!" />
+    <div className="min-h-screen pt-20 pb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <HeroBanner {...featuredCourse} />
+        <div className="mt-10 space-y-2">
+          {courseRows.map((row) => (
+            <CourseRow key={row.title} title={row.title} courses={row.courses} />
+          ))}
+        </div>
+      </div>
     </div>
   );
-}
-
-function Index() {
-  return <PlaceholderIndex />;
 }
