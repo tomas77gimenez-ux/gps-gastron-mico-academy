@@ -23,7 +23,7 @@ export function CourseCard({ course }: CourseCardProps) {
       transition={{ duration: 0.2 }}
       className="shrink-0 w-[260px] md:w-[280px] group"
     >
-      <Link to="/cursos" className="block">
+      <a href="/cursos" className="block">
         <div className="relative aspect-video rounded-xl overflow-hidden bg-navy-light mb-3">
           {/* Thumbnail placeholder */}
           <div className="absolute inset-0 bg-gradient-to-br from-navy-light to-navy flex items-center justify-center">
