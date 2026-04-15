@@ -1,9 +1,10 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle } from "lucide-react";
+import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle } from "lucide-react";
 import { useState } from "react";
 
 const navItems = [
   { to: "/", label: "Inicio", icon: Home },
+  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/cursos", label: "Cursos", icon: Film },
   { to: "/tienda", label: "Tienda", icon: ShoppingCart },
   { to: "/perfil", label: "Mi Perfil", icon: User },
