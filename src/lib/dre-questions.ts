@@ -258,7 +258,12 @@ export function calculateDRE(data: DREData): DREResults {
   const financial = (data.bank_fees || 0) + (data.loan_interest || 0) + (data.cc_fees || 0);
   const purchases = (data.supplies_cleaning || 0) + (data.supplies_utensils || 0) + (data.supplies_misc || 0);
 
-  const totalOPEX = rent + utilities + payroll + services + taxes + marketing + maintenance + financial + purchases;
+  // Sum all custom fields (they start with "custom_")
+  const customTotal = Object.entries(data)
+    .filter(([key]) => key.startsWith("custom_"))
+    .reduce((sum, [, val]) => sum + (val || 0), 0);
+
+  const totalOPEX = rent + utilities + payroll + services + taxes + marketing + maintenance + financial + purchases + customTotal;
   const gop = grossRevenue - totalCMV - totalOPEX;
   const netProfit = gop;
   const contributionMargin = grossRevenue - totalCMV;
