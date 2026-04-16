@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 
 const products = [
-  { id: "mentoria-individual", title: "Mentoría Individual", description: "Sesión 1-on-1 personalizada para resolver los desafíos de tu restaurante.", price: "$500", type: "mentorship", icon: Users },
-  { id: "mentoria-grupal", title: "Mentoría Grupal", description: "Sesión grupal con otros dueños de restaurantes. Aprende de experiencias compartidas.", price: "$197", type: "mentorship", icon: Users },
-  { id: "dre", title: "DRE - Estado de Resultados", description: "Planilla profesional para controlar el estado de resultados de tu restaurante.", price: "$97", type: "download", icon: Download },
-  { id: "sup", title: "SUP - Sistema Único de Pedidos", description: "Herramienta para optimizar y sistematizar tus pedidos a proveedores.", price: "$67", type: "download", icon: Download },
-  { id: "food-cost-calc", title: "Calculadora de Food Cost", description: "Calcula el costo real de cada plato y optimiza tu menú.", price: "$47", type: "download", icon: Download },
-  { id: "desafio-rentabilidad", title: "El Desafío de la Rentabilidad", description: "Curso completo con acceso de por vida. Transforma la rentabilidad de tu restaurante.", price: "$297", type: "course", icon: BookOpen },
+  { id: "mentoria-individual", title: "Mentoría Individual 60 días", description: "Sesión 1-on-1 personalizada para resolver los desafíos de tu restaurante.", price: "$4.500", type: "mentorship", icon: Users },
+  { id: "mentoria-grupal", title: "Mentoría Grupal", description: "Sesión grupal con otros dueños de restaurantes. Aprende de experiencias compartidas.", price: "$450", type: "mentorship", icon: Users },
+  { id: "dre", title: "DRE - Estado de Resultados", description: "Planilla profesional para controlar el estado de resultados de tu restaurante.", price: "$18", type: "download", icon: Download },
+  { id: "sup", title: "SUP - Sistema Único de Pedidos", description: "Herramienta para optimizar y sistematizar tus pedidos a proveedores.", price: "$18", type: "download", icon: Download },
+  { id: "food-cost-calc", title: "Calculadora de Food Cost", description: "Calcula el costo real de cada plato y optimiza tu menú.", price: "$28", type: "download", icon: Download },
   { id: "libro-gps", title: "Libro GPS Gastronômico", description: "La guía definitiva en formato libro. Disponible en Amazon.", price: "Ver en Amazon", type: "external", icon: ExternalLink },
 ];
 
