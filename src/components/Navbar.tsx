@@ -1,6 +1,7 @@
-import { Link, useLocation } from "@tanstack/react-router";
-import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle } from "lucide-react";
-import { useState } from "react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield } from "lucide-react";
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { to: "/", label: "Inicio", icon: Home },
@@ -12,8 +13,40 @@ const navItems = [
 
 export function Navbar() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [user, setUser] = useState<any>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        const { data } = await supabase.rpc("has_role", { _user_id: u.id, _role: "admin" });
+        setIsAdmin(!!data);
+      } else {
+        setIsAdmin(false);
+      }
+    });
+
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
+      const u = session?.user ?? null;
+      setUser(u);
+      if (u) {
+        const { data } = await supabase.rpc("has_role", { _user_id: u.id, _role: "admin" });
+        setIsAdmin(!!data);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    navigate({ to: "/" });
+  }
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-b border-border">
@@ -49,6 +82,19 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  location.pathname.startsWith("/admin")
+                    ? "bg-primary/15 text-primary"
+                    : "text-muted-foreground hover:text-foreground hover:bg-secondary"
+                }`}
+              >
+                <Shield className="w-4 h-4" />
+                Admin
+              </Link>
+            )}
           </div>
 
           {/* Right actions */}
@@ -65,6 +111,26 @@ export function Navbar() {
             >
               <MessageCircle className="w-5 h-5" />
             </Link>
+
+            {/* Auth buttons */}
+            {user ? (
+              <button
+                onClick={handleLogout}
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                title="Cerrar sesión"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            ) : (
+              <Link
+                to="/login"
+                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                Entrar
+              </Link>
+            )}
+
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
               className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -110,6 +176,16 @@ export function Navbar() {
                 </Link>
               );
             })}
+            {isAdmin && (
+              <Link
+                to="/admin"
+                onClick={() => setMobileOpen(false)}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <Shield className="w-5 h-5" />
+                Admin
+              </Link>
+            )}
             <Link
               to="/asistente"
               onClick={() => setMobileOpen(false)}
@@ -118,6 +194,28 @@ export function Navbar() {
               <MessageCircle className="w-5 h-5" />
               Asistente IA
             </Link>
+
+            {/* Mobile auth */}
+            <div className="pt-2 border-t border-border mt-2">
+              {user ? (
+                <button
+                  onClick={() => { handleLogout(); setMobileOpen(false); }}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors w-full"
+                >
+                  <LogOut className="w-5 h-5" />
+                  Cerrar Sesión
+                </button>
+              ) : (
+                <Link
+                  to="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                >
+                  <LogIn className="w-5 h-5" />
+                  Iniciar Sesión
+                </Link>
+              )}
+            </div>
           </div>
         </div>
       )}
