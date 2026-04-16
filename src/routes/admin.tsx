@@ -97,8 +97,8 @@ function AdminPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <Shield className="w-4 h-4" /> Panel de Administración
             </div>
-            <h1 className="text-2xl font-bold font-display">Acceso Admin</h1>
-            <p className="text-muted-foreground text-sm mt-2">Inicia sesión con tu cuenta de administrador</p>
+            <h1 className="text-2xl font-bold font-display">{isSignup ? "Crear Cuenta" : "Acceso Admin"}</h1>
+            <p className="text-muted-foreground text-sm mt-2">{isSignup ? "Registra tu cuenta de administrador" : "Inicia sesión con tu cuenta de administrador"}</p>
           </div>
           <form onSubmit={handleLogin} className="rounded-xl border border-border bg-card p-6 space-y-4">
             {loginError && (
