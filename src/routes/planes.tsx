@@ -7,42 +7,36 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { useI18n } from "@/lib/i18n";
 
 const plans = [
   {
     id: "basico",
-    name: "Plan Básico",
+    name: { es: "Plan Básico", en: "Basic Plan" },
     price: "$27",
     priceId: "plan_basico_monthly",
-    period: "/mes",
-    description: "Todo lo que necesitás para empezar a controlar tu restaurante.",
+    period: { es: "/mes", en: "/mo" },
+    description: { es: "Todo lo que necesitás para empezar a controlar tu restaurante.", en: "Everything you need to start controlling your restaurant." },
     icon: Star,
     featured: false,
-    features: [
-      "Acceso a todos los cursos",
-      "Planillas DRE y SUP",
-      "Calculadora de Food Cost",
-      "Comunidad privada",
-      "Actualizaciones mensuales",
-    ],
+    features: {
+      es: ["Acceso a todos los cursos", "Planillas DRE y SUP", "Calculadora de Food Cost", "Comunidad privada", "Actualizaciones mensuales"],
+      en: ["Access to all courses", "DRE and SUP spreadsheets", "Food Cost Calculator", "Private community", "Monthly updates"],
+    },
   },
   {
     id: "premium",
-    name: "Plan Premium",
+    name: { es: "Plan Premium", en: "Premium Plan" },
     price: "$97",
     priceId: "plan_premium_monthly",
-    period: "/mes",
-    description: "Para dueños que quieren resultados acelerados con acompañamiento.",
+    period: { es: "/mes", en: "/mo" },
+    description: { es: "Para dueños que quieren resultados acelerados con acompañamiento.", en: "For owners who want accelerated results with guidance." },
     icon: Crown,
     featured: true,
-    features: [
-      "Todo del Plan Básico",
-      "Mentoría grupal mensual",
-      "Acceso prioritario a mentorías individuales",
-      "Contenido exclusivo avanzado",
-      "Soporte directo por WhatsApp",
-      "Descuentos en productos de la tienda",
-    ],
+    features: {
+      es: ["Todo del Plan Básico", "Mentoría grupal mensual", "Acceso prioritario a mentorías individuales", "Contenido exclusivo avanzado", "Soporte directo por WhatsApp", "Descuentos en productos de la tienda"],
+      en: ["Everything in Basic Plan", "Monthly group mentorship", "Priority access to individual mentorships", "Exclusive advanced content", "Direct WhatsApp support", "Discounts on store products"],
+    },
   },
 ];
 
@@ -60,6 +54,7 @@ function PlanesPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
+  const { t, lang } = useI18n();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -75,10 +70,8 @@ function PlanesPage() {
       <PaymentTestModeBanner />
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold font-display mb-3">Elegí tu Plan</h1>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Invertí en el crecimiento de tu negocio gastronómico con herramientas, contenido y acompañamiento profesional.
-          </p>
+          <h1 className="text-4xl font-bold font-display mb-3">{t("planes.titulo")}</h1>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("planes.desc")}</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -96,7 +89,7 @@ function PlanesPage() {
             >
               {plan.featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
-                  Más Popular
+                  {t("planes.masPopular")}
                 </span>
               )}
 
@@ -104,16 +97,16 @@ function PlanesPage() {
                 <plan.icon className="w-6 h-6 text-primary" />
               </div>
 
-              <h2 className="text-2xl font-bold font-display mb-1">{plan.name}</h2>
-              <p className="text-sm text-muted-foreground mb-6">{plan.description}</p>
+              <h2 className="text-2xl font-bold font-display mb-1">{plan.name[lang]}</h2>
+              <p className="text-sm text-muted-foreground mb-6">{plan.description[lang]}</p>
 
               <div className="mb-6">
                 <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                <span className="text-muted-foreground">{plan.period}</span>
+                <span className="text-muted-foreground">{plan.period[lang]}</span>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
-                {plan.features.map((feature) => (
+                {plan.features[lang].map((feature) => (
                   <li key={feature} className="flex items-start gap-2 text-sm">
                     <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                     <span className="text-foreground">{feature}</span>
@@ -130,7 +123,7 @@ function PlanesPage() {
                 }`}
                 onClick={() => setCheckoutPriceId(plan.priceId)}
               >
-                Suscribirme
+                {t("planes.suscribirme")}
               </Button>
             </motion.div>
           ))}
@@ -139,7 +132,7 @@ function PlanesPage() {
 
       <Dialog open={!!checkoutPriceId} onOpenChange={(open) => !open && setCheckoutPriceId(null)}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogTitle>Completar Suscripción</DialogTitle>
+          <DialogTitle>{t("planes.completarSub")}</DialogTitle>
           {checkoutPriceId && (
             <StripeEmbeddedCheckout
               priceId={checkoutPriceId}

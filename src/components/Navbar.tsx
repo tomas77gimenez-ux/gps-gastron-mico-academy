@@ -1,16 +1,8 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard } from "lucide-react";
+import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
-const navItems = [
-  { to: "/", label: "Inicio", icon: Home },
-  { to: "/dashboard", label: "DRE", icon: LayoutDashboard },
-  { to: "/cursos", label: "Mentoria", icon: Film },
-  { to: "/planes", label: "Planes", icon: CreditCard },
-  { to: "/tienda", label: "Productos", icon: ShoppingCart },
-  { to: "/perfil", label: "Mi Perfil", icon: User },
-] as const;
+import { useI18n } from "@/lib/i18n";
 
 export function Navbar() {
   const location = useLocation();
@@ -19,6 +11,16 @@ export function Navbar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
+  const { t, lang, toggleLang } = useI18n();
+
+  const navItems = [
+    { to: "/", label: t("nav.inicio"), icon: Home },
+    { to: "/dashboard", label: t("nav.dre"), icon: LayoutDashboard },
+    { to: "/cursos", label: t("nav.mentoria"), icon: Film },
+    { to: "/planes", label: t("nav.planes"), icon: CreditCard },
+    { to: "/tienda", label: t("nav.productos"), icon: ShoppingCart },
+    { to: "/perfil", label: t("nav.perfil"), icon: User },
+  ] as const;
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -100,6 +102,16 @@ export function Navbar() {
 
           {/* Right actions */}
           <div className="flex items-center gap-1">
+            {/* Language toggle */}
+            <button
+              onClick={toggleLang}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors uppercase"
+              title={lang === "es" ? "Switch to English" : "Cambiar a Español"}
+            >
+              <Globe className="w-4 h-4" />
+              {lang === "es" ? "EN" : "ES"}
+            </button>
+
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
@@ -118,7 +130,7 @@ export function Navbar() {
               <button
                 onClick={handleLogout}
                 className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-                title="Cerrar sesión"
+                title={t("nav.cerrarSesion")}
               >
                 <LogOut className="w-4 h-4" />
               </button>
@@ -128,7 +140,7 @@ export function Navbar() {
                 className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
-                Entrar
+                {t("nav.entrar")}
               </Link>
             )}
 
@@ -146,7 +158,7 @@ export function Navbar() {
           <div className="pb-4">
             <input
               type="text"
-              placeholder="Buscar cursos, productos..."
+              placeholder={t("nav.buscar")}
               className="w-full px-4 py-2.5 bg-secondary rounded-xl text-foreground placeholder:text-muted-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
               autoFocus
             />
@@ -193,7 +205,7 @@ export function Navbar() {
               className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
-              Asistente IA
+              {t("nav.asistente")}
             </Link>
 
             {/* Mobile auth */}
@@ -204,7 +216,7 @@ export function Navbar() {
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors w-full"
                 >
                   <LogOut className="w-5 h-5" />
-                  Cerrar Sesión
+                  {t("nav.cerrarSesion")}
                 </button>
               ) : (
                 <Link
@@ -213,7 +225,7 @@ export function Navbar() {
                   className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
                 >
                   <LogIn className="w-5 h-5" />
-                  Iniciar Sesión
+                  {t("nav.iniciarSesion")}
                 </Link>
               )}
             </div>

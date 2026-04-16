@@ -4,6 +4,7 @@ import { DREQuestionnaire } from "@/components/DREQuestionnaire";
 import { DashboardResults } from "@/components/DashboardResults";
 import { calculateDRE, type DREData, type DREResults } from "@/lib/dre-questions";
 import { LayoutDashboard, Plus, X, Calendar } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
@@ -24,18 +25,19 @@ interface Diagnostic {
   createdAt: Date;
 }
 
-const PERIOD_OPTIONS = [
-  { value: "1m", label: "1 Mes" },
-  { value: "3m", label: "3 Meses" },
-  { value: "6m", label: "6 Meses" },
-  { value: "1y", label: "1 Año" },
-];
-
 function DashboardPage() {
   const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(diagnostics.length === 0);
   const [selectedPeriod, setSelectedPeriod] = useState("1m");
+  const { t } = useI18n();
+
+  const PERIOD_OPTIONS = [
+    { value: "1m", label: t("period.1m") },
+    { value: "3m", label: t("period.3m") },
+    { value: "6m", label: t("period.6m") },
+    { value: "1y", label: t("period.1y") },
+  ];
 
   function handleComplete(data: DREData) {
     const id = `diag_${Date.now()}`;
@@ -74,7 +76,6 @@ function DashboardPage() {
   return (
     <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Sub-tabs for diagnostics */}
         {diagnostics.length > 0 && (
           <div className="flex items-center gap-2 mb-6 overflow-x-auto scrollbar-hide pb-2">
             {diagnostics.map(d => {
@@ -111,7 +112,7 @@ function DashboardPage() {
                   : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
               }`}
             >
-              <Plus className="w-3.5 h-3.5" /> Nuevo Diagnóstico
+              <Plus className="w-3.5 h-3.5" /> {t("dashboard.nuevoDiag")}
             </button>
           </div>
         )}
@@ -121,19 +122,18 @@ function DashboardPage() {
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
                 <LayoutDashboard className="w-4 h-4" />
-                Dashboard Financiero
+                {t("dashboard.badge")}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold font-display">
-                Diagnóstico de tu <span className="text-gradient-brand">Restaurante</span>
+                {t("dashboard.titulo1")}<span className="text-gradient-brand">{t("dashboard.titulo2")}</span>
               </h1>
               <p className="text-muted-foreground mt-2 max-w-xl mx-auto">
-                Selecciona el período de análisis y completa los datos financieros.
+                {t("dashboard.desc")}
               </p>
             </div>
 
-            {/* Period Selector */}
             <div className="max-w-3xl mx-auto mb-8">
-              <label className="block text-sm font-medium mb-3">Período de Análisis</label>
+              <label className="block text-sm font-medium mb-3">{t("dashboard.periodo")}</label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 {PERIOD_OPTIONS.map(opt => (
                   <button
