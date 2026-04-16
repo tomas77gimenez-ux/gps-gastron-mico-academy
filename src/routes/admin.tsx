@@ -22,6 +22,7 @@ function AdminPage() {
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
+  const [isSignup, setIsSignup] = useState(false);
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -59,11 +60,19 @@ function AdminPage() {
     e.preventDefault();
     setLoginLoading(true);
     setLoginError(null);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginForm.email,
-      password: loginForm.password,
-    });
-    if (error) setLoginError(error.message);
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
+      if (error) setLoginError(error.message);
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
+      if (error) setLoginError(error.message);
+    }
     setLoginLoading(false);
   }
 
@@ -88,8 +97,8 @@ function AdminPage() {
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
               <Shield className="w-4 h-4" /> Panel de Administración
             </div>
-            <h1 className="text-2xl font-bold font-display">Acceso Admin</h1>
-            <p className="text-muted-foreground text-sm mt-2">Inicia sesión con tu cuenta de administrador</p>
+            <h1 className="text-2xl font-bold font-display">{isSignup ? "Crear Cuenta" : "Acceso Admin"}</h1>
+            <p className="text-muted-foreground text-sm mt-2">{isSignup ? "Registra tu cuenta de administrador" : "Inicia sesión con tu cuenta de administrador"}</p>
           </div>
           <form onSubmit={handleLogin} className="rounded-xl border border-border bg-card p-6 space-y-4">
             {loginError && (
@@ -110,8 +119,12 @@ function AdminPage() {
                 required />
             </div>
             <Button type="submit" className="w-full" disabled={loginLoading}>
-              <LogIn className="w-4 h-4 mr-2" /> {loginLoading ? "Iniciando..." : "Iniciar Sesión"}
+              <LogIn className="w-4 h-4 mr-2" /> {loginLoading ? (isSignup ? "Registrando..." : "Iniciando...") : (isSignup ? "Crear Cuenta" : "Iniciar Sesión")}
             </Button>
+            <button type="button" onClick={() => { setIsSignup(!isSignup); setLoginError(null); }}
+              className="w-full text-center text-xs text-muted-foreground hover:text-primary transition-colors">
+              {isSignup ? "¿Ya tienes cuenta? Inicia sesión" : "¿Primera vez? Crea tu cuenta"}
+            </button>
           </form>
         </div>
       </div>
