@@ -105,7 +105,7 @@ function TiendaPage() {
               priceId={checkoutPriceId}
               customerEmail={userEmail}
               userId={userId}
-              returnUrl={`${window.location.origin}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
+              returnUrl={`${typeof window !== 'undefined' ? window.location.origin : ''}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
             />
           )}
         </DialogContent>
