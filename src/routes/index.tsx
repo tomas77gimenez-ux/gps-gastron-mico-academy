@@ -5,6 +5,7 @@ import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
 } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -18,27 +19,31 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const stats = [
-  { value: "15+", label: "Años de experiencia", icon: Award },
-  { value: "200+", label: "Restaurantes asesorados", icon: Utensils },
-  { value: "50+", label: "Cursos y talleres", icon: BookOpen },
-  { value: "95%", label: "Satisfacción de clientes", icon: Star },
-];
-
-const methodSteps = [
-  { icon: BarChart3, title: "Diagnóstico", desc: "Analizamos los números reales de tu operación con nuestro DRE interactivo." },
-  { icon: Lightbulb, title: "Estrategia", desc: "Diseñamos un plan de acción basado en datos, no en suposiciones." },
-  { icon: TrendingUp, title: "Implementación", desc: "Te acompañamos paso a paso con herramientas y mentoría directa." },
-  { icon: Award, title: "Resultados", desc: "Medimos el impacto y ajustamos para crecimiento sostenible." },
-];
+const statIcons = [Award, Utensils, BookOpen, Star];
 
 const testimonials = [
-  { name: "María González", role: "Dueña — La Cocina de María", text: "Gracias a GPS Gastronômico, logré reducir mi food cost un 8% en solo 3 meses. El dashboard financiero cambió mi forma de ver el negocio.", stars: 5 },
-  { name: "Carlos Mendoza", role: "Chef Ejecutivo — Bistró Central", text: "La mentoría de Daniel es práctica y directa. No es teoría, es experiencia real de alguien que vivió la cocina.", stars: 5 },
-  { name: "Ana Ramírez", role: "Gerente — Grupo Gastro MX", text: "Implementamos los procesos de GPS en 4 restaurantes. La estandarización nos ahorró miles de dólares al mes.", stars: 5 },
+  { name: "María González", role: "Dueña — La Cocina de María", text: "Gracias a GPS Gastronômico, logré reducir mi food cost un 8% en solo 3 meses. El dashboard financiero cambió mi forma de ver el negocio.", textEn: "Thanks to GPS Gastronômico, I managed to reduce my food cost by 8% in just 3 months. The financial dashboard changed the way I see business.", stars: 5 },
+  { name: "Carlos Mendoza", role: "Chef Ejecutivo — Bistró Central", text: "La mentoría de Daniel es práctica y directa. No es teoría, es experiencia real de alguien que vivió la cocina.", textEn: "Daniel's mentorship is practical and direct. It's not theory, it's real experience from someone who lived the kitchen.", stars: 5 },
+  { name: "Ana Ramírez", role: "Gerente — Grupo Gastro MX", text: "Implementamos los procesos de GPS en 4 restaurantes. La estandarización nos ahorró miles de dólares al mes.", textEn: "We implemented GPS processes in 4 restaurants. Standardization saved us thousands of dollars per month.", stars: 5 },
 ];
 
 function HomePage() {
+  const { t, lang } = useI18n();
+
+  const stats = [
+    { value: "15+", label: t("home.stat.experiencia"), icon: Award },
+    { value: "200+", label: t("home.stat.restaurantes"), icon: Utensils },
+    { value: "50+", label: t("home.stat.cursos"), icon: BookOpen },
+    { value: "95%", label: t("home.stat.satisfaccion"), icon: Star },
+  ];
+
+  const methodSteps = [
+    { icon: BarChart3, title: t("home.step.diagnostico"), desc: t("home.step.diagnosticoDesc") },
+    { icon: Lightbulb, title: t("home.step.estrategia"), desc: t("home.step.estrategiaDesc") },
+    { icon: TrendingUp, title: t("home.step.implementacion"), desc: t("home.step.implementacionDesc") },
+    { icon: Award, title: t("home.step.resultados"), desc: t("home.step.resultadosDesc") },
+  ];
+
   return (
     <div className="min-h-screen">
       {/* Hero */}
@@ -56,24 +61,24 @@ function HomePage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
               <ChefHat className="w-4 h-4" />
-              Gestión · Procesos · Sustentabilidad
+              {t("home.badge")}
             </div>
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display leading-tight">
-              Transforma tu restaurante con{" "}
-              <span className="text-gradient-brand">datos y estrategia</span>
+              {t("home.heroTitle1")}
+              <span className="text-gradient-brand">{t("home.heroTitle2")}</span>
             </h1>
             <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
-              Soy Daniel Gimenez, y hace más de 15 años ayudo a restaurantes a ser más rentables, organizados y sustentables. Bienvenido a tu plataforma de crecimiento gastronómico.
+              {t("home.heroDesc")}
             </p>
             <div className="flex flex-wrap gap-4 mt-8">
               <Link to="/cursos">
                 <Button size="lg" className="glow-orange gap-2">
-                  <Play className="w-4 h-4" /> Explorar Cursos
+                  <Play className="w-4 h-4" /> {t("home.explorarCursos")}
                 </Button>
               </Link>
               <Link to="/dashboard">
                 <Button size="lg" variant="outline" className="gap-2">
-                  <BarChart3 className="w-4 h-4" /> Diagnosticar mi Restaurante
+                  <BarChart3 className="w-4 h-4" /> {t("home.diagnosticar")}
                 </Button>
               </Link>
             </div>
@@ -87,7 +92,7 @@ function HomePage() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((s, i) => (
               <motion.div
-                key={s.label}
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -115,7 +120,7 @@ function HomePage() {
               <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 via-card to-secondary overflow-hidden flex items-center justify-center">
                 <div className="text-center p-8">
                   <ChefHat className="w-20 h-20 text-primary mx-auto mb-4 opacity-50" />
-                  <p className="text-muted-foreground text-sm">Foto de Daniel Gimenez</p>
+                  <p className="text-muted-foreground text-sm">{t("home.fotoDesc")}</p>
                 </div>
               </div>
             </motion.div>
@@ -125,21 +130,15 @@ function HomePage() {
               viewport={{ once: true }}
             >
               <h2 className="text-3xl sm:text-4xl font-bold font-display mb-6">
-                Conoce a <span className="text-gradient-brand">Daniel Gimenez</span>
+                {t("home.conoce")}<span className="text-gradient-brand">Daniel Gimenez</span>
               </h2>
               <div className="space-y-4 text-muted-foreground">
-                <p>
-                  Con más de 15 años en el sector gastronómico, Daniel ha transformado la operación de cientos de restaurantes en América Latina y España.
-                </p>
-                <p>
-                  Su enfoque combina análisis financiero riguroso con estrategias prácticas que cualquier operador puede implementar, sin importar el tamaño de su negocio.
-                </p>
-                <p>
-                  Fundador de GPS Gastronômico, una metodología que integra Gestión, Procesos y Sustentabilidad para crear restaurantes que prosperan a largo plazo.
-                </p>
+                <p>{t("home.aboutP1")}</p>
+                <p>{t("home.aboutP2")}</p>
+                <p>{t("home.aboutP3")}</p>
               </div>
               <div className="flex flex-wrap gap-3 mt-6">
-                {["Food Cost", "DRE", "KPIs", "Liderazgo", "Escalabilidad"].map(tag => (
+                {["Food Cost", "DRE", "KPIs", lang === "es" ? "Liderazgo" : "Leadership", lang === "es" ? "Escalabilidad" : "Scalability"].map(tag => (
                   <span key={tag} className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
                     {tag}
                   </span>
@@ -155,16 +154,16 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              Nuestro <span className="text-gradient-brand">Método</span>
+              {t("home.metodo")}<span className="text-gradient-brand">{t("home.metodoWord")}</span>
             </h2>
             <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-              Un proceso probado en más de 200 restaurantes para llevar tu negocio al siguiente nivel.
+              {t("home.metodoDesc")}
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {methodSteps.map((step, i) => (
               <motion.div
-                key={step.title}
+                key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -190,13 +189,13 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6">
           <div className="text-center mb-14">
             <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              Lo que dicen nuestros <span className="text-gradient-brand">clientes</span>
+              {t("home.testimonios")}<span className="text-gradient-brand">{t("home.testimoniosWord")}</span>
             </h2>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            {testimonials.map((t, i) => (
+            {testimonials.map((te, i) => (
               <motion.div
-                key={t.name}
+                key={te.name}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -204,14 +203,14 @@ function HomePage() {
                 className="rounded-xl border border-border bg-card p-6"
               >
                 <Quote className="w-8 h-8 text-primary/30 mb-4" />
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{t.text}</p>
+                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{lang === "en" ? te.textEn : te.text}</p>
                 <div className="flex items-center gap-1 mb-3">
-                  {Array.from({ length: t.stars }).map((_, si) => (
+                  {Array.from({ length: te.stars }).map((_, si) => (
                     <Star key={si} className="w-4 h-4 fill-primary text-primary" />
                   ))}
                 </div>
-                <p className="font-semibold text-sm">{t.name}</p>
-                <p className="text-xs text-muted-foreground">{t.role}</p>
+                <p className="font-semibold text-sm">{te.name}</p>
+                <p className="text-xs text-muted-foreground">{te.role}</p>
               </motion.div>
             ))}
           </div>
@@ -228,20 +227,20 @@ function HomePage() {
             className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-10 sm:p-14"
           >
             <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">
-              ¿Listo para transformar tu restaurante?
+              {t("home.ctaTitle")}
             </h2>
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              Comienza hoy con un diagnóstico gratuito o explora nuestros cursos y herramientas.
+              {t("home.ctaDesc")}
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <Link to="/dashboard">
                 <Button size="lg" className="glow-orange gap-2">
-                  <BarChart3 className="w-4 h-4" /> Hacer Diagnóstico
+                  <BarChart3 className="w-4 h-4" /> {t("home.hacerDiag")}
                 </Button>
               </Link>
               <Link to="/asistente">
                 <Button size="lg" variant="outline" className="gap-2">
-                  Hablar con el Asistente IA <ArrowRight className="w-4 h-4" />
+                  {t("home.hablarAsistente")} <ArrowRight className="w-4 h-4" />
                 </Button>
               </Link>
             </div>

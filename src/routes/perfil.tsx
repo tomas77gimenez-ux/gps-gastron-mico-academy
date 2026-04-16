@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { User, BookOpen, ShoppingBag, Award } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/perfil")({
   component: PerfilPage,
@@ -12,12 +13,12 @@ export const Route = createFileRoute("/perfil")({
 });
 
 function PerfilPage() {
+  const { t } = useI18n();
   return (
     <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
-        <h1 className="text-3xl font-bold font-display mb-8">Mi Perfil</h1>
+        <h1 className="text-3xl font-bold font-display mb-8">{t("perfil.titulo")}</h1>
 
-        {/* Profile card */}
         <div className="bg-card rounded-xl border border-border p-6 mb-8">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -31,15 +32,14 @@ function PerfilPage() {
               </span>
             </div>
           </div>
-          <p className="text-sm text-muted-foreground mt-4">Miembro desde enero 2025</p>
+          <p className="text-sm text-muted-foreground mt-4">{t("perfil.miembro")}</p>
         </div>
 
-        {/* Sections */}
         <div className="grid gap-6">
           {[
-            { icon: BookOpen, title: "Mis Cursos", desc: "2 cursos en progreso" },
-            { icon: ShoppingBag, title: "Mis Compras", desc: "3 productos adquiridos" },
-            { icon: Award, title: "Certificados", desc: "0 certificados obtenidos" },
+            { icon: BookOpen, title: t("perfil.misCursos"), desc: t("perfil.cursosDesc") },
+            { icon: ShoppingBag, title: t("perfil.misCompras"), desc: t("perfil.comprasDesc") },
+            { icon: Award, title: t("perfil.certificados"), desc: t("perfil.certificadosDesc") },
           ].map((section) => (
             <div key={section.title} className="bg-card rounded-xl border border-border p-6 hover:border-primary/30 transition-colors cursor-pointer">
               <div className="flex items-center gap-4">
