@@ -60,11 +60,19 @@ function AdminPage() {
     e.preventDefault();
     setLoginLoading(true);
     setLoginError(null);
-    const { error } = await supabase.auth.signInWithPassword({
-      email: loginForm.email,
-      password: loginForm.password,
-    });
-    if (error) setLoginError(error.message);
+    if (isSignup) {
+      const { error } = await supabase.auth.signUp({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
+      if (error) setLoginError(error.message);
+    } else {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginForm.email,
+        password: loginForm.password,
+      });
+      if (error) setLoginError(error.message);
+    }
     setLoginLoading(false);
   }
 
