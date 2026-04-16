@@ -10,7 +10,11 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TiendaRouteImport } from './routes/tienda'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as AsistenteRouteImport } from './routes/asistente'
@@ -22,9 +26,29 @@ const TiendaRoute = TiendaRouteImport.update({
   path: '/tienda',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PerfilRoute = PerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardRoute = DashboardRouteImport.update({
@@ -59,7 +83,11 @@ export interface FileRoutesByFullPath {
   '/asistente': typeof AsistenteRoute
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
+  '/registro': typeof RegistroRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
 }
 export interface FileRoutesByTo {
@@ -68,7 +96,11 @@ export interface FileRoutesByTo {
   '/asistente': typeof AsistenteRoute
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
+  '/registro': typeof RegistroRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
 }
 export interface FileRoutesById {
@@ -78,7 +110,11 @@ export interface FileRoutesById {
   '/asistente': typeof AsistenteRoute
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
+  '/forgot-password': typeof ForgotPasswordRoute
+  '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
+  '/registro': typeof RegistroRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
 }
 export interface FileRouteTypes {
@@ -89,7 +125,11 @@ export interface FileRouteTypes {
     | '/asistente'
     | '/cursos'
     | '/dashboard'
+    | '/forgot-password'
+    | '/login'
     | '/perfil'
+    | '/registro'
+    | '/reset-password'
     | '/tienda'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -98,7 +138,11 @@ export interface FileRouteTypes {
     | '/asistente'
     | '/cursos'
     | '/dashboard'
+    | '/forgot-password'
+    | '/login'
     | '/perfil'
+    | '/registro'
+    | '/reset-password'
     | '/tienda'
   id:
     | '__root__'
@@ -107,7 +151,11 @@ export interface FileRouteTypes {
     | '/asistente'
     | '/cursos'
     | '/dashboard'
+    | '/forgot-password'
+    | '/login'
     | '/perfil'
+    | '/registro'
+    | '/reset-password'
     | '/tienda'
   fileRoutesById: FileRoutesById
 }
@@ -117,7 +165,11 @@ export interface RootRouteChildren {
   AsistenteRoute: typeof AsistenteRoute
   CursosRoute: typeof CursosRoute
   DashboardRoute: typeof DashboardRoute
+  ForgotPasswordRoute: typeof ForgotPasswordRoute
+  LoginRoute: typeof LoginRoute
   PerfilRoute: typeof PerfilRoute
+  RegistroRoute: typeof RegistroRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   TiendaRoute: typeof TiendaRoute
 }
 
@@ -130,11 +182,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TiendaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/perfil': {
       id: '/perfil'
       path: '/perfil'
       fullPath: '/perfil'
       preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dashboard': {
@@ -181,7 +261,11 @@ const rootRouteChildren: RootRouteChildren = {
   AsistenteRoute: AsistenteRoute,
   CursosRoute: CursosRoute,
   DashboardRoute: DashboardRoute,
+  ForgotPasswordRoute: ForgotPasswordRoute,
+  LoginRoute: LoginRoute,
   PerfilRoute: PerfilRoute,
+  RegistroRoute: RegistroRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   TiendaRoute: TiendaRoute,
 }
 export const routeTree = rootRouteImport
