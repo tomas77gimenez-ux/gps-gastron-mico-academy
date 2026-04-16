@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield } from "lucide-react";
+import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -7,6 +7,7 @@ const navItems = [
   { to: "/", label: "Inicio", icon: Home },
   { to: "/dashboard", label: "DRE", icon: LayoutDashboard },
   { to: "/cursos", label: "Mentoria", icon: Film },
+  { to: "/planes", label: "Planes", icon: CreditCard },
   { to: "/tienda", label: "Productos", icon: ShoppingCart },
   { to: "/perfil", label: "Mi Perfil", icon: User },
 ] as const;
