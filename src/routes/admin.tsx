@@ -119,8 +119,12 @@ function AdminPage() {
                 required />
             </div>
             <Button type="submit" className="w-full" disabled={loginLoading}>
-              <LogIn className="w-4 h-4 mr-2" /> {loginLoading ? "Iniciando..." : "Iniciar Sesión"}
+              <LogIn className="w-4 h-4 mr-2" /> {loginLoading ? (isSignup ? "Registrando..." : "Iniciando...") : (isSignup ? "Crear Cuenta" : "Iniciar Sesión")}
             </Button>
+            <button type="button" onClick={() => { setIsSignup(!isSignup); setLoginError(null); }}
+              className="w-full text-center text-xs text-muted-foreground hover:text-primary transition-colors">
+              {isSignup ? "¿Ya tienes cuenta? Inicia sesión" : "¿Primera vez? Crea tu cuenta"}
+            </button>
           </form>
         </div>
       </div>
