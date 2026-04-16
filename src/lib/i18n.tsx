@@ -143,12 +143,16 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>(() => {
+  const [lang, setLang] = useState<Lang>("es");
+
+  useEffect(() => {
     if (typeof window !== "undefined") {
-      return (localStorage.getItem("gps-lang") as Lang) || "es";
+      const saved = localStorage.getItem("gps-lang") as Lang;
+      if (saved && (saved === "en" || saved === "es")) {
+        setLang(saved);
+      }
     }
-    return "es";
-  });
+  }, []);
 
   const changeLang = useCallback((newLang: Lang) => {
     setLang(newLang);
