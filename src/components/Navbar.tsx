@@ -5,9 +5,9 @@ import { supabase } from "@/integrations/supabase/client";
 
 const navItems = [
   { to: "/", label: "Inicio", icon: Home },
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/cursos", label: "Cursos", icon: Film },
-  { to: "/tienda", label: "Tienda", icon: ShoppingCart },
+  { to: "/dashboard", label: "DRE", icon: LayoutDashboard },
+  { to: "/cursos", label: "Mentoria", icon: Film },
+  { to: "/tienda", label: "Productos", icon: ShoppingCart },
   { to: "/perfil", label: "Mi Perfil", icon: User },
 ] as const;
 
