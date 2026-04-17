@@ -1,8 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { User, BookOpen, ShoppingBag, Award, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2 } from "lucide-react";
+import { useState } from "react";
+import { User, BookOpen, ShoppingBag, Award, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Button } from "@/components/ui/button";
+import { supabase } from "@/integrations/supabase/client";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/perfil")({
   component: PerfilPage,
@@ -26,6 +30,26 @@ function formatDate(iso: string | null, lang: string): string {
 function PerfilPage() {
   const { t, lang } = useI18n();
   const sub = useSubscription();
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  async function openPortal() {
+    setPortalLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-portal-session", {
+        body: {
+          returnUrl: `${window.location.origin}/perfil`,
+          environment: getStripeEnvironment(),
+        },
+      });
+      if (error || !data?.url) throw new Error(error?.message || "no url");
+      window.open(data.url, "_blank", "noopener,noreferrer");
+    } catch (e) {
+      console.error("portal error", e);
+      toast.error(t("perfil.errorPortal"));
+    } finally {
+      setPortalLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen pt-20 pb-12">
@@ -107,6 +131,17 @@ function PerfilPage() {
                   </p>
                 </div>
               )}
+
+              <div className="pt-2 border-t border-border">
+                <p className="text-sm text-muted-foreground mb-3">{t("perfil.gestionarDesc")}</p>
+                <Button onClick={openPortal} disabled={portalLoading} variant="outline">
+                  {portalLoading ? (
+                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("perfil.abriendoPortal")}</>
+                  ) : (
+                    <><ExternalLink className="w-4 h-4 mr-2" />{t("perfil.gestionar")}</>
+                  )}
+                </Button>
+              </div>
             </div>
           ) : (
             <div className="text-center py-6">
