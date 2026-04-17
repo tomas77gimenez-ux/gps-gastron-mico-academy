@@ -1,0 +1,1 @@
+DELETE FROM public.subscriptions WHERE user_id = 'bfc23fa8-6eaf-42b6-8463-6a4073cb8387' AND stripe_subscription_id LIKE 'sub_test_fake_%';
