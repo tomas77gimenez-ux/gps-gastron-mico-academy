@@ -1,5 +1,7 @@
 import { type DREResults } from "@/lib/dre-questions";
 import { TrendingUp, TrendingDown, DollarSign, Target, PieChart, BarChart3, AlertTriangle, CheckCircle } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
+import { dreT, tChannel, tExpense } from "@/lib/dre-i18n";
 
 function fmt(v: number) {
   return new Intl.NumberFormat("es-MX", { style: "currency", currency: "USD", minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(v);
@@ -10,6 +12,7 @@ function pctFmt(v: number) {
 }
 
 function StatusBadge({ value, min, max }: { value: number; min: number; max: number }) {
+  const { t } = useI18n();
   const isGood = value >= min && value <= max;
   const isLow = value < min;
   return (
@@ -17,7 +20,7 @@ function StatusBadge({ value, min, max }: { value: number; min: number; max: num
       isGood ? "bg-green-500/15 text-green-400" : isLow ? "bg-yellow-500/15 text-yellow-400" : "bg-red-500/15 text-red-400"
     }`}>
       {isGood ? <CheckCircle className="w-3 h-3" /> : <AlertTriangle className="w-3 h-3" />}
-      {isGood ? "En rango" : isLow ? "Bajo" : "Alto"}
+      {isGood ? t("results.enRango") : isLow ? t("results.bajo") : t("results.alto")}
     </span>
   );
 }
@@ -50,6 +53,7 @@ function KPICard({ title, value, subtitle, icon: Icon, variant }: {
 }
 
 export function DashboardResults({ results, onReset }: { results: DREResults; onReset: () => void }) {
+  const { t, lang } = useI18n();
   const maxExpense = Math.max(...results.expensesByCategory.map(e => e.value));
   const maxRevenue = Math.max(...results.revenueByChannel.map(r => r.value));
 
@@ -58,35 +62,35 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold font-display">Tu Dashboard Financiero</h2>
-          <p className="text-muted-foreground text-sm mt-1">Análisis basado en tus datos del DRE</p>
+          <h2 className="text-2xl font-bold font-display">{t("results.titulo")}</h2>
+          <p className="text-muted-foreground text-sm mt-1">{t("results.desc")}</p>
         </div>
         <button onClick={onReset} className="px-4 py-2 rounded-lg bg-secondary text-sm font-medium hover:bg-secondary/80 transition-colors">
-          Editar Datos
+          {t("results.editar")}
         </button>
       </div>
 
       {/* KPI Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPICard title="Venta Bruta" value={fmt(results.grossRevenue)} icon={DollarSign} variant="primary" />
+        <KPICard title={t("results.ventaBruta")} value={fmt(results.grossRevenue)} icon={DollarSign} variant="primary" />
         <KPICard
-          title="CMV Total"
+          title={t("results.cmvTotal")}
           value={fmt(results.totalCMV)}
-          subtitle={`${pctFmt(results.cmvPercent)} — Ref: 28-30%`}
+          subtitle={`${pctFmt(results.cmvPercent)} — ${dreT("results.refCmv", lang)}`}
           icon={PieChart}
           variant={results.cmvPercent <= 32 ? "success" : "danger"}
         />
         <KPICard
-          title="GOP (Lucro Operativo)"
+          title={t("results.gop")}
           value={fmt(results.grossOperatingProfit)}
           subtitle={pctFmt(results.gopPercent)}
           icon={results.grossOperatingProfit >= 0 ? TrendingUp : TrendingDown}
           variant={results.gopPercent >= 10 ? "success" : results.gopPercent >= 0 ? "warning" : "danger"}
         />
         <KPICard
-          title="Punto de Equilibrio"
+          title={t("results.puntoEquilibrio")}
           value={fmt(results.breakEvenPoint)}
-          subtitle="Venta mínima mensual"
+          subtitle={t("results.ventaMinima")}
           icon={Target}
           variant={results.grossRevenue >= results.breakEvenPoint ? "success" : "danger"}
         />
@@ -124,14 +128,14 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Expense Breakdown */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
-          <PieChart className="w-5 h-5 text-primary" /> Desglose de Gastos Operativos
+          <PieChart className="w-5 h-5 text-primary" /> {t("results.desgloseGastos")}
         </h3>
         <div className="space-y-3">
           {results.expensesByCategory.filter(e => e.value > 0).map((expense) => {
             const refMatch = expense.reference.match(/(\d+)[/-](\d+)/);
             return (
               <div key={expense.name} className="flex items-center gap-4">
-                <div className="w-28 shrink-0 text-sm">{expense.name}</div>
+                <div className="w-28 shrink-0 text-sm">{tExpense(expense.name, lang)}</div>
                 <div className="flex-1">
                   <div className="h-2.5 bg-secondary rounded-full overflow-hidden">
                     <div
@@ -152,7 +156,7 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
           })}
         </div>
         <div className="mt-4 pt-4 border-t border-border flex items-center justify-between">
-          <span className="font-semibold">Total OPEX</span>
+          <span className="font-semibold">{t("results.totalOpex")}</span>
           <div className="text-right">
             <span className="font-bold text-lg">{fmt(results.totalOPEX)}</span>
             <span className="text-muted-foreground text-sm ml-2">({pctFmt(results.opexPercent)})</span>
@@ -163,23 +167,23 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Profit Summary */}
       <div className={`rounded-xl border p-6 ${results.netProfit >= 0 ? "border-green-500/30 bg-green-500/5" : "border-red-500/30 bg-red-500/5"}`}>
         <h3 className="font-display font-semibold text-lg mb-2">
-          {results.netProfit >= 0 ? "✅" : "🚨"} Resultado Neto
+          {results.netProfit >= 0 ? "✅" : "🚨"} {t("results.resultadoNeto")}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-4">
           <div>
-            <p className="text-sm text-muted-foreground">Margen de Contribución</p>
+            <p className="text-sm text-muted-foreground">{t("results.margenContribucion")}</p>
             <p className="text-xl font-bold">{fmt(results.contributionMargin)}</p>
-            <p className="text-xs text-muted-foreground">{pctFmt(results.contributionMarginPercent)} — Ref: 70-72%</p>
+            <p className="text-xs text-muted-foreground">{pctFmt(results.contributionMarginPercent)} — {dreT("results.refMargen", lang)}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Lucro Neto</p>
+            <p className="text-sm text-muted-foreground">{t("results.lucroNeto")}</p>
             <p className={`text-xl font-bold ${results.netProfit >= 0 ? "text-green-400" : "text-red-400"}`}>
               {fmt(results.netProfit)}
             </p>
             <p className="text-xs text-muted-foreground">{pctFmt(results.netProfitPercent)}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Ticket Medio</p>
+            <p className="text-sm text-muted-foreground">{t("results.ticketMedio")}</p>
             <p className="text-xl font-bold">{results.avgTicket > 0 ? fmt(results.avgTicket) : "—"}</p>
           </div>
         </div>
