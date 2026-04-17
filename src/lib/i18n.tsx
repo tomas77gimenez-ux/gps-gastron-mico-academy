@@ -103,6 +103,18 @@ const translations = {
   "perfil.comprasDesc": { es: "3 productos adquiridos", en: "3 products purchased" },
   "perfil.certificados": { es: "Certificados", en: "Certificates" },
   "perfil.certificadosDesc": { es: "0 certificados obtenidos", en: "0 certificates obtained" },
+  "perfil.suscripcion": { es: "Mi Suscripción", en: "My Subscription" },
+  "perfil.plan": { es: "Plan", en: "Plan" },
+  "perfil.estado": { es: "Estado", en: "Status" },
+  "perfil.proximaCobranza": { es: "Próxima cobranza", en: "Next billing" },
+  "perfil.cancelaEn": { es: "Tu suscripción se cancelará el", en: "Your subscription will cancel on" },
+  "perfil.activa": { es: "Activa", en: "Active" },
+  "perfil.prueba": { es: "En prueba", en: "Trialing" },
+  "perfil.cancelada": { es: "Cancelada", en: "Canceled" },
+  "perfil.sinSuscripcion": { es: "No tenés una suscripción activa", en: "You don't have an active subscription" },
+  "perfil.sinSuscripcionDesc": { es: "Suscribite para acceder a todos los cursos y contenido exclusivo.", en: "Subscribe to access all courses and exclusive content." },
+  "perfil.verPlanes": { es: "Ver Planes", en: "View Plans" },
+  "perfil.cargandoSub": { es: "Cargando suscripción...", en: "Loading subscription..." },
 
   // Login
   "login.bienvenido": { es: "Bienvenido de vuelta", en: "Welcome back" },
