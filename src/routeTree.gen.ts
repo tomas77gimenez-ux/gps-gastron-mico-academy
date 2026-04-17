@@ -21,6 +21,7 @@ import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as AsistenteRouteImport } from './routes/asistente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CursosIdRouteImport } from './routes/cursos.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 
 const TiendaRoute = TiendaRouteImport.update({
@@ -83,6 +84,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CursosIdRoute = CursosIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => CursosRoute,
+} as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
   path: '/checkout/return',
@@ -93,7 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -103,12 +109,13 @@ export interface FileRoutesByFullPath {
   '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/cursos/$id': typeof CursosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -118,13 +125,14 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/cursos/$id': typeof CursosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRoute
+  '/cursos': typeof CursosRouteWithChildren
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -134,6 +142,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
+  '/cursos/$id': typeof CursosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -151,6 +160,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/tienda'
     | '/checkout/return'
+    | '/cursos/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/tienda'
     | '/checkout/return'
+    | '/cursos/$id'
   id:
     | '__root__'
     | '/'
@@ -181,13 +192,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/tienda'
     | '/checkout/return'
+    | '/cursos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AsistenteRoute: typeof AsistenteRoute
-  CursosRoute: typeof CursosRoute
+  CursosRoute: typeof CursosRouteWithChildren
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -285,6 +297,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cursos/$id': {
+      id: '/cursos/$id'
+      path: '/$id'
+      fullPath: '/cursos/$id'
+      preLoaderRoute: typeof CursosIdRouteImport
+      parentRoute: typeof CursosRoute
+    }
     '/checkout/return': {
       id: '/checkout/return'
       path: '/checkout/return'
@@ -295,11 +314,22 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface CursosRouteChildren {
+  CursosIdRoute: typeof CursosIdRoute
+}
+
+const CursosRouteChildren: CursosRouteChildren = {
+  CursosIdRoute: CursosIdRoute,
+}
+
+const CursosRouteWithChildren =
+  CursosRoute._addFileChildren(CursosRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AsistenteRoute: AsistenteRoute,
-  CursosRoute: CursosRoute,
+  CursosRoute: CursosRouteWithChildren,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
@@ -313,3 +343,12 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { createStart } from '@tanstack/react-start'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+  }
+}
