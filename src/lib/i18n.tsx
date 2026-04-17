@@ -54,6 +54,23 @@ const translations = {
 
   // Cursos
   "cursos.titulo": { es: "Catálogo de Cursos", en: "Course Catalog" },
+  "cursos.desc": { es: "Aprendé a gestionar y hacer crecer tu restaurante con nuestros cursos exclusivos.", en: "Learn to manage and grow your restaurant with our exclusive courses." },
+  "cursos.lecciones": { es: "lecciones", en: "lessons" },
+  "cursos.bloqueado": { es: "Solo para suscriptores", en: "Subscribers only" },
+  "cursos.suscribete": { es: "Suscribite para acceder a todo el contenido", en: "Subscribe to access all content" },
+  "cursos.verCurso": { es: "Ver Curso", en: "View Course" },
+  "cursos.continuar": { es: "Continuar", en: "Continue" },
+  "cursos.gratis": { es: "Vista previa", en: "Free preview" },
+  "cursos.vacio": { es: "Aún no hay cursos disponibles.", en: "No courses available yet." },
+  "cursos.cargando": { es: "Cargando cursos...", en: "Loading courses..." },
+  "cursos.acceso": { es: "Tenés acceso completo a todos los cursos", en: "You have full access to all courses" },
+  "cursos.reproducir": { es: "Reproducir", en: "Play" },
+  "cursos.aulas": { es: "Aulas", en: "Lessons" },
+  "cursos.aulaBloqueada": { es: "Esta aula es exclusiva para suscriptores", en: "This lesson is for subscribers only" },
+  "cursos.verPlanes": { es: "Ver Planes", en: "View Plans" },
+  "cursos.volver": { es: "Volver a cursos", en: "Back to courses" },
+  "cursos.sinAulas": { es: "Este curso aún no tiene aulas.", en: "This course has no lessons yet." },
+  "cursos.sinVideo": { es: "Esta aula aún no tiene video.", en: "This lesson has no video yet." },
 
   // Dashboard
   "dashboard.badge": { es: "Dashboard Financiero", en: "Financial Dashboard" },
