@@ -13,7 +13,9 @@ export const Route = createFileRoute("/checkout/return")({
 });
 
 function CheckoutReturnPage() {
-  const sessionId = new URLSearchParams(window.location.search).get("session_id");
+  const sessionId = typeof window !== "undefined"
+    ? new URLSearchParams(window.location.search).get("session_id")
+    : null;
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
