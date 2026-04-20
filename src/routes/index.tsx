@@ -317,6 +317,36 @@ function HomePage() {
               {t("home.plans.title1")}<span className="text-gradient-brand">{t("home.plans.title2")}</span>
             </h2>
             <p className="text-muted-foreground mt-3 max-w-xl mx-auto">{t("home.plans.desc")}</p>
+
+            <div className="inline-flex items-center gap-1 mt-8 p-1 rounded-full border border-border bg-card">
+              <button
+                type="button"
+                onClick={() => setBilling("monthly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                  billing === "monthly"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("home.plans.billingMonthly")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBilling("yearly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+                  billing === "yearly"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("home.plans.billingYearly")}
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
+                }`}>
+                  −20%
+                </span>
+              </button>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
