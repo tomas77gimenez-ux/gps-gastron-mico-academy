@@ -288,6 +288,24 @@ export function DRERealtimeTracker() {
         </div>
       </div>
 
+      {completedWeeks < 4 ? (
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 mb-6 flex items-center gap-3 text-sm">
+          <Calendar className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-foreground">
+            {completedWeeks === 0
+              ? "Aún no cargas ninguna semana. Comienza por la Semana 1 para ver tu acumulado."
+              : `Falta${4 - completedWeeks === 1 ? "" : "n"} ${4 - completedWeeks} semana${4 - completedWeeks === 1 ? "" : "s"} para cerrar el ciclo del mes.`}
+          </span>
+        </div>
+      ) : (
+        <div className="rounded-xl border border-primary/40 bg-primary/10 p-3 mb-6 flex items-center gap-3 text-sm">
+          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-foreground font-medium">
+            ¡Mes completo! Ya puedes cerrar el ciclo y archivarlo en tu histórico.
+          </span>
+        </div>
+      )}
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
         {[1, 2, 3, 4].map(week => {
           const entry = entries.find(e => e.week_number === week);
