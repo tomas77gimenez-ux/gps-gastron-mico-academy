@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TiendaRouteImport } from './routes/tienda'
+import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as LoginRouteImport } from './routes/login'
@@ -29,6 +31,11 @@ const TiendaRoute = TiendaRouteImport.update({
   path: '/tienda',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
@@ -37,6 +44,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
   path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PlanesRoute = PlanesRouteImport.update({
@@ -105,8 +117,10 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
+  '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
@@ -121,8 +135,10 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
+  '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
@@ -138,8 +154,10 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
+  '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
@@ -156,8 +174,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/perfil'
     | '/planes'
+    | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
@@ -172,8 +192,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/perfil'
     | '/planes'
+    | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
@@ -188,8 +210,10 @@ export interface FileRouteTypes {
     | '/login'
     | '/perfil'
     | '/planes'
+    | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos_/$id'
@@ -205,8 +229,10 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PerfilRoute: typeof PerfilRoute
   PlanesRoute: typeof PlanesRoute
+  PrivacidadRoute: typeof PrivacidadRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TerminosRoute: typeof TerminosRoute
   TiendaRoute: typeof TiendaRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CursosIdRoute: typeof CursosIdRoute
@@ -221,6 +247,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TiendaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reset-password': {
       id: '/reset-password'
       path: '/reset-password'
@@ -233,6 +266,13 @@ declare module '@tanstack/react-router' {
       path: '/registro'
       fullPath: '/registro'
       preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/planes': {
@@ -325,8 +365,10 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PerfilRoute: PerfilRoute,
   PlanesRoute: PlanesRoute,
+  PrivacidadRoute: PrivacidadRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TerminosRoute: TerminosRoute,
   TiendaRoute: TiendaRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CursosIdRoute: CursosIdRoute,

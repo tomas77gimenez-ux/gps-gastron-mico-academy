@@ -199,6 +199,34 @@ const translations = {
     es: "Vista del dashboard financiero de GPS Gastronômico",
     en: "View of the GPS Gastronômico financial dashboard",
   },
+
+  // Footer
+  "footer.tagline": {
+    es: "Plataforma de formación y consultoría para profesionales gastronómicos. Datos, procesos y mentoría para transformar tu restaurante.",
+    en: "Training and consulting platform for gastronomic professionals. Data, processes and mentorship to transform your restaurant.",
+  },
+  "footer.explorar": { es: "Explorar", en: "Explore" },
+  "footer.recursos": { es: "Recursos", en: "Resources" },
+  "footer.legal": { es: "Legal", en: "Legal" },
+  "footer.contacto": { es: "Contacto", en: "Contact" },
+  "footer.terminos": { es: "Términos y Condiciones", en: "Terms & Conditions" },
+  "footer.privacidad": { es: "Política de Privacidad", en: "Privacy Policy" },
+  "footer.cookies": { es: "Política de Cookies", en: "Cookie Policy" },
+  "footer.dashboard": { es: "Diagnóstico DRE", en: "DRE Diagnosis" },
+  "footer.asistente": { es: "Asistente IA", en: "AI Assistant" },
+  "footer.faq": { es: "Preguntas frecuentes", en: "FAQ" },
+  "footer.soporte": { es: "Soporte", en: "Support" },
+  "footer.newsletter": { es: "Recibe tips de gestión gastronómica", en: "Get gastronomy management tips" },
+  "footer.suscribir": { es: "Suscribir", en: "Subscribe" },
+  "footer.email": { es: "Tu email", en: "Your email" },
+  "footer.derechos": { es: "Todos los derechos reservados.", en: "All rights reserved." },
+  "footer.hechoCon": { es: "Hecho con", en: "Made with" },
+  "footer.para": { es: "para gastrónomos", en: "for gastronomes" },
+
+  // Legal pages
+  "legal.terminos.title": { es: "Términos y Condiciones", en: "Terms & Conditions" },
+  "legal.privacidad.title": { es: "Política de Privacidad", en: "Privacy Policy" },
+  "legal.actualizado": { es: "Última actualización", en: "Last updated" },
 } as const;
 
 type TranslationKey = keyof typeof translations;
