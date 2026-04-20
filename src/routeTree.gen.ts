@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TiendaRouteImport } from './routes/tienda'
+import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as PlanesRouteImport } from './routes/planes'
@@ -27,6 +28,11 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 const TiendaRoute = TiendaRouteImport.update({
   id: '/tienda',
   path: '/tienda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/planes': typeof PlanesRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/planes': typeof PlanesRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/planes': typeof PlanesRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/planes'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/planes'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/planes'
     | '/registro'
     | '/reset-password'
+    | '/terminos'
     | '/tienda'
     | '/checkout/return'
     | '/cursos_/$id'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   PlanesRoute: typeof PlanesRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  TerminosRoute: typeof TerminosRoute
   TiendaRoute: typeof TiendaRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CursosIdRoute: typeof CursosIdRoute
@@ -219,6 +232,13 @@ declare module '@tanstack/react-router' {
       path: '/tienda'
       fullPath: '/tienda'
       preLoaderRoute: typeof TiendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlanesRoute: PlanesRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  TerminosRoute: TerminosRoute,
   TiendaRoute: TiendaRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CursosIdRoute: CursosIdRoute,
