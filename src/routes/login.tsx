@@ -42,7 +42,7 @@ function LoginPage() {
       setLoading(false);
       return;
     }
-    navigate({ to: "/dashboard" });
+    window.location.href = "/dashboard";
   }
 
   async function handleGoogleLogin() {
