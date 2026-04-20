@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
-  LineChart, GraduationCap, Target, Sparkles,
+  LineChart, GraduationCap, Target, Sparkles, HelpCircle,
 } from "lucide-react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useI18n } from "@/lib/i18n";
 import platformMockup from "@/assets/platform-mockup.jpg";
 
@@ -317,6 +318,51 @@ function HomePage() {
                 </Button>
               </Link>
             </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="py-20 bg-card/50">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-center mb-12"
+          >
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
+              <HelpCircle className="w-4 h-4" />
+              {t("home.faq.badge")}
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold font-display">
+              {t("home.faq.title1")}<span className="text-gradient-brand">{t("home.faq.title2")}</span>
+            </h2>
+            <p className="text-muted-foreground mt-3">{t("home.faq.desc")}</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+          >
+            <Accordion type="single" collapsible className="space-y-3">
+              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                <AccordionItem
+                  key={i}
+                  value={`item-${i}`}
+                  className="rounded-xl border border-border bg-card px-5 data-[state=open]:border-primary/30 transition-colors"
+                >
+                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline py-5">
+                    {t(`home.faq.q${i}` as never)}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
+                    {t(`home.faq.a${i}` as never)}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
           </motion.div>
         </div>
       </section>
