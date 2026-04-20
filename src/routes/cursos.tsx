@@ -41,39 +41,47 @@ function CursosPage() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const { data: courseData } = await supabase
-        .from("courses")
-        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor, methodology, pillar_order, module_number")
-        .eq("status", "published")
-        .order("methodology", { ascending: true })
-        .order("pillar_order", { ascending: true, nullsFirst: false })
-        .order("module_number", { ascending: true, nullsFirst: false })
-        .order("sort_order", { ascending: true });
+      try {
+        const { data: courseData, error: courseErr } = await supabase
+          .from("courses")
+          .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor, methodology, pillar_order, module_number")
+          .eq("status", "published")
+          .order("methodology", { ascending: true })
+          .order("pillar_order", { ascending: true, nullsFirst: false })
+          .order("module_number", { ascending: true, nullsFirst: false })
+          .order("sort_order", { ascending: true });
 
-      const ids = (courseData ?? []).map(c => c.id);
-      let lessonMap: Record<string, { count: number; hasFree: boolean }> = {};
-      if (ids.length > 0) {
-        const { data: lessonData } = await supabase
-          .from("lessons")
-          .select("course_id, is_free")
-          .in("course_id", ids);
-        for (const id of ids) lessonMap[id] = { count: 0, hasFree: false };
-        for (const l of lessonData ?? []) {
-          const m = lessonMap[l.course_id];
-          if (m) {
-            m.count += 1;
-            if (l.is_free) m.hasFree = true;
+        if (courseErr) console.error("[cursos] courses query error:", courseErr);
+
+        const ids = (courseData ?? []).map(c => c.id);
+        let lessonMap: Record<string, { count: number; hasFree: boolean }> = {};
+        if (ids.length > 0) {
+          const { data: lessonData, error: lessonErr } = await supabase
+            .from("lessons")
+            .select("course_id, is_free")
+            .in("course_id", ids);
+          if (lessonErr) console.error("[cursos] lessons query error:", lessonErr);
+          for (const id of ids) lessonMap[id] = { count: 0, hasFree: false };
+          for (const l of lessonData ?? []) {
+            const m = lessonMap[l.course_id];
+            if (m) {
+              m.count += 1;
+              if (l.is_free) m.hasFree = true;
+            }
           }
         }
-      }
 
-      if (!active) return;
-      setCourses((courseData ?? []).map(c => ({
-        ...c,
-        lessonCount: lessonMap[c.id]?.count ?? 0,
-        hasFreeLesson: lessonMap[c.id]?.hasFree ?? false,
-      })));
-      setLoading(false);
+        if (!active) return;
+        setCourses((courseData ?? []).map(c => ({
+          ...c,
+          lessonCount: lessonMap[c.id]?.count ?? 0,
+          hasFreeLesson: lessonMap[c.id]?.hasFree ?? false,
+        })));
+      } catch (e) {
+        console.error("[cursos] unexpected error:", e);
+      } finally {
+        if (active) setLoading(false);
+      }
     })();
     return () => { active = false; };
   }, []);
