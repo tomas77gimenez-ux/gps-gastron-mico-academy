@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useParams } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -37,7 +37,7 @@ interface Lesson {
 }
 
 function CourseDetailPage() {
-  const { id } = useParams({ from: "/cursos/$id" });
+  const { id } = Route.useParams();
   const { t } = useI18n();
   const sub = useSubscription();
   const [course, setCourse] = useState<Course | null>(null);
@@ -48,24 +48,31 @@ function CourseDetailPage() {
   useEffect(() => {
     let active = true;
     (async () => {
-      const [{ data: courseData }, { data: lessonData }] = await Promise.all([
-        supabase
-          .from("courses")
-          .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
-          .eq("id", id)
-          .maybeSingle(),
-        supabase
-          .from("lessons")
-          .select("id, title, description, duration, video_url, is_free, sort_order")
-          .eq("course_id", id)
-          .order("sort_order", { ascending: true }),
-      ]);
-      if (!active) return;
-      setCourse(courseData);
-      const ls = lessonData ?? [];
-      setLessons(ls);
-      if (ls.length > 0) setActiveLessonId(ls[0].id);
-      setLoading(false);
+      try {
+        const [{ data: courseData, error: cErr }, { data: lessonData, error: lErr }] = await Promise.all([
+          supabase
+            .from("courses")
+            .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
+            .eq("id", id)
+            .maybeSingle(),
+          supabase
+            .from("lessons")
+            .select("id, title, description, duration, video_url, is_free, sort_order")
+            .eq("course_id", id)
+            .order("sort_order", { ascending: true }),
+        ]);
+        if (cErr) console.error("[curso] course err:", cErr);
+        if (lErr) console.error("[curso] lessons err:", lErr);
+        if (!active) return;
+        setCourse(courseData);
+        const ls = lessonData ?? [];
+        setLessons(ls);
+        if (ls.length > 0) setActiveLessonId(ls[0].id);
+      } catch (e) {
+        console.error("[curso] unexpected:", e);
+      } finally {
+        if (active) setLoading(false);
+      }
     })();
     return () => { active = false; };
   }, [id]);
