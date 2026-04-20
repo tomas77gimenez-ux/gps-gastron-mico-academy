@@ -54,7 +54,10 @@ function PlanesPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const { t, lang } = useI18n();
+
+  const yearlyDiscount = 0.8; // 20% off
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
