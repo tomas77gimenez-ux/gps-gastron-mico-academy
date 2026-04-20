@@ -54,7 +54,7 @@
   --font-body: 'Inter', sans-serif;
 
   /* Dark black/orange/gray theme */
-  --background: oklch(0.10 0 0);
+  --background: oklch(0.18 0 0);
   --foreground: oklch(0.95 0 0);
   --card: oklch(0.14 0 0);
   --card-foreground: oklch(0.95 0 0);
