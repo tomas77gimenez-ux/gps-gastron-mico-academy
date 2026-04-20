@@ -8,7 +8,7 @@ const translations = {
   "nav.dre": { es: "DRE", en: "DRE" },
   "nav.mentoria": { es: "Mentoria", en: "Mentorship" },
   "nav.planes": { es: "Planes", en: "Plans" },
-  "nav.productos": { es: "Productos", en: "Products" },
+  "nav.productos": { es: "Tienda", en: "Store" },
   "nav.perfil": { es: "Mi Perfil", en: "My Profile" },
   "nav.admin": { es: "Admin", en: "Admin" },
   "nav.asistente": { es: "Asistente IA", en: "AI Assistant" },
@@ -81,10 +81,13 @@ const translations = {
   "dashboard.nuevoDiag": { es: "Nuevo Diagnóstico", en: "New Diagnosis" },
 
   // Tienda
-  "tienda.titulo": { es: "Productos", en: "Products" },
-  "tienda.desc": { es: "Herramientas y servicios para transformar tu negocio gastronómico.", en: "Tools and services to transform your gastronomic business." },
+  "tienda.titulo": { es: "Tienda GPS Gastronómico", en: "GPS Gastronómico Store" },
+  "tienda.desc": { es: "Servicios premium y productos exclusivos para profesionales gastronómicos.", en: "Premium services and exclusive products for gastronomic professionals." },
   "tienda.comprar": { es: "Comprar", en: "Buy" },
+  "tienda.consultar": { es: "Consultar", en: "Inquire" },
   "tienda.ver": { es: "Ver", en: "View" },
+  "tienda.desde": { es: "Desde", en: "From" },
+  "tienda.personalizado": { es: "Consultar Personalizado", en: "Custom Quote" },
   "tienda.completarCompra": { es: "Completar Compra", en: "Complete Purchase" },
 
   // Planes
