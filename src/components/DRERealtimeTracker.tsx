@@ -289,8 +289,8 @@ export function DRERealtimeTracker() {
       </div>
 
       {completedWeeks < 4 ? (
-        <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 mb-6 flex items-center gap-3 text-sm">
-          <Calendar className="w-4 h-4 text-amber-500 shrink-0" />
+        <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 mb-6 flex items-center gap-3 text-sm">
+          <Calendar className="w-4 h-4 text-primary shrink-0" />
           <span className="text-foreground">
             {completedWeeks === 0
               ? "Aún no cargas ninguna semana. Comienza por la Semana 1 para ver tu acumulado."
