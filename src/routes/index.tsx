@@ -292,6 +292,112 @@ function HomePage() {
         </div>
       </section>
 
+      {/* Plans Preview */}
+      <section className="py-20 bg-card/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="text-center mb-14">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
+              <Sparkles className="w-4 h-4" />
+              {t("home.plans.badge")}
+            </div>
+            <h2 className="text-3xl sm:text-4xl font-bold font-display">
+              {t("home.plans.title1")}<span className="text-gradient-brand">{t("home.plans.title2")}</span>
+            </h2>
+            <p className="text-muted-foreground mt-3 max-w-xl mx-auto">{t("home.plans.desc")}</p>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {[
+              {
+                id: "gratis",
+                icon: Gift,
+                name: t("home.plans.freeName"),
+                price: t("home.plans.freePrice"),
+                period: "",
+                desc: t("home.plans.freeDesc"),
+                features: [t("home.plans.freeF1"), t("home.plans.freeF2"), t("home.plans.freeF3")],
+                featured: false,
+              },
+              {
+                id: "basico",
+                icon: Star,
+                name: t("home.plans.basicName"),
+                price: "$27",
+                period: t("home.plans.perMonth"),
+                desc: t("home.plans.basicDesc"),
+                features: [t("home.plans.basicF1"), t("home.plans.basicF2"), t("home.plans.basicF3"), t("home.plans.basicF4")],
+                featured: false,
+              },
+              {
+                id: "premium",
+                icon: Crown,
+                name: t("home.plans.premiumName"),
+                price: "$97",
+                period: t("home.plans.perMonth"),
+                desc: t("home.plans.premiumDesc"),
+                features: [t("home.plans.premiumF1"), t("home.plans.premiumF2"), t("home.plans.premiumF3"), t("home.plans.premiumF4")],
+                featured: true,
+              },
+            ].map((plan, i) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className={`relative rounded-2xl border p-7 flex flex-col ${
+                  plan.featured
+                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)]"
+                    : "border-border bg-card"
+                }`}
+              >
+                {plan.featured && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
+                    {t("home.plans.popular")}
+                  </span>
+                )}
+                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
+                  <plan.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="text-xl font-bold font-display mb-1">{plan.name}</h3>
+                <p className="text-sm text-muted-foreground mb-5">{plan.desc}</p>
+                <div className="mb-5">
+                  <span className="text-3xl font-bold text-foreground">{plan.price}</span>
+                  {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
+                </div>
+                <ul className="space-y-2.5 mb-6 flex-1">
+                  {plan.features.map((f) => (
+                    <li key={f} className="flex items-start gap-2 text-sm">
+                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      <span className="text-foreground">{f}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link to="/planes">
+                  <Button
+                    className={`w-full rounded-xl ${
+                      plan.featured
+                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                    }`}
+                  >
+                    {plan.id === "gratis" ? t("home.plans.ctaFree") : t("home.plans.ctaPaid")}
+                  </Button>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="text-center mt-10">
+            <Link to="/planes">
+              <Button variant="outline" size="lg" className="gap-2">
+                {t("home.plans.viewAll")} <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
