@@ -56,15 +56,8 @@ function CourseDetailPage() {
   const sub = useSubscription();
   const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
-  const loading = false;
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen pt-24 px-4 text-center text-muted-foreground">{t("cursos.cargando")}</div>
-    );
-  }
 
   if (!course) {
     return (
