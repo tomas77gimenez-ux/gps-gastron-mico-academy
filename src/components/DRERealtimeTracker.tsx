@@ -4,7 +4,7 @@ import { useAuthSession } from "@/hooks/useAuthSession";
 import { calculateDRE, type DREData } from "@/lib/dre-questions";
 import { DREQuestionnaire } from "./DREQuestionnaire";
 import { DashboardResults } from "./DashboardResults";
-import { Calendar, CheckCircle2, Lock, Pencil, Plus, BarChart3, ArrowLeft } from "lucide-react";
+import { Calendar, CheckCircle2, Lock, Pencil, Plus, BarChart3, ArrowLeft, History } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 interface Cycle {
@@ -16,6 +16,7 @@ interface Cycle {
 
 interface Entry {
   id: string;
+  cycle_id: string;
   week_number: number;
   data: DREData;
   updated_at: string;
@@ -39,6 +40,8 @@ export function DRERealtimeTracker() {
   const [editingWeek, setEditingWeek] = useState<number | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState<Array<{ cycle: Cycle; entries: Entry[] }>>([]);
+  const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isReady) return;
@@ -47,6 +50,7 @@ export function DRERealtimeTracker() {
       return;
     }
     void loadActive();
+    void loadHistory();
   }, [isReady, user?.id]);
 
   async function loadActive() {
@@ -71,6 +75,30 @@ export function DRERealtimeTracker() {
       setEntries([]);
     }
     setLoading(false);
+  }
+
+  async function loadHistory() {
+    if (!user) return;
+    const { data: cycles } = await supabase
+      .from("dre_realtime_cycles")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "closed")
+      .order("closed_at", { ascending: false });
+    if (!cycles || cycles.length === 0) {
+      setHistory([]);
+      return;
+    }
+    const ids = cycles.map(c => c.id);
+    const { data: ents } = await supabase
+      .from("dre_realtime_entries")
+      .select("*")
+      .in("cycle_id", ids);
+    const grouped = (cycles as Cycle[]).map(c => ({
+      cycle: c,
+      entries: ((ents ?? []) as unknown as Entry[]).filter(e => e.cycle_id === c.id),
+    }));
+    setHistory(grouped);
   }
 
   async function startCycle() {
@@ -120,6 +148,7 @@ export function DRERealtimeTracker() {
     setCycle(null);
     setEntries([]);
     setShowResults(false);
+    await loadHistory();
   }
 
   if (!isReady || loading) {
@@ -143,18 +172,21 @@ export function DRERealtimeTracker() {
 
   if (!cycle) {
     return (
-      <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
-        <Calendar className="w-10 h-10 mx-auto text-primary mb-3" />
-        <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
-        <p className="text-sm text-muted-foreground mb-5">
-          Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
-        </p>
-        <button
-          onClick={startCycle}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
-        >
-          <Plus className="w-4 h-4" /> Iniciar ciclo de Tiempo Real
-        </button>
+      <div className="max-w-3xl mx-auto">
+        <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
+          <Calendar className="w-10 h-10 mx-auto text-primary mb-3" />
+          <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
+          <p className="text-sm text-muted-foreground mb-5">
+            Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
+          </p>
+          <button
+            onClick={startCycle}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
+          >
+            <Plus className="w-4 h-4" /> Iniciar ciclo de Tiempo Real
+          </button>
+        </div>
+        <HistoryList history={history} onView={setViewingHistoryId} />
       </div>
     );
   }
@@ -184,6 +216,32 @@ export function DRERealtimeTracker() {
           onComplete={(data) => void saveWeek(editingWeek, data)}
         />
         {saving && <p className="text-center text-xs text-muted-foreground mt-4">Guardando…</p>}
+      </div>
+    );
+  }
+
+  if (viewingHistoryId) {
+    const item = history.find(h => h.cycle.id === viewingHistoryId);
+    if (!item) {
+      setViewingHistoryId(null);
+      return null;
+    }
+    return (
+      <div>
+        <button
+          onClick={() => setViewingHistoryId(null)}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver al histórico
+        </button>
+        <div className="text-center mb-6">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-1">Mes cerrado</div>
+          <h2 className="text-2xl font-bold font-display capitalize">{item.cycle.label}</h2>
+        </div>
+        <DashboardResults
+          results={calculateDRE(sumData(item.entries))}
+          onReset={() => setViewingHistoryId(null)}
+        />
       </div>
     );
   }
@@ -286,6 +344,8 @@ export function DRERealtimeTracker() {
           </div>
         </div>
       )}
+
+      <HistoryList history={history} onView={setViewingHistoryId} />
     </div>
   );
 }
@@ -296,6 +356,58 @@ function Stat({ label, value, suffix = "", plain = false }: { label: string; val
       <div className="text-xs text-muted-foreground mb-1">{label}</div>
       <div className="font-semibold text-foreground">
         {plain ? value : `$${value.toLocaleString("es-MX", { maximumFractionDigits: 0 })}`}{suffix}
+      </div>
+    </div>
+  );
+}
+
+function HistoryList({
+  history,
+  onView,
+}: {
+  history: Array<{ cycle: Cycle; entries: Entry[] }>;
+  onView: (id: string) => void;
+}) {
+  if (history.length === 0) return null;
+  return (
+    <div className="mt-8">
+      <div className="flex items-center gap-2 mb-3">
+        <History className="w-4 h-4 text-muted-foreground" />
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Meses anteriores
+        </h3>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {history.map(({ cycle, entries }) => {
+          const acc = sumData(entries);
+          const facturacion =
+            (acc.kitchen_gross_sales ?? 0) +
+            (acc.bar_gross_sales ?? 0) +
+            (acc.cafeteria_gross_sales ?? 0) +
+            (acc.events_gross_sales ?? 0);
+          const cmv =
+            (acc.kitchen_cmv ?? 0) +
+            (acc.bar_cmv ?? 0) +
+            (acc.cafeteria_cmv ?? 0) +
+            (acc.events_cmv ?? 0);
+          return (
+            <button
+              key={cycle.id}
+              onClick={() => onView(cycle.id)}
+              className="text-left rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold capitalize">{cycle.label}</span>
+                <span className="text-xs text-muted-foreground">{entries.length}/4 sem</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <Stat label="Facturación" value={facturacion} />
+                <Stat label="CMV" value={cmv} />
+              </div>
+              <div className="text-xs text-primary mt-3 font-medium">Ver dashboard →</div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
