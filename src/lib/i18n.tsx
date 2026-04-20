@@ -161,7 +161,7 @@ const translations = {
   "results.alto": { es: "Alto", en: "High" },
 
   // Period options
-  "period.realtime": { es: "Tempo Real", en: "Real Time" },
+  "period.realtime": { es: "Tiempo Real", en: "Real Time" },
   "period.1m": { es: "1 Mes", en: "1 Month" },
   "period.3m": { es: "3 Meses", en: "3 Months" },
   "period.6m": { es: "6 Meses", en: "6 Months" },
