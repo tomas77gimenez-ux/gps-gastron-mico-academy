@@ -21,7 +21,7 @@ import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as AsistenteRouteImport } from './routes/asistente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CursosIdRouteImport } from './routes/cursos.$id'
+import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 
 const TiendaRoute = TiendaRouteImport.update({
@@ -85,9 +85,9 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CursosIdRoute = CursosIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => CursosRoute,
+  id: '/cursos_/$id',
+  path: '/cursos/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   id: '/checkout/return',
@@ -99,7 +99,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRouteWithChildren
+  '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -115,7 +115,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRouteWithChildren
+  '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -132,7 +132,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/asistente': typeof AsistenteRoute
-  '/cursos': typeof CursosRouteWithChildren
+  '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
   '/login': typeof LoginRoute
@@ -142,7 +142,7 @@ export interface FileRoutesById {
   '/reset-password': typeof ResetPasswordRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
-  '/cursos/$id': typeof CursosIdRoute
+  '/cursos_/$id': typeof CursosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -192,14 +192,14 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/tienda'
     | '/checkout/return'
-    | '/cursos/$id'
+    | '/cursos_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AsistenteRoute: typeof AsistenteRoute
-  CursosRoute: typeof CursosRouteWithChildren
+  CursosRoute: typeof CursosRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
   LoginRoute: typeof LoginRoute
@@ -209,6 +209,7 @@ export interface RootRouteChildren {
   ResetPasswordRoute: typeof ResetPasswordRoute
   TiendaRoute: typeof TiendaRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
+  CursosIdRoute: typeof CursosIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -297,12 +298,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cursos/$id': {
-      id: '/cursos/$id'
-      path: '/$id'
+    '/cursos_/$id': {
+      id: '/cursos_/$id'
+      path: '/cursos/$id'
       fullPath: '/cursos/$id'
       preLoaderRoute: typeof CursosIdRouteImport
-      parentRoute: typeof CursosRoute
+      parentRoute: typeof rootRouteImport
     }
     '/checkout/return': {
       id: '/checkout/return'
@@ -314,22 +315,11 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CursosRouteChildren {
-  CursosIdRoute: typeof CursosIdRoute
-}
-
-const CursosRouteChildren: CursosRouteChildren = {
-  CursosIdRoute: CursosIdRoute,
-}
-
-const CursosRouteWithChildren =
-  CursosRoute._addFileChildren(CursosRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AsistenteRoute: AsistenteRoute,
-  CursosRoute: CursosRouteWithChildren,
+  CursosRoute: CursosRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
   LoginRoute: LoginRoute,
@@ -339,6 +329,7 @@ const rootRouteChildren: RootRouteChildren = {
   ResetPasswordRoute: ResetPasswordRoute,
   TiendaRoute: TiendaRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
+  CursosIdRoute: CursosIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
