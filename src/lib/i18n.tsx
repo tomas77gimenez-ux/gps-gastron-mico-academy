@@ -278,6 +278,40 @@ const translations = {
     es: "La mayoría de nuestros mentorados ven mejoras concretas en margen y food cost en los primeros 60-90 días aplicando el método.",
     en: "Most of our mentees see concrete improvements in margin and food cost within the first 60-90 days applying the method.",
   },
+
+  "home.plans.badge": { es: "Planes y precios", en: "Plans & pricing" },
+  "home.plans.title1": { es: "Elegí el plan ideal para ", en: "Choose the right plan for " },
+  "home.plans.title2": { es: "tu restaurante", en: "your restaurant" },
+  "home.plans.desc": {
+    es: "Empezá gratis o accedé a todo el método con nuestros planes de membresía.",
+    en: "Start free or unlock the full method with our membership plans.",
+  },
+  "home.plans.popular": { es: "Más popular", en: "Most popular" },
+  "home.plans.perMonth": { es: "/mes", en: "/mo" },
+  "home.plans.viewAll": { es: "Ver todos los planes", en: "View all plans" },
+  "home.plans.ctaFree": { es: "Empezar gratis", en: "Start free" },
+  "home.plans.ctaPaid": { es: "Suscribirme", en: "Subscribe" },
+
+  "home.plans.freeName": { es: "Gratis", en: "Free" },
+  "home.plans.freePrice": { es: "$0", en: "$0" },
+  "home.plans.freeDesc": { es: "Probá la plataforma sin compromiso.", en: "Try the platform with no commitment." },
+  "home.plans.freeF1": { es: "Acceso a clases gratuitas", en: "Access to free lessons" },
+  "home.plans.freeF2": { es: "Diagnóstico inicial", en: "Initial diagnosis" },
+  "home.plans.freeF3": { es: "Newsletter semanal", en: "Weekly newsletter" },
+
+  "home.plans.basicName": { es: "Plan Básico", en: "Basic Plan" },
+  "home.plans.basicDesc": { es: "Todo lo que necesitás para controlar tu restaurante.", en: "Everything you need to control your restaurant." },
+  "home.plans.basicF1": { es: "Acceso a todos los cursos", en: "Access to all courses" },
+  "home.plans.basicF2": { es: "Planillas DRE y SUP", en: "DRE & SUP spreadsheets" },
+  "home.plans.basicF3": { es: "Calculadora de Food Cost", en: "Food Cost Calculator" },
+  "home.plans.basicF4": { es: "Comunidad privada", en: "Private community" },
+
+  "home.plans.premiumName": { es: "Plan Premium", en: "Premium Plan" },
+  "home.plans.premiumDesc": { es: "Resultados acelerados con acompañamiento directo.", en: "Accelerated results with direct guidance." },
+  "home.plans.premiumF1": { es: "Todo del Plan Básico", en: "Everything in Basic Plan" },
+  "home.plans.premiumF2": { es: "Mentoría grupal mensual", en: "Monthly group mentorship" },
+  "home.plans.premiumF3": { es: "Soporte por WhatsApp", en: "WhatsApp support" },
+  "home.plans.premiumF4": { es: "Descuentos en la tienda", en: "Store discounts" },
 } as const;
 
 type TranslationKey = keyof typeof translations;
