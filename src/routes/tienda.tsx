@@ -96,7 +96,15 @@ function TiendaPage() {
     if (!product.priceId) {
       const message = product.whatsappMessage
         ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
-      window.open(buildWhatsappUrl(message), "_blank", "noopener,noreferrer");
+      const url = buildWhatsappUrl(message);
+      // Usar <a> con target=_blank evita el bloqueo COOP de Safari con window.open
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
       return;
     }
     setCheckoutPriceId(product.priceId);
