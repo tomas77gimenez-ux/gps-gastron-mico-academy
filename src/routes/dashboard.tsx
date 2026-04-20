@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { DREQuestionnaire } from "@/components/DREQuestionnaire";
 import { DashboardResults } from "@/components/DashboardResults";
+import { DRERealtimeTracker } from "@/components/DRERealtimeTracker";
 import { calculateDRE, type DREData, type DREResults } from "@/lib/dre-questions";
 import { LayoutDashboard, Plus, X, Calendar } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -153,7 +154,11 @@ function DashboardPage() {
               </div>
             </div>
 
-            <DREQuestionnaire onComplete={handleComplete} />
+            {selectedPeriod === "realtime" ? (
+              <DRERealtimeTracker />
+            ) : (
+              <DREQuestionnaire onComplete={handleComplete} />
+            )}
           </>
         ) : activeDiag ? (
           <DashboardResults results={activeDiag.results} onReset={startNew} />

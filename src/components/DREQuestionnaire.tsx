@@ -100,10 +100,18 @@ function CustomFieldRow({ customField, value, onChangeLabel, onChangeValue, onRe
   );
 }
 
-export function DREQuestionnaire({ onComplete }: { onComplete: (data: DREData) => void }) {
+export function DREQuestionnaire({
+  onComplete,
+  initialData,
+  submitLabelKey,
+}: {
+  onComplete: (data: DREData) => void;
+  initialData?: DREData;
+  submitLabelKey?: string;
+}) {
   const { lang } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<DREData>({});
+  const [formData, setFormData] = useState<DREData>(initialData ?? {});
   // Track custom fields per section: { [sectionId]: CustomField[] }
   const [customFields, setCustomFields] = useState<Record<string, CustomField[]>>({});
 
@@ -250,7 +258,7 @@ export function DREQuestionnaire({ onComplete }: { onComplete: (data: DREData) =
           onClick={next}
           className="flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
         >
-          {isLast ? dreT("dre.verDashboard", lang) : dreT("dre.siguiente", lang)} <ChevronRight className="w-4 h-4" />
+          {isLast ? dreT(submitLabelKey ?? "dre.verDashboard", lang) : dreT("dre.siguiente", lang)} <ChevronRight className="w-4 h-4" />
         </button>
       </div>
     </div>
