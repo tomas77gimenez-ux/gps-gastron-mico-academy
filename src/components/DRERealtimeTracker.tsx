@@ -16,6 +16,7 @@ interface Cycle {
 
 interface Entry {
   id: string;
+  cycle_id: string;
   week_number: number;
   data: DREData;
   updated_at: string;
