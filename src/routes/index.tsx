@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
+  LineChart, GraduationCap, Target, Sparkles,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import platformMockup from "@/assets/platform-mockup.jpg";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
