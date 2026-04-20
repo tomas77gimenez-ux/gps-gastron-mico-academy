@@ -172,18 +172,21 @@ export function DRERealtimeTracker() {
 
   if (!cycle) {
     return (
-      <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
-        <Calendar className="w-10 h-10 mx-auto text-primary mb-3" />
-        <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
-        <p className="text-sm text-muted-foreground mb-5">
-          Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
-        </p>
-        <button
-          onClick={startCycle}
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
-        >
-          <Plus className="w-4 h-4" /> Iniciar ciclo de Tiempo Real
-        </button>
+      <div className="max-w-3xl mx-auto">
+        <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
+          <Calendar className="w-10 h-10 mx-auto text-primary mb-3" />
+          <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
+          <p className="text-sm text-muted-foreground mb-5">
+            Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
+          </p>
+          <button
+            onClick={startCycle}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
+          >
+            <Plus className="w-4 h-4" /> Iniciar ciclo de Tiempo Real
+          </button>
+        </div>
+        <HistoryList history={history} onView={setViewingHistoryId} />
       </div>
     );
   }
