@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -7,6 +7,21 @@ import { ArrowLeft, Lock, Play, Sparkles, BookOpen, FileText, CheckCircle2 } fro
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
+  loader: async ({ params: { id } }) => {
+    const [{ data: course }, { data: lessons }] = await Promise.all([
+      supabase
+        .from("courses")
+        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
+        .eq("id", id)
+        .maybeSingle(),
+      supabase
+        .from("lessons")
+        .select("id, title, description, duration, video_url, is_free, sort_order")
+        .eq("course_id", id)
+        .order("sort_order", { ascending: true }),
+    ]);
+    return { course, lessons: lessons ?? [] };
+  },
   head: () => ({
     meta: [
       { title: "Curso — GPS Gastronômico" },
