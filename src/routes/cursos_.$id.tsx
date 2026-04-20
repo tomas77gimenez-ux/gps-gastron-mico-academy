@@ -1,12 +1,27 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ArrowLeft, Lock, Play, Sparkles, BookOpen, FileText, CheckCircle2 } from "lucide-react";
 
-export const Route = createFileRoute("/cursos/$id")({
+export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
+  loader: async ({ params: { id } }) => {
+    const [{ data: course }, { data: lessons }] = await Promise.all([
+      supabase
+        .from("courses")
+        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
+        .eq("id", id)
+        .maybeSingle(),
+      supabase
+        .from("lessons")
+        .select("id, title, description, duration, video_url, is_free, sort_order")
+        .eq("course_id", id)
+        .order("sort_order", { ascending: true }),
+    ]);
+    return { course, lessons: lessons ?? [] };
+  },
   head: () => ({
     meta: [
       { title: "Curso — GPS Gastronômico" },
@@ -37,54 +52,12 @@ interface Lesson {
 }
 
 function CourseDetailPage() {
-  const { id } = Route.useParams();
   const { t } = useI18n();
   const sub = useSubscription();
-  const [course, setCourse] = useState<Course | null>(null);
-  const [lessons, setLessons] = useState<Lesson[]>([]);
-  const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    let active = true;
-    (async () => {
-      try {
-        const [{ data: courseData, error: cErr }, { data: lessonData, error: lErr }] = await Promise.all([
-          supabase
-            .from("courses")
-            .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
-            .eq("id", id)
-            .maybeSingle(),
-          supabase
-            .from("lessons")
-            .select("id, title, description, duration, video_url, is_free, sort_order")
-            .eq("course_id", id)
-            .order("sort_order", { ascending: true }),
-        ]);
-        if (cErr) console.error("[curso] course err:", cErr);
-        if (lErr) console.error("[curso] lessons err:", lErr);
-        if (!active) return;
-        setCourse(courseData);
-        const ls = lessonData ?? [];
-        setLessons(ls);
-        if (ls.length > 0) setActiveLessonId(ls[0].id);
-      } catch (e) {
-        console.error("[curso] unexpected:", e);
-      } finally {
-        if (active) setLoading(false);
-      }
-    })();
-    return () => { active = false; };
-  }, [id]);
-
+  const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
+  const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
-
-  if (loading) {
-    return (
-      <div className="min-h-screen pt-24 px-4 text-center text-muted-foreground">{t("cursos.cargando")}</div>
-    );
-  }
 
   if (!course) {
     return (
