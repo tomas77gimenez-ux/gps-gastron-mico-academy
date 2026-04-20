@@ -1,10 +1,11 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { useAuthSession } from "@/hooks/useAuthSession";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -18,6 +19,7 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const navigate = useNavigate();
+  const { isReady, user } = useAuthSession();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -25,12 +27,18 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { t } = useI18n();
 
+  useEffect(() => {
+    if (isReady && user) {
+      navigate({ to: "/dashboard" });
+    }
+  }, [isReady, user, navigate]);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
-    const { error: err } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: err } = await supabase.auth.signInWithPassword({ email, password });
     if (err) {
       if (err.message === "Invalid login credentials") {
         setError(t("login.emailIncorrecto"));
@@ -42,7 +50,15 @@ function LoginPage() {
       setLoading(false);
       return;
     }
-    window.location.href = "/dashboard";
+
+    if (!data.session) {
+      setError(t("login.emailIncorrecto"));
+      setLoading(false);
+      return;
+    }
+
+    navigate({ to: "/dashboard" });
+    setLoading(false);
   }
 
   async function handleGoogleLogin() {

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { User, BookOpen, ShoppingBag, Award, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useAuthSession } from "@/hooks/useAuthSession";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
@@ -30,6 +31,7 @@ function formatDate(iso: string | null, lang: string): string {
 function PerfilPage() {
   const { t, lang } = useI18n();
   const sub = useSubscription();
+  const { isReady, user } = useAuthSession();
   const [portalLoading, setPortalLoading] = useState(false);
 
   async function openPortal() {
@@ -56,14 +58,24 @@ function PerfilPage() {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <h1 className="text-3xl font-bold font-display mb-8">{t("perfil.titulo")}</h1>
 
+        {isReady && !user && (
+          <section className="bg-card rounded-xl border border-border p-6 mb-8 text-center">
+            <p className="font-medium mb-2">{t("perfil.sinSuscripcion")}</p>
+            <p className="text-sm text-muted-foreground mb-4">Inicia sesión para ver tu suscripción y gestionar tu cuenta.</p>
+            <Button asChild>
+              <Link to="/login">{t("nav.entrar")}</Link>
+            </Button>
+          </section>
+        )}
+
         <div className="bg-card rounded-xl border border-border p-6 mb-8">
           <div className="flex items-center gap-4">
             <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="w-8 h-8 text-primary" />
             </div>
             <div>
-              <h2 className="text-xl font-semibold">Usuario Demo</h2>
-              <p className="text-sm text-muted-foreground">usuario@ejemplo.com</p>
+              <h2 className="text-xl font-semibold">{user?.user_metadata?.display_name ?? user?.email?.split("@")[0] ?? "Usuario"}</h2>
+              <p className="text-sm text-muted-foreground">{user?.email ?? "—"}</p>
               {sub.hasActive && (
                 <span className="inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary text-xs font-semibold rounded-full">
                   {sub.status === "trialing" ? t("perfil.prueba") : t("perfil.activa")}
@@ -83,7 +95,20 @@ function PerfilPage() {
             <h2 className="text-xl font-semibold">{t("perfil.suscripcion")}</h2>
           </div>
 
-          {sub.loading ? (
+          {!isReady ? (
+            <div className="flex items-center gap-2 text-muted-foreground py-4">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span className="text-sm">{t("perfil.cargandoSub")}</span>
+            </div>
+          ) : !user ? (
+            <div className="text-center py-6">
+              <p className="font-medium mb-1">Inicia sesión para ver tu suscripción</p>
+              <p className="text-sm text-muted-foreground mb-4">Tu plan, estado y cobros aparecerán aquí automáticamente.</p>
+              <Button asChild>
+                <Link to="/login">{t("nav.entrar")}</Link>
+              </Button>
+            </div>
+          ) : sub.loading ? (
             <div className="flex items-center gap-2 text-muted-foreground py-4">
               <Loader2 className="w-4 h-4 animate-spin" />
               <span className="text-sm">{t("perfil.cargandoSub")}</span>
