@@ -11,7 +11,16 @@ export interface Course {
   sort_order: number;
   created_at: string;
   updated_at: string;
+  methodology: string;
+  pillar_order: number | null;
+  module_number: number | null;
 }
+
+export const PILLARS = [
+  { order: 1, name: "Gestión", subtitle: "Diagnóstico y Análisis de Resultado" },
+  { order: 2, name: "Proceso Productivo", subtitle: "Operación y Control" },
+  { order: 3, name: "Sostenibilidad de la Venta", subtitle: "Servicio y Crecimiento" },
+] as const;
 
 export interface Lesson {
   id: string;
