@@ -29,10 +29,11 @@ function DashboardPage() {
   const [diagnostics, setDiagnostics] = useState<Diagnostic[]>([]);
   const [activeTab, setActiveTab] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(diagnostics.length === 0);
-  const [selectedPeriod, setSelectedPeriod] = useState("1m");
+  const [selectedPeriod, setSelectedPeriod] = useState("realtime");
   const { t } = useI18n();
 
   const PERIOD_OPTIONS = [
+    { value: "realtime", label: t("period.realtime") },
     { value: "1m", label: t("period.1m") },
     { value: "3m", label: t("period.3m") },
     { value: "6m", label: t("period.6m") },
