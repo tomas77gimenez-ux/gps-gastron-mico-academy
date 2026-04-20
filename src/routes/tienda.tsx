@@ -9,8 +9,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
 
-// WhatsApp para consultas personalizadas
-const WHATSAPP_URL = "https://wa.me/?text=Hola%20Daniel%2C%20quiero%20consultar%20por%20un%20servicio%20de%20la%20Tienda%20GPS";
+// WhatsApp de Daniel Giménez para consultas y soporte
+const WHATSAPP_NUMBER = "14709439722";
+
+const buildWhatsappUrl = (productTitle: string) => {
+  const message = `Hola, tengo interés en hacer la consulta sobre "${productTitle}" con Daniel Giménez. ¿Podrían orientarme con más información?`;
+  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+};
 
 type Product = {
   id: string;
@@ -86,7 +91,7 @@ function TiendaPage() {
 
   const handleBuy = (product: Product) => {
     if (!product.priceId) {
-      window.open(WHATSAPP_URL, "_blank");
+      window.open(buildWhatsappUrl(product.title), "_blank", "noopener,noreferrer");
       return;
     }
     setCheckoutPriceId(product.priceId);
