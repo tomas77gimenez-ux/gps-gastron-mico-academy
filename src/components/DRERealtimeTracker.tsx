@@ -217,6 +217,32 @@ export function DRERealtimeTracker() {
     );
   }
 
+  if (viewingHistoryId) {
+    const item = history.find(h => h.cycle.id === viewingHistoryId);
+    if (!item) {
+      setViewingHistoryId(null);
+      return null;
+    }
+    return (
+      <div>
+        <button
+          onClick={() => setViewingHistoryId(null)}
+          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
+        >
+          <ArrowLeft className="w-4 h-4" /> Volver al histórico
+        </button>
+        <div className="text-center mb-6">
+          <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-1">Mes cerrado</div>
+          <h2 className="text-2xl font-bold font-display capitalize">{item.cycle.label}</h2>
+        </div>
+        <DashboardResults
+          results={calculateDRE(sumData(item.entries))}
+          onReset={() => setViewingHistoryId(null)}
+        />
+      </div>
+    );
+  }
+
   if (showResults) {
     return (
       <div>
