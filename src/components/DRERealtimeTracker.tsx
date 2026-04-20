@@ -4,7 +4,7 @@ import { useAuthSession } from "@/hooks/useAuthSession";
 import { calculateDRE, type DREData } from "@/lib/dre-questions";
 import { DREQuestionnaire } from "./DREQuestionnaire";
 import { DashboardResults } from "./DashboardResults";
-import { Calendar, CheckCircle2, Lock, Pencil, Plus, BarChart3, ArrowLeft } from "lucide-react";
+import { Calendar, CheckCircle2, Lock, Pencil, Plus, BarChart3, ArrowLeft, History } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 
 interface Cycle {
