@@ -58,7 +58,13 @@ const compareFeatures: Array<{ key: string; basico: boolean; premium: boolean }>
   { key: "compare.descuentos", basico: false, premium: true },
 ];
 
-const faqKeys = ["1", "2", "3", "4", "5"] as const;
+const faqs = [
+  { q: "planes.faqQ1", a: "planes.faqA1" },
+  { q: "planes.faqQ2", a: "planes.faqA2" },
+  { q: "planes.faqQ3", a: "planes.faqA3" },
+  { q: "planes.faqQ4", a: "planes.faqA4" },
+  { q: "planes.faqQ5", a: "planes.faqA5" },
+] as const;
 
 export const Route = createFileRoute("/planes")({
   component: PlanesPage,
@@ -357,10 +363,10 @@ function PlanesPage() {
             {t("planes.faqTitulo")}
           </h2>
           <Accordion type="single" collapsible className="w-full">
-            {faqKeys.map((k) => (
-              <AccordionItem key={k} value={`q${k}`}>
-                <AccordionTrigger className="text-left text-base">{t(`planes.faqQ${k}`)}</AccordionTrigger>
-                <AccordionContent className="text-muted-foreground">{t(`planes.faqA${k}`)}</AccordionContent>
+            {faqs.map((item, idx) => (
+              <AccordionItem key={item.q} value={`q${idx}`}>
+                <AccordionTrigger className="text-left text-base">{t(item.q)}</AccordionTrigger>
+                <AccordionContent className="text-muted-foreground">{t(item.a)}</AccordionContent>
               </AccordionItem>
             ))}
           </Accordion>
