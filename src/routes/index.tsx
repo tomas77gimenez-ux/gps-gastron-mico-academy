@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
+  LineChart, GraduationCap, Target, Sparkles,
 } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import platformMockup from "@/assets/platform-mockup.jpg";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -104,6 +106,77 @@ function HomePage() {
                 <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
               </motion.div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Cómo funciona */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+            >
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
+                <Sparkles className="w-4 h-4" />
+                {t("home.howItWorks.badge")}
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">
+                {t("home.howItWorks.title1")}
+                <span className="text-gradient-brand">{t("home.howItWorks.title2")}</span>
+              </h2>
+              <p className="text-muted-foreground mb-8">
+                {t("home.howItWorks.desc")}
+              </p>
+              <div className="space-y-5">
+                {[
+                  { icon: LineChart, title: t("home.howItWorks.b1Title"), desc: t("home.howItWorks.b1Desc") },
+                  { icon: GraduationCap, title: t("home.howItWorks.b2Title"), desc: t("home.howItWorks.b2Desc") },
+                  { icon: Target, title: t("home.howItWorks.b3Title"), desc: t("home.howItWorks.b3Desc") },
+                  { icon: Users, title: t("home.howItWorks.b4Title"), desc: t("home.howItWorks.b4Desc") },
+                ].map((b, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.08 }}
+                    className="flex gap-4"
+                  >
+                    <div className="w-10 h-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
+                      <b.icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold font-display mb-1">{b.title}</h3>
+                      <p className="text-sm text-muted-foreground">{b.desc}</p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6 }}
+              className="relative"
+            >
+              <div className="absolute -inset-6 bg-primary/10 rounded-3xl blur-3xl" aria-hidden="true" />
+              <div className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-2xl">
+                <img
+                  src={platformMockup}
+                  alt={t("home.howItWorks.imgAlt")}
+                  width={1024}
+                  height={768}
+                  loading="lazy"
+                  className="w-full h-auto"
+                />
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
