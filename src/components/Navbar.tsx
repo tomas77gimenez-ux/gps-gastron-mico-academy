@@ -3,13 +3,14 @@ import { Home, LayoutDashboard, Film, ShoppingCart, User, Search, Menu, X, Messa
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { useAuthSession } from "@/hooks/useAuthSession";
 
 export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user } = useAuthSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [user, setUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const { t, lang, toggleLang } = useI18n();
 
@@ -23,28 +24,24 @@ export function Navbar() {
   ] as const;
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        const { data } = await supabase.rpc("has_role", { _user_id: u.id, _role: "admin" });
-        setIsAdmin(!!data);
-      } else {
-        setIsAdmin(false);
-      }
-    });
+    let active = true;
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const u = session?.user ?? null;
-      setUser(u);
-      if (u) {
-        const { data } = await supabase.rpc("has_role", { _user_id: u.id, _role: "admin" });
-        setIsAdmin(!!data);
+    async function loadRole() {
+      if (!user) {
+        if (active) setIsAdmin(false);
+        return;
       }
-    });
 
-    return () => subscription.unsubscribe();
-  }, []);
+      const { data } = await supabase.rpc("has_role", { _user_id: user.id, _role: "admin" });
+      if (active) setIsAdmin(!!data);
+    }
+
+    void loadRole();
+
+    return () => {
+      active = false;
+    };
+  }, [user]);
 
   async function handleLogout() {
     await supabase.auth.signOut();

@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-
-const clientToken = import.meta.env.VITE_PAYMENTS_CLIENT_TOKEN as string | undefined;
-const environment: "sandbox" | "live" = clientToken?.startsWith("pk_test_") ? "sandbox" : "live";
+import { getStripeEnvironment } from "@/lib/stripe";
+import { useAuthSession } from "@/hooks/useAuthSession";
 
 interface SubscriptionState {
   loading: boolean;
@@ -33,6 +32,7 @@ function isActive(status: string | null, periodEnd: string | null): boolean {
 }
 
 export function useSubscription() {
+  const { isReady, user } = useAuthSession();
   const [state, setState] = useState<SubscriptionState>(initial);
 
   async function load(userId: string | null) {
@@ -40,44 +40,49 @@ export function useSubscription() {
       setState({ ...initial, loading: false });
       return;
     }
-    const { data } = await supabase
-      .from("subscriptions")
-      .select("product_id, status, current_period_end, cancel_at_period_end")
-      .eq("user_id", userId)
-      .eq("environment", environment)
-      .order("updated_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    try {
+      const preferredEnvironment = getStripeEnvironment();
+      const { data, error } = await supabase
+        .from("subscriptions")
+        .select("product_id, status, current_period_end, cancel_at_period_end, environment")
+        .eq("user_id", userId)
+        .order("updated_at", { ascending: false })
+        .limit(10);
 
-    setState({
-      loading: false,
-      isAuthenticated: true,
-      hasActive: isActive(data?.status ?? null, data?.current_period_end ?? null),
-      productId: data?.product_id ?? null,
-      status: data?.status ?? null,
-      currentPeriodEnd: data?.current_period_end ?? null,
-      cancelAtPeriodEnd: !!data?.cancel_at_period_end,
-    });
+      if (error) throw error;
+
+      const selectedSubscription =
+        data?.find((item) => item.environment === preferredEnvironment) ??
+        data?.find((item) => isActive(item.status ?? null, item.current_period_end ?? null)) ??
+        data?.[0] ??
+        null;
+
+      setState({
+        loading: false,
+        isAuthenticated: true,
+        hasActive: isActive(selectedSubscription?.status ?? null, selectedSubscription?.current_period_end ?? null),
+        productId: selectedSubscription?.product_id ?? null,
+        status: selectedSubscription?.status ?? null,
+        currentPeriodEnd: selectedSubscription?.current_period_end ?? null,
+        cancelAtPeriodEnd: !!selectedSubscription?.cancel_at_period_end,
+      });
+    } catch {
+      setState({
+        loading: false,
+        isAuthenticated: true,
+        hasActive: false,
+        productId: null,
+        status: null,
+        currentPeriodEnd: null,
+        cancelAtPeriodEnd: false,
+      });
+    }
   }
 
   useEffect(() => {
-    let active = true;
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!active) return;
-      load(session?.user?.id ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!active) return;
-      load(session?.user?.id ?? null);
-    });
-
-    return () => {
-      active = false;
-      subscription.unsubscribe();
-    };
-  }, []);
+    if (!isReady) return;
+    load(user?.id ?? null);
+  }, [isReady, user?.id]);
 
   return state;
 }
