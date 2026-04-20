@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Lock, Play, BookOpen, CheckCircle2, Sparkles } from "lucide-react";
+import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight } from "lucide-react";
+import { PILLARS } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
   component: CursosPage,
   head: () => ({
     meta: [
-      { title: "Cursos — GPS Gastronômico" },
-      { name: "description", content: "Explora todos nuestros cursos de gestión, operaciones, marketing y liderazgo gastronómico." },
+      { title: "Mentoría · Método GPS — GPS Gastronômico" },
+      { name: "description", content: "Método GPS: 3 Pilares y 9 Módulos para transformar la gestión de tu restaurante." },
     ],
   }),
 });
@@ -24,6 +25,9 @@ interface CourseRow {
   thumbnail_url: string | null;
   estimated_duration: string | null;
   instructor: string;
+  methodology: string;
+  pillar_order: number | null;
+  module_number: number | null;
   lessonCount: number;
   hasFreeLesson: boolean;
 }
@@ -39,8 +43,11 @@ function CursosPage() {
     (async () => {
       const { data: courseData } = await supabase
         .from("courses")
-        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
+        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor, methodology, pillar_order, module_number")
         .eq("status", "published")
+        .order("methodology", { ascending: true })
+        .order("pillar_order", { ascending: true, nullsFirst: false })
+        .order("module_number", { ascending: true, nullsFirst: false })
         .order("sort_order", { ascending: true });
 
       const ids = (courseData ?? []).map(c => c.id);
@@ -71,8 +78,9 @@ function CursosPage() {
     return () => { active = false; };
   }, []);
 
-  // Group by category
-  const grouped = courses.reduce<Record<string, CourseRow[]>>((acc, c) => {
+  const gpsCourses = courses.filter(c => c.methodology === "gps");
+  const generalCourses = courses.filter(c => c.methodology !== "gps");
+  const generalGrouped = generalCourses.reduce<Record<string, CourseRow[]>>((acc, c) => {
     (acc[c.category] ||= []).push(c);
     return acc;
   }, {});
@@ -83,9 +91,17 @@ function CursosPage() {
   return (
     <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold font-display">{t("cursos.titulo")}</h1>
-          <p className="text-muted-foreground mt-2">{t("cursos.desc")}</p>
+        {/* Mentoría hero */}
+        <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4">
+            <Compass className="w-3.5 h-3.5" /> MENTORÍA · MÉTODO GPS
+          </div>
+          <h1 className="text-3xl sm:text-5xl font-bold font-display leading-tight">
+            El sistema completo de <span className="text-gradient-brand">gestión gastronómica</span>
+          </h1>
+          <p className="text-muted-foreground mt-3 max-w-2xl">
+            3 Pilares · 9 Módulos · más de 50 clases descargables. La metodología profesional para transformar tu restaurante.
+          </p>
         </div>
 
         {showAccessBanner && (
@@ -112,20 +128,55 @@ function CursosPage() {
 
         {loading ? (
           <p className="text-muted-foreground text-center py-12">{t("cursos.cargando")}</p>
-        ) : courses.length === 0 ? (
-          <p className="text-muted-foreground text-center py-12">{t("cursos.vacio")}</p>
         ) : (
-          <div className="space-y-10">
-            {Object.entries(grouped).map(([category, list]) => (
-              <section key={category}>
-                <h2 className="text-xl font-bold font-display mb-4">{category}</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                  {list.map(course => (
-                    <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
-                  ))}
-                </div>
-              </section>
-            ))}
+          <div className="space-y-12">
+            {/* 3 Pilares */}
+            {PILLARS.map(pillar => {
+              const modules = gpsCourses.filter(c => c.pillar_order === pillar.order);
+              return (
+                <section key={pillar.order}>
+                  <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
+                    <div className="shrink-0 w-14 h-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center">
+                      <span className="text-[9px] font-medium opacity-70">PILAR</span>
+                      <span className="text-xl font-bold leading-none">{pillar.order}</span>
+                    </div>
+                    <div className="flex-1">
+                      <h2 className="text-2xl font-bold font-display">{pillar.name}</h2>
+                      <p className="text-sm text-muted-foreground">{pillar.subtitle}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground hidden sm:block">
+                      {modules.length} {modules.length === 1 ? "módulo" : "módulos"}
+                    </span>
+                  </div>
+                  {modules.length === 0 ? (
+                    <p className="text-sm text-muted-foreground italic py-4">Próximamente.</p>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {modules.map(course => (
+                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                      ))}
+                    </div>
+                  )}
+                </section>
+              );
+            })}
+
+            {/* Catálogo general extra */}
+            {Object.entries(generalGrouped).length > 0 && (
+              <div className="pt-8 border-t border-border space-y-10">
+                <h2 className="text-2xl font-bold font-display">Catálogo Adicional</h2>
+                {Object.entries(generalGrouped).map(([category, list]) => (
+                  <section key={category}>
+                    <h3 className="text-lg font-bold font-display mb-4">{category}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                      {list.map(course => (
+                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -150,6 +201,12 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary">
             <BookOpen className="w-12 h-12 text-primary/30" />
           </div>
+        )}
+
+        {course.methodology === "gps" && course.module_number && (
+          <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary px-2 py-1 rounded">
+            MÓDULO {course.module_number}
+          </span>
         )}
 
         {locked ? (
@@ -180,8 +237,9 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
         <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}
         </h3>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground flex items-center gap-1">
           {course.lessonCount} {t("cursos.lecciones")} · {course.instructor}
+          <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
         </p>
       </div>
     </Link>
