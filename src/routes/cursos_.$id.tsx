@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { ArrowLeft, Lock, Play, Sparkles, BookOpen, FileText, CheckCircle2 } from "lucide-react";
 
-export const Route = createFileRoute("/cursos/$id")({
+export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
   head: () => ({
     meta: [
