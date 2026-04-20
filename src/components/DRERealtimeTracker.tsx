@@ -148,6 +148,7 @@ export function DRERealtimeTracker() {
     setCycle(null);
     setEntries([]);
     setShowResults(false);
+    await loadHistory();
   }
 
   if (!isReady || loading) {
