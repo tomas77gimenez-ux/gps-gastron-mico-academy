@@ -13,9 +13,9 @@ const plans = [
   {
     id: "basico",
     name: { es: "Plan Básico", en: "Basic Plan" },
-    price: "$27",
-    priceId: "plan_basico_monthly",
-    period: { es: "/mes", en: "/mo" },
+    monthlyPrice: 27,
+    priceIdMonthly: "plan_basico_monthly",
+    priceIdYearly: "plan_basico_yearly",
     description: { es: "Todo lo que necesitás para empezar a controlar tu restaurante.", en: "Everything you need to start controlling your restaurant." },
     icon: Star,
     featured: false,
@@ -27,9 +27,9 @@ const plans = [
   {
     id: "premium",
     name: { es: "Plan Premium", en: "Premium Plan" },
-    price: "$97",
-    priceId: "plan_premium_monthly",
-    period: { es: "/mes", en: "/mo" },
+    monthlyPrice: 97,
+    priceIdMonthly: "plan_premium_monthly",
+    priceIdYearly: "plan_premium_yearly",
     description: { es: "Para dueños que quieren resultados acelerados con acompañamiento.", en: "For owners who want accelerated results with guidance." },
     icon: Crown,
     featured: true,
@@ -54,7 +54,10 @@ function PlanesPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
   const { t, lang } = useI18n();
+
+  const yearlyDiscount = 0.8; // 20% off
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -72,10 +75,50 @@ function PlanesPage() {
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold font-display mb-3">{t("planes.titulo")}</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("planes.desc")}</p>
+
+          <div className="inline-flex items-center gap-1 mt-8 p-1 bg-card border border-border rounded-full">
+            <button
+              type="button"
+              onClick={() => setBilling("monthly")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                billing === "monthly"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t("home.plans.billingMonthly")}
+            </button>
+            <button
+              type="button"
+              onClick={() => setBilling("yearly")}
+              className={`px-5 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center gap-2 ${
+                billing === "yearly"
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+            >
+              {t("home.plans.billingYearly")}
+              <span
+                className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
+                }`}
+              >
+                −20%
+              </span>
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          {plans.map((plan, i) => (
+          {plans.map((plan, i) => {
+            const displayPrice =
+              billing === "monthly"
+                ? `$${plan.monthlyPrice}`
+                : `$${Math.round(plan.monthlyPrice * 12 * yearlyDiscount)}`;
+            const displayPeriod =
+              billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
+            const activePriceId = billing === "monthly" ? plan.priceIdMonthly : plan.priceIdYearly;
+            return (
             <motion.div
               key={plan.id}
               initial={{ opacity: 0, y: 24 }}
@@ -101,8 +144,8 @@ function PlanesPage() {
               <p className="text-sm text-muted-foreground mb-6">{plan.description[lang]}</p>
 
               <div className="mb-6">
-                <span className="text-4xl font-bold text-foreground">{plan.price}</span>
-                <span className="text-muted-foreground">{plan.period[lang]}</span>
+                <span className="text-4xl font-bold text-foreground">{displayPrice}</span>
+                <span className="text-muted-foreground">{displayPeriod}</span>
               </div>
 
               <ul className="space-y-3 mb-8 flex-1">
@@ -121,12 +164,13 @@ function PlanesPage() {
                     ? "bg-primary text-primary-foreground hover:bg-primary/90"
                     : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                 }`}
-                onClick={() => setCheckoutPriceId(plan.priceId)}
+                onClick={() => setCheckoutPriceId(activePriceId)}
               >
                 {t("planes.suscribirme")}
               </Button>
             </motion.div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
