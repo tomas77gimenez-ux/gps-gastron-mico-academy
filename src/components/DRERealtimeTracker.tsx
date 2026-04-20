@@ -344,6 +344,8 @@ export function DRERealtimeTracker() {
           </div>
         </div>
       )}
+
+      <HistoryList history={history} onView={setViewingHistoryId} />
     </div>
   );
 }
@@ -354,6 +356,58 @@ function Stat({ label, value, suffix = "", plain = false }: { label: string; val
       <div className="text-xs text-muted-foreground mb-1">{label}</div>
       <div className="font-semibold text-foreground">
         {plain ? value : `$${value.toLocaleString("es-MX", { maximumFractionDigits: 0 })}`}{suffix}
+      </div>
+    </div>
+  );
+}
+
+function HistoryList({
+  history,
+  onView,
+}: {
+  history: Array<{ cycle: Cycle; entries: Entry[] }>;
+  onView: (id: string) => void;
+}) {
+  if (history.length === 0) return null;
+  return (
+    <div className="mt-8">
+      <div className="flex items-center gap-2 mb-3">
+        <History className="w-4 h-4 text-muted-foreground" />
+        <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+          Meses anteriores
+        </h3>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {history.map(({ cycle, entries }) => {
+          const acc = sumData(entries);
+          const facturacion =
+            (acc.kitchen_gross_sales ?? 0) +
+            (acc.bar_gross_sales ?? 0) +
+            (acc.cafeteria_gross_sales ?? 0) +
+            (acc.events_gross_sales ?? 0);
+          const cmv =
+            (acc.kitchen_cmv ?? 0) +
+            (acc.bar_cmv ?? 0) +
+            (acc.cafeteria_cmv ?? 0) +
+            (acc.events_cmv ?? 0);
+          return (
+            <button
+              key={cycle.id}
+              onClick={() => onView(cycle.id)}
+              className="text-left rounded-xl border border-border bg-card p-4 hover:border-primary/40 transition-colors"
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold capitalize">{cycle.label}</span>
+                <span className="text-xs text-muted-foreground">{entries.length}/4 sem</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <Stat label="Facturación" value={facturacion} />
+                <Stat label="CMV" value={cmv} />
+              </div>
+              <div className="text-xs text-primary mt-3 font-medium">Ver dashboard →</div>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
