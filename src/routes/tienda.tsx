@@ -94,7 +94,9 @@ function TiendaPage() {
 
   const handleBuy = (product: Product) => {
     if (!product.priceId) {
-      window.open(buildWhatsappUrl(product.title), "_blank", "noopener,noreferrer");
+      const message = product.whatsappMessage
+        ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
+      window.open(buildWhatsappUrl(message), "_blank", "noopener,noreferrer");
       return;
     }
     setCheckoutPriceId(product.priceId);
