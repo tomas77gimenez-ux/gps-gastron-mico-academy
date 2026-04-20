@@ -71,6 +71,9 @@ export type Database = {
           id: string
           instructor: string
           level: string
+          methodology: string
+          module_number: number | null
+          pillar_order: number | null
           sort_order: number
           status: string
           thumbnail_url: string | null
@@ -85,6 +88,9 @@ export type Database = {
           id?: string
           instructor?: string
           level?: string
+          methodology?: string
+          module_number?: number | null
+          pillar_order?: number | null
           sort_order?: number
           status?: string
           thumbnail_url?: string | null
@@ -99,6 +105,9 @@ export type Database = {
           id?: string
           instructor?: string
           level?: string
+          methodology?: string
+          module_number?: number | null
+          pillar_order?: number | null
           sort_order?: number
           status?: string
           thumbnail_url?: string | null

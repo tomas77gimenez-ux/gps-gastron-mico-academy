@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Lesson } from "@/lib/admin-types";
-import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const CONTENT_TYPES = [
@@ -22,6 +22,28 @@ function LessonForm({ lesson, onSave, onCancel }: {
     duration: lesson?.duration ?? "",
     is_free: lesson?.is_free ?? false,
   });
+  const [uploading, setUploading] = useState(false);
+  const [uploadErr, setUploadErr] = useState<string | null>(null);
+  const [mode, setMode] = useState<"upload" | "url">(form.video_url?.startsWith("http") ? "url" : "upload");
+  const fileRef = useRef<HTMLInputElement>(null);
+
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setUploadErr(null);
+    const path = `videos/${Date.now()}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
+    const { error: upErr } = await supabase.storage.from("course-content").upload(path, file, { upsert: false });
+    if (upErr) {
+      setUploadErr(upErr.message);
+      setUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from("course-content").getPublicUrl(path);
+    setForm(f => ({ ...f, video_url: data.publicUrl }));
+    setUploading(false);
+    if (fileRef.current) fileRef.current.value = "";
+  }
 
   return (
     <div className="rounded-lg border border-border bg-card p-4 space-y-3">
@@ -51,10 +73,33 @@ function LessonForm({ lesson, onSave, onCancel }: {
             placeholder="ej: 15 min" />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-xs font-medium mb-1">URL del Contenido</label>
-          <input value={form.video_url} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))}
-            className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            placeholder="https://... (Hotmart, YouTube, URL directa)" />
+          <label className="block text-xs font-medium mb-1">Contenido del Video</label>
+          <div className="flex gap-2 mb-2">
+            <button type="button" onClick={() => setMode("upload")}
+              className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "upload" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Upload className="w-3 h-3" /> Subir archivo
+            </button>
+            <button type="button" onClick={() => setMode("url")}
+              className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "url" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Link2 className="w-3 h-3" /> URL externa
+            </button>
+          </div>
+          {mode === "upload" ? (
+            <div className="space-y-2">
+              <input ref={fileRef} type="file" accept="video/*" onChange={handleFile} className="hidden" />
+              <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full">
+                {uploading ? <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Subiendo...</> : <><Upload className="w-3 h-3 mr-1" /> Seleccionar video (mp4, mov, webm)</>}
+              </Button>
+              {form.video_url && (
+                <p className="text-xs text-green-400 truncate">✓ {form.video_url.split("/").pop()}</p>
+              )}
+              {uploadErr && <p className="text-xs text-destructive">{uploadErr}</p>}
+            </div>
+          ) : (
+            <input value={form.video_url} onChange={e => setForm(f => ({ ...f, video_url: e.target.value }))}
+              className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+              placeholder="https://youtube.com/... · vimeo · hotmart" />
+          )}
         </div>
         <div className="flex items-center gap-2">
           <input type="checkbox" checked={form.is_free} onChange={e => setForm(f => ({ ...f, is_free: e.target.checked }))}
