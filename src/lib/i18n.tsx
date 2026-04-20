@@ -227,6 +227,57 @@ const translations = {
   "legal.terminos.title": { es: "Términos y Condiciones", en: "Terms & Conditions" },
   "legal.privacidad.title": { es: "Política de Privacidad", en: "Privacy Policy" },
   "legal.actualizado": { es: "Última actualización", en: "Last updated" },
+
+  // FAQ
+  "home.faq.badge": { es: "Preguntas frecuentes", en: "Frequently asked questions" },
+  "home.faq.title1": { es: "Resolvemos tus ", en: "We answer your " },
+  "home.faq.title2": { es: "dudas", en: "questions" },
+  "home.faq.desc": {
+    es: "Todo lo que necesitas saber antes de empezar con GPS Gastronômico.",
+    en: "Everything you need to know before starting with GPS Gastronômico.",
+  },
+
+  "home.faq.q1": { es: "¿Qué incluye la membresía?", en: "What does the membership include?" },
+  "home.faq.a1": {
+    es: "Acceso a todos los cursos, dashboard financiero (DRE) en tiempo real, herramientas de gestión, comunidad privada y mentorías en vivo según tu plan.",
+    en: "Access to all courses, real-time financial dashboard (DRE), management tools, private community and live mentoring sessions depending on your plan.",
+  },
+
+  "home.faq.q2": { es: "¿Cuáles son los planes disponibles?", en: "What plans are available?" },
+  "home.faq.a2": {
+    es: "Tenemos un plan mensual y un plan anual con descuento. Puedes ver el detalle completo y comparativa en la sección de Planes.",
+    en: "We offer a monthly plan and a discounted annual plan. You can see the full breakdown and comparison in the Plans section.",
+  },
+
+  "home.faq.q3": { es: "¿Puedo cancelar cuando quiera?", en: "Can I cancel anytime?" },
+  "home.faq.a3": {
+    es: "Sí. Puedes cancelar tu suscripción en cualquier momento desde tu perfil, sin penalizaciones ni preguntas.",
+    en: "Yes. You can cancel your subscription anytime from your profile, with no penalties or questions asked.",
+  },
+
+  "home.faq.q4": { es: "¿Los cursos otorgan certificado?", en: "Do courses provide a certificate?" },
+  "home.faq.a4": {
+    es: "Sí. Al completar cada curso recibes un certificado digital firmado por Daniel Gimenez que puedes compartir en LinkedIn y CVs.",
+    en: "Yes. Upon completing each course you receive a digital certificate signed by Daniel Gimenez that you can share on LinkedIn and your CV.",
+  },
+
+  "home.faq.q5": { es: "¿Cómo funciona la mentoría?", en: "How does the mentorship work?" },
+  "home.faq.a5": {
+    es: "Las mentorías son sesiones grupales en vivo (y opcionalmente 1:1 en planes premium) donde revisamos tu DRE, tus desafíos operativos y diseñamos un plan de acción concreto.",
+    en: "Mentorships are live group sessions (and optionally 1:1 in premium plans) where we review your DRE, operational challenges and design a concrete action plan.",
+  },
+
+  "home.faq.q6": { es: "¿Necesito conocimientos previos de gestión?", en: "Do I need prior management knowledge?" },
+  "home.faq.a6": {
+    es: "No. La metodología está pensada para todos los niveles, desde dueños sin formación financiera hasta chefs ejecutivos y gerentes de cadenas.",
+    en: "No. The methodology is designed for all levels, from owners without financial training to executive chefs and chain managers.",
+  },
+
+  "home.faq.q7": { es: "¿En cuánto tiempo veo resultados?", en: "How long until I see results?" },
+  "home.faq.a7": {
+    es: "La mayoría de nuestros mentorados ven mejoras concretas en margen y food cost en los primeros 60-90 días aplicando el método.",
+    en: "Most of our mentees see concrete improvements in margin and food cost within the first 60-90 days applying the method.",
+  },
 } as const;
 
 type TranslationKey = keyof typeof translations;
