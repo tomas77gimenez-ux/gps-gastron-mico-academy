@@ -70,7 +70,7 @@ function CourseDetailPage() {
   }
 
   return (
-    <div className="min-h-screen pt-20 pb-12 bg-gray-700">
+    <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <Link to="/cursos" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6">
           <ArrowLeft className="w-4 h-4" /> {t("cursos.volver")}
