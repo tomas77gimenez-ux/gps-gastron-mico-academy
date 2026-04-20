@@ -5,6 +5,7 @@ import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
   LineChart, GraduationCap, Target, Sparkles, HelpCircle,
+  Check, Crown, Gift,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useI18n } from "@/lib/i18n";
