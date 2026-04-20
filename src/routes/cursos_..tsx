@@ -26,7 +26,7 @@ interface Lesson {
   sort_order: number;
 }
 
-export const Route = createFileRoute("/cursos_/$id")({
+export const Route = createFileRoute("/cursos_/")({
   loader: async ({ params: { id } }) => {
     const [{ data: course }, { data: lessons }] = await Promise.all([
       supabase
