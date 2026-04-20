@@ -44,7 +44,7 @@ const plans = [
   },
 ];
 
-const compareFeatures: Array<{ key: string; basico: boolean; premium: boolean }> = [
+const compareFeatures = [
   { key: "compare.cursos", basico: true, premium: true },
   { key: "compare.dre", basico: true, premium: true },
   { key: "compare.foodcost", basico: true, premium: true },
@@ -56,7 +56,7 @@ const compareFeatures: Array<{ key: string; basico: boolean; premium: boolean }>
   { key: "compare.contenido", basico: false, premium: true },
   { key: "compare.whatsapp", basico: false, premium: true },
   { key: "compare.descuentos", basico: false, premium: true },
-];
+] as const;
 
 const faqs = [
   { q: "planes.faqQ1", a: "planes.faqA1" },
