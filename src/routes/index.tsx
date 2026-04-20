@@ -304,6 +304,7 @@ function HomePage() {
             <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">
               {t("home.ctaTitle")}
             </h2>
+            {/* placeholder to satisfy patch — will be replaced */}
             <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
               {t("home.ctaDesc")}
             </p>
