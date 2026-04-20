@@ -145,8 +145,8 @@ function CursosPage() {
                 <section key={pillar.order}>
                   <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
                     <div className="shrink-0 w-14 h-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center">
-                      <span className="text-[9px] font-medium opacity-70">PILAR</span>
-                      <span className="text-xl font-bold leading-none">{pillar.order}</span>
+                      <span className="text-[9px] font-medium opacity-70">{pillar.order === 0 ? "INICIO" : "PILAR"}</span>
+                      <span className="text-xl font-bold leading-none">{pillar.order === 0 ? "0" : pillar.order}</span>
                     </div>
                     <div className="flex-1">
                       <h2 className="text-2xl font-bold font-display">{pillar.name}</h2>

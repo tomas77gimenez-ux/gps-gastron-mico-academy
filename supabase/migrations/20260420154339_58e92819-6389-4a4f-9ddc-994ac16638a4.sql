@@ -1,0 +1,4 @@
+INSERT INTO public.lessons (course_id, title, description, content_type, sort_order, is_free) VALUES
+('e7d15e85-7d0e-45e1-9a4e-cbbef3f0e1d3', 'Video de bienvenida al Método GPS', 'Conoce a Daniel Gimenez y descubre cómo funciona el Método GPS para transformar tu restaurante.', 'video', 1, true),
+('e7d15e85-7d0e-45e1-9a4e-cbbef3f0e1d3', 'Instrucciones de navegación en la plataforma', 'Aprende a usar la plataforma: dónde encontrar los módulos, las planillas y los materiales descargables.', 'video', 2, true),
+('e7d15e85-7d0e-45e1-9a4e-cbbef3f0e1d3', 'Hoja de ruta personalizada para cada usuario', 'Define tu punto de partida y arma tu plan personalizado para recorrer los 3 Pilares.', 'video', 3, true);
