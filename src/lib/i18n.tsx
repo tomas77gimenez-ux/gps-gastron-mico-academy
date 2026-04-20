@@ -166,6 +166,39 @@ const translations = {
   "period.3m": { es: "3 Meses", en: "3 Months" },
   "period.6m": { es: "6 Meses", en: "6 Months" },
   "period.1y": { es: "1 Año", en: "1 Year" },
+
+  // Home — Cómo funciona
+  "home.howItWorks.badge": { es: "¿Cómo funciona?", en: "How it works" },
+  "home.howItWorks.title1": { es: "Una plataforma que combina ", en: "A platform that combines " },
+  "home.howItWorks.title2": { es: "datos, formación y comunidad", en: "data, training and community" },
+  "home.howItWorks.desc": {
+    es: "GPS Gastronômico reúne todo lo que tu restaurante necesita para crecer con números claros: diagnostica tu salud financiera, aprende con cursos prácticos y aplica con acompañamiento experto.",
+    en: "GPS Gastronômico brings together everything your restaurant needs to grow with clear numbers: diagnose your financial health, learn with practical courses, and apply with expert guidance.",
+  },
+  "home.howItWorks.b1Title": { es: "Diagnóstico financiero en tiempo real", en: "Real-time financial diagnosis" },
+  "home.howItWorks.b1Desc": {
+    es: "Carga tus números semana a semana y mira cómo evolucionan tu facturación, CMV y margen al instante.",
+    en: "Enter your numbers week by week and watch revenue, COGS and margin evolve instantly.",
+  },
+  "home.howItWorks.b2Title": { es: "Cursos prácticos de gestión", en: "Practical management courses" },
+  "home.howItWorks.b2Desc": {
+    es: "Mentorías y módulos paso a paso para dominar food cost, KPIs, equipos y crecimiento.",
+    en: "Mentorships and step-by-step modules to master food cost, KPIs, teams and growth.",
+  },
+  "home.howItWorks.b3Title": { es: "Decisiones basadas en datos", en: "Data-driven decisions" },
+  "home.howItWorks.b3Desc": {
+    es: "Dashboards claros que te dicen dónde estás perdiendo dinero y qué palanca mover primero.",
+    en: "Clear dashboards that show where you're losing money and which lever to pull first.",
+  },
+  "home.howItWorks.b4Title": { es: "Acompañamiento experto", en: "Expert mentorship" },
+  "home.howItWorks.b4Desc": {
+    es: "Acceso al método y al equipo de Daniel Gimenez, con +15 años transformando restaurantes.",
+    en: "Access to Daniel Gimenez's method and team, with 15+ years transforming restaurants.",
+  },
+  "home.howItWorks.imgAlt": {
+    es: "Vista del dashboard financiero de GPS Gastronômico",
+    en: "View of the GPS Gastronômico financial dashboard",
+  },
 } as const;
 
 type TranslationKey = keyof typeof translations;
