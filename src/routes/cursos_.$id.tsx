@@ -16,7 +16,7 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, video_url, is_free, sort_order")
+        .select("id, title, description, duration, video_url, poster_url, is_free, sort_order")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -47,6 +47,7 @@ interface Lesson {
   description: string | null;
   duration: string | null;
   video_url: string | null;
+  poster_url: string | null;
   is_free: boolean;
   sort_order: number;
 }
@@ -83,6 +84,7 @@ function CourseDetailPage() {
                 <video
                   key={activeLesson.id}
                   src={activeLesson.video_url}
+                  poster={activeLesson.poster_url ?? undefined}
                   controls
                   className="w-full h-full object-contain bg-black"
                 />
