@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +34,18 @@ const testimonials = [
 
 function HomePage() {
   const { t, lang } = useI18n();
+  const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
+
+  const yearlyDiscount = 0.8; // 20% off
+  const basicMonthly = 27;
+  const premiumMonthly = 97;
+  const basicPrice = billing === "monthly"
+    ? `$${basicMonthly}`
+    : `$${Math.round(basicMonthly * 12 * yearlyDiscount)}`;
+  const premiumPrice = billing === "monthly"
+    ? `$${premiumMonthly}`
+    : `$${Math.round(premiumMonthly * 12 * yearlyDiscount)}`;
+  const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
     { value: "15+", label: t("home.stat.experiencia"), icon: Award },
@@ -304,6 +317,36 @@ function HomePage() {
               {t("home.plans.title1")}<span className="text-gradient-brand">{t("home.plans.title2")}</span>
             </h2>
             <p className="text-muted-foreground mt-3 max-w-xl mx-auto">{t("home.plans.desc")}</p>
+
+            <div className="inline-flex items-center gap-1 mt-8 p-1 rounded-full border border-border bg-card">
+              <button
+                type="button"
+                onClick={() => setBilling("monthly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
+                  billing === "monthly"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("home.plans.billingMonthly")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBilling("yearly")}
+                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
+                  billing === "yearly"
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t("home.plans.billingYearly")}
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
+                }`}>
+                  −20%
+                </span>
+              </button>
+            </div>
           </div>
 
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
@@ -322,8 +365,8 @@ function HomePage() {
                 id: "basico",
                 icon: Star,
                 name: t("home.plans.basicName"),
-                price: "$27",
-                period: t("home.plans.perMonth"),
+                price: basicPrice,
+                period: paidPeriod,
                 desc: t("home.plans.basicDesc"),
                 features: [t("home.plans.basicF1"), t("home.plans.basicF2"), t("home.plans.basicF3"), t("home.plans.basicF4")],
                 featured: false,
@@ -332,8 +375,8 @@ function HomePage() {
                 id: "premium",
                 icon: Crown,
                 name: t("home.plans.premiumName"),
-                price: "$97",
-                period: t("home.plans.perMonth"),
+                price: premiumPrice,
+                period: paidPeriod,
                 desc: t("home.plans.premiumDesc"),
                 features: [t("home.plans.premiumF1"), t("home.plans.premiumF2"), t("home.plans.premiumF3"), t("home.plans.premiumF4")],
                 featured: true,
