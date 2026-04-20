@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, FileText, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2 } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
