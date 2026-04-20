@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { ChefHat, Mail, Instagram, Heart } from "lucide-react";
+import { ChefHat, Mail, Instagram, Youtube, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useI18n } from "@/lib/i18n";
@@ -102,6 +102,15 @@ export function Footer() {
                 className="w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
               >
                 <Instagram className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.youtube.com/@danielgimenezcoach"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="YouTube @danielgimenezcoach"
+                className="w-9 h-9 rounded-lg bg-card border border-border flex items-center justify-center text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors"
+              >
+                <Youtube className="w-4 h-4" />
               </a>
             </div>
           </div>
