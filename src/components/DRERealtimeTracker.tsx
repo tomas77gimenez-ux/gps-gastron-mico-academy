@@ -39,6 +39,8 @@ export function DRERealtimeTracker() {
   const [editingWeek, setEditingWeek] = useState<number | null>(null);
   const [showResults, setShowResults] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState<Array<{ cycle: Cycle; entries: Entry[] }>>([]);
+  const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isReady) return;
@@ -47,6 +49,7 @@ export function DRERealtimeTracker() {
       return;
     }
     void loadActive();
+    void loadHistory();
   }, [isReady, user?.id]);
 
   async function loadActive() {
@@ -71,6 +74,30 @@ export function DRERealtimeTracker() {
       setEntries([]);
     }
     setLoading(false);
+  }
+
+  async function loadHistory() {
+    if (!user) return;
+    const { data: cycles } = await supabase
+      .from("dre_realtime_cycles")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("status", "closed")
+      .order("closed_at", { ascending: false });
+    if (!cycles || cycles.length === 0) {
+      setHistory([]);
+      return;
+    }
+    const ids = cycles.map(c => c.id);
+    const { data: ents } = await supabase
+      .from("dre_realtime_entries")
+      .select("*")
+      .in("cycle_id", ids);
+    const grouped = (cycles as Cycle[]).map(c => ({
+      cycle: c,
+      entries: ((ents ?? []) as unknown as Entry[]).filter(e => e.cycle_id === c.id),
+    }));
+    setHistory(grouped);
   }
 
   async function startCycle() {
