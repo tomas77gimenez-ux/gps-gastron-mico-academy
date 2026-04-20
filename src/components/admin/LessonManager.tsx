@@ -3,6 +3,28 @@ import { supabase } from "@/integrations/supabase/client";
 import type { Lesson } from "@/lib/admin-types";
 import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+
+function formatBytes(bytes: number) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  if (bytes < 1024 * 1024 * 1024) return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+  return `${(bytes / (1024 * 1024 * 1024)).toFixed(2)} GB`;
+}
+
+function formatSpeed(bytesPerSec: number) {
+  return `${formatBytes(bytesPerSec)}/s`;
+}
+
+function formatTime(seconds: number) {
+  if (!isFinite(seconds) || seconds < 0) return "—";
+  if (seconds < 60) return `${Math.ceil(seconds)}s`;
+  const m = Math.floor(seconds / 60);
+  const s = Math.ceil(seconds % 60);
+  return `${m}m ${s}s`;
+}
 
 const CONTENT_TYPES = [
   { value: "video", label: "Video", icon: Video },
@@ -26,23 +48,73 @@ function LessonForm({ lesson, onSave, onCancel }: {
   const [uploadErr, setUploadErr] = useState<string | null>(null);
   const [mode, setMode] = useState<"upload" | "url">(form.video_url?.startsWith("http") ? "url" : "upload");
   const fileRef = useRef<HTMLInputElement>(null);
+  const [progress, setProgress] = useState(0);
+  const [uploadStats, setUploadStats] = useState<{ loaded: number; total: number; speed: number; eta: number } | null>(null);
+  const xhrRef = useRef<XMLHttpRequest | null>(null);
 
   async function handleFile(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setUploading(true);
     setUploadErr(null);
+    setProgress(0);
+    setUploadStats({ loaded: 0, total: file.size, speed: 0, eta: 0 });
+
     const path = `videos/${Date.now()}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
-    const { error: upErr } = await supabase.storage.from("course-content").upload(path, file, { upsert: false });
-    if (upErr) {
-      setUploadErr(upErr.message);
+    const { data: { session } } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (!token) {
+      setUploadErr("Sesión expirada. Recarga la página.");
       setUploading(false);
       return;
     }
-    const { data } = supabase.storage.from("course-content").getPublicUrl(path);
-    setForm(f => ({ ...f, video_url: data.publicUrl }));
-    setUploading(false);
-    if (fileRef.current) fileRef.current.value = "";
+
+    const url = `${SUPABASE_URL}/storage/v1/object/course-content/${path}`;
+    const xhr = new XMLHttpRequest();
+    xhrRef.current = xhr;
+    const startTime = Date.now();
+
+    xhr.upload.onprogress = (ev) => {
+      if (!ev.lengthComputable) return;
+      const elapsed = (Date.now() - startTime) / 1000;
+      const speed = elapsed > 0 ? ev.loaded / elapsed : 0;
+      const eta = speed > 0 ? (ev.total - ev.loaded) / speed : 0;
+      setProgress((ev.loaded / ev.total) * 100);
+      setUploadStats({ loaded: ev.loaded, total: ev.total, speed, eta });
+    };
+
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) {
+        const { data } = supabase.storage.from("course-content").getPublicUrl(path);
+        setForm(f => ({ ...f, video_url: data.publicUrl }));
+        setProgress(100);
+        setUploading(false);
+        if (fileRef.current) fileRef.current.value = "";
+      } else {
+        let msg = `Error ${xhr.status}`;
+        try { msg = JSON.parse(xhr.responseText).message ?? msg; } catch {}
+        setUploadErr(msg);
+        setUploading(false);
+      }
+    };
+    xhr.onerror = () => {
+      setUploadErr("Error de red durante la subida");
+      setUploading(false);
+    };
+    xhr.onabort = () => {
+      setUploadErr("Subida cancelada");
+      setUploading(false);
+    };
+
+    xhr.open("POST", url);
+    xhr.setRequestHeader("Authorization", `Bearer ${token}`);
+    xhr.setRequestHeader("x-upsert", "false");
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.send(file);
+  }
+
+  function cancelUpload() {
+    xhrRef.current?.abort();
   }
 
   return (
@@ -87,10 +159,27 @@ function LessonForm({ lesson, onSave, onCancel }: {
           {mode === "upload" ? (
             <div className="space-y-2">
               <input ref={fileRef} type="file" accept="video/*" onChange={handleFile} className="hidden" />
-              <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading} className="w-full">
-                {uploading ? <><Loader2 className="w-3 h-3 mr-1 animate-spin" /> Subiendo...</> : <><Upload className="w-3 h-3 mr-1" /> Seleccionar video (mp4, mov, webm)</>}
-              </Button>
-              {form.video_url && (
+              {!uploading && (
+                <Button type="button" variant="outline" size="sm" onClick={() => fileRef.current?.click()} className="w-full">
+                  <Upload className="w-3 h-3 mr-1" /> Seleccionar video (mp4, mov, webm)
+                </Button>
+              )}
+              {uploading && uploadStats && (
+                <div className="space-y-1.5 rounded-lg border border-border bg-secondary/30 p-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="flex items-center gap-1 font-medium">
+                      <Loader2 className="w-3 h-3 animate-spin text-primary" /> Subiendo... {progress.toFixed(1)}%
+                    </span>
+                    <button type="button" onClick={cancelUpload} className="text-destructive hover:underline">Cancelar</button>
+                  </div>
+                  <Progress value={progress} className="h-1.5" />
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                    <span>{formatBytes(uploadStats.loaded)} / {formatBytes(uploadStats.total)}</span>
+                    <span>{formatSpeed(uploadStats.speed)} · ETA {formatTime(uploadStats.eta)}</span>
+                  </div>
+                </div>
+              )}
+              {!uploading && form.video_url && (
                 <p className="text-xs text-green-400 truncate">✓ {form.video_url.split("/").pop()}</p>
               )}
               {uploadErr && <p className="text-xs text-destructive">{uploadErr}</p>}
