@@ -12,8 +12,7 @@ import { useI18n } from "@/lib/i18n";
 // WhatsApp de Daniel Giménez para consultas y soporte
 const WHATSAPP_NUMBER = "14709439722";
 
-const buildWhatsappUrl = (productTitle: string) => {
-  const message = `Hola, tengo interés en hacer la consulta sobre "${productTitle}" con Daniel Giménez. ¿Podrían orientarme con más información?`;
+const buildWhatsappUrl = (message: string) => {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 
@@ -27,13 +26,15 @@ type Product = {
   icon: typeof Users;
   priceId: string | null; // null = consultar personalizado
   priceLabel?: string;    // ex: "$590"
+  whatsappMessage?: string; // mensaje pre-escrito personalizado para Consultar
 };
 
 const products: Product[] = [
   { id: "club-elite-plus", area: "Área 1", title: "Club Elite Plus", titleEn: "Elite Plus Club",
     description: "Mentoría 1 a 1 con Daniel Giménez y el equipo. Programas personalizados de 30, 60 o 90 días.",
     descEn: "1-on-1 mentorship with Daniel Giménez and the team. Personalized 30, 60 or 90-day programs.",
-    icon: Users, priceId: null },
+    icon: Users, priceId: null,
+    whatsappMessage: "Hola, tengo interés en hacer la mentoría 1 a 1 Club Elite Plus con Daniel Giménez. Me gustaría conocer los programas de 30, 60 y 90 días, valores y disponibilidad. ¡Gracias!" },
   { id: "auditoria-contable", area: "Área 2", title: "Auditoría Contable", titleEn: "Accounting Audit",
     description: "Diagnósticos de situación frente al IRS, tipo de corporación ideal, estrategia contable (suscriptores USA).",
     descEn: "IRS situation diagnostics, ideal corporation type, accounting strategy (US subscribers).",
@@ -41,11 +42,13 @@ const products: Product[] = [
   { id: "gps-marketing", area: "Área 3", title: "GPS Marketing", titleEn: "GPS Marketing",
     description: "Agencia de marketing especializada. Redes sociales, tráfico pago y branding con ventajas exclusivas.",
     descEn: "Specialized marketing agency. Social media, paid traffic and branding with exclusive perks.",
-    icon: Megaphone, priceId: null },
+    icon: Megaphone, priceId: null,
+    whatsappMessage: "Hola, quiero saber más sobre GPS Marketing: campañas en redes sociales, tráfico pago y branding para mi restaurante. ¿Podrían enviarme propuesta y ventajas para suscriptores? ¡Gracias!" },
   { id: "diseno-grafico", area: "Área 4", title: "Diseño Gráfico", titleEn: "Graphic Design",
     description: "Diseño de menú profesional con asociados verificados. Descuentos importantes para suscriptores.",
     descEn: "Professional menu design with verified partners. Important discounts for subscribers.",
-    icon: Palette, priceId: null },
+    icon: Palette, priceId: null,
+    whatsappMessage: "Hola, me interesa el servicio de Diseño Gráfico para el menú de mi restaurante. ¿Podrían pasarme valores, plazos y los descuentos para suscriptores? ¡Gracias!" },
   { id: "educacion-financiera", area: "Área 5", title: "Educación Financiera", titleEn: "Financial Education",
     description: "Videos sobre educación financiera, deuda buena y mala, proyecciones. Incluye planilla Excel de flujo de caja.",
     descEn: "Videos on financial education, good and bad debt, projections. Includes cash-flow Excel sheet.",
@@ -91,7 +94,9 @@ function TiendaPage() {
 
   const handleBuy = (product: Product) => {
     if (!product.priceId) {
-      window.open(buildWhatsappUrl(product.title), "_blank", "noopener,noreferrer");
+      const message = product.whatsappMessage
+        ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
+      window.open(buildWhatsappUrl(message), "_blank", "noopener,noreferrer");
       return;
     }
     setCheckoutPriceId(product.priceId);
