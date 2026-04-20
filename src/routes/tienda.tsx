@@ -12,8 +12,7 @@ import { useI18n } from "@/lib/i18n";
 // WhatsApp de Daniel Giménez para consultas y soporte
 const WHATSAPP_NUMBER = "14709439722";
 
-const buildWhatsappUrl = (productTitle: string) => {
-  const message = `Hola, tengo interés en hacer la consulta sobre "${productTitle}" con Daniel Giménez. ¿Podrían orientarme con más información?`;
+const buildWhatsappUrl = (message: string) => {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 
