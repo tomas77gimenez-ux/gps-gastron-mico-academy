@@ -116,6 +116,74 @@ export type Database = {
         }
         Relationships: []
       }
+      dre_realtime_cycles: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          label: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          label: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          label?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dre_realtime_entries: {
+        Row: {
+          created_at: string
+          cycle_id: string
+          data: Json
+          id: string
+          updated_at: string
+          user_id: string
+          week_number: number
+        }
+        Insert: {
+          created_at?: string
+          cycle_id: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          user_id: string
+          week_number: number
+        }
+        Update: {
+          created_at?: string
+          cycle_id?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          user_id?: string
+          week_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dre_realtime_entries_cycle_id_fkey"
+            columns: ["cycle_id"]
+            isOneToOne: false
+            referencedRelation: "dre_realtime_cycles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       lessons: {
         Row: {
           content_type: string
