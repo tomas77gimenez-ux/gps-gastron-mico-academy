@@ -79,6 +79,7 @@ export const Route = createFileRoute("/planes")({
 
 function PlanesPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
+  const [checkoutSessionId, setCheckoutSessionId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
@@ -87,6 +88,27 @@ function PlanesPage() {
   const subscription = useSubscription();
 
   const yearlyDiscount = 0.8; // 20% off
+
+  // Fire checkout_abandoned if user closes the dialog or leaves the page
+  // before completing payment. Cleared in /checkout/return when purchase fires.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleBeforeUnload = () => {
+      const pending = window.sessionStorage.getItem("pending_checkout_session");
+      if (pending) {
+        const parsed = JSON.parse(pending);
+        trackEvent("checkout_abandoned", {
+          session_id: parsed.sessionId,
+          plan: parsed.plan,
+          period: parsed.period,
+          reason: "page_unload",
+        });
+        window.sessionStorage.removeItem("pending_checkout_session");
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
