@@ -361,6 +361,7 @@ function PlanesPage() {
                     }`}
                     onClick={() => {
                       setCheckoutPriceId(activePriceId);
+                      setCheckoutSessionId(null);
                       trackEvent("checkout_opened", {
                         plan: plan.id,
                         period: billing,
