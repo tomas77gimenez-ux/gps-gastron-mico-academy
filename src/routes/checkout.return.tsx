@@ -23,6 +23,10 @@ function CheckoutReturnPage() {
 
   useEffect(() => {
     if (!sessionId) return;
+    // Clear the abandonment marker — user reached the return page
+    if (typeof window !== "undefined") {
+      window.sessionStorage.removeItem("pending_checkout_session");
+    }
     const key = `ga_purchase_tracked_${sessionId}`;
     if (typeof window !== "undefined" && window.sessionStorage.getItem(key)) return;
 
