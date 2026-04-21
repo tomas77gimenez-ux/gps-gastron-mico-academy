@@ -156,7 +156,10 @@ function PlanesPage() {
           <div className="inline-flex items-center gap-1 mt-8 p-1 bg-card border border-border rounded-full">
             <button
               type="button"
-              onClick={() => setBilling("monthly")}
+              onClick={() => {
+                setBilling("monthly");
+                trackEvent("plans_billing_toggle", { period: "monthly" });
+              }}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
                 billing === "monthly"
                   ? "bg-primary text-primary-foreground"
@@ -167,7 +170,10 @@ function PlanesPage() {
             </button>
             <button
               type="button"
-              onClick={() => setBilling("yearly")}
+              onClick={() => {
+                setBilling("yearly");
+                trackEvent("plans_billing_toggle", { period: "yearly" });
+              }}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center gap-2 ${
                 billing === "yearly"
                   ? "bg-primary text-primary-foreground"
