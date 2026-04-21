@@ -1,6 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/checkout/return")({
   component: CheckoutReturnPage,
@@ -16,6 +18,14 @@ function CheckoutReturnPage() {
   const sessionId = typeof window !== "undefined"
     ? new URLSearchParams(window.location.search).get("session_id")
     : null;
+
+  useEffect(() => {
+    if (!sessionId) return;
+    const key = `ga_purchase_tracked_${sessionId}`;
+    if (typeof window !== "undefined" && window.sessionStorage.getItem(key)) return;
+    trackEvent("purchase", { transaction_id: sessionId });
+    if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
+  }, [sessionId]);
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
