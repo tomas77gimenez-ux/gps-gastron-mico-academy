@@ -89,6 +89,34 @@ function PlanesPage() {
 
   const yearlyDiscount = 0.8; // 20% off
 
+  // Auto-open checkout when arriving from a retry link (?retry_plan=...&retry_period=...)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const retryPlan = params.get("retry_plan");
+    const retryPeriod = params.get("retry_period") as "monthly" | "yearly" | null;
+    if (!retryPlan) return;
+    const plan = plans.find((p) => p.id === retryPlan);
+    if (!plan) return;
+    if (retryPeriod === "monthly" || retryPeriod === "yearly") {
+      setBilling(retryPeriod);
+    }
+    const priceId = retryPeriod === "yearly" ? plan.priceIdYearly : plan.priceIdMonthly;
+    setCheckoutPriceId(priceId);
+    setCheckoutSessionId(null);
+    trackEvent("checkout_opened", {
+      plan: plan.id,
+      period: retryPeriod ?? "monthly",
+      price_id: priceId,
+      source: "retry",
+    });
+    // Clean URL so refresh doesn't re-open
+    const url = new URL(window.location.href);
+    url.searchParams.delete("retry_plan");
+    url.searchParams.delete("retry_period");
+    window.history.replaceState({}, "", url.toString());
+  }, []);
+
   // Fire checkout_abandoned if user closes the dialog or leaves the page
   // before completing payment. Cleared in /checkout/return when purchase fires.
   useEffect(() => {
