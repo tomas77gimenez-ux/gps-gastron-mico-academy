@@ -490,6 +490,8 @@ function PlanesPage() {
               customerEmail={userEmail}
               userId={userId}
               returnUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
+              plan={plans.find((p) => p.priceIdMonthly === checkoutPriceId || p.priceIdYearly === checkoutPriceId)?.id}
+              period={billing}
               onSessionCreated={(sessionId) => {
                 setCheckoutSessionId(sessionId);
                 if (typeof window !== "undefined") {
