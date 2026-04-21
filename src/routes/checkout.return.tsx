@@ -23,8 +23,18 @@ function CheckoutReturnPage() {
 
   useEffect(() => {
     if (!sessionId) return;
-    // Clear the abandonment marker — user reached the return page
+    // Read the pending checkout context (plan, period) before clearing
+    let pendingContext: { plan?: string; period?: string } = {};
     if (typeof window !== "undefined") {
+      const raw = window.sessionStorage.getItem("pending_checkout_session");
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          pendingContext = { plan: parsed.plan, period: parsed.period };
+        } catch {
+          // ignore
+        }
+      }
       window.sessionStorage.removeItem("pending_checkout_session");
     }
     const key = `ga_purchase_tracked_${sessionId}`;
@@ -47,7 +57,16 @@ function CheckoutReturnPage() {
             items: data.items ?? [],
           });
         } else {
-          // Not paid — don't fire purchase
+          // Stripe redirected here but payment is not paid → failure
+          trackEvent("checkout_failed", {
+            session_id: sessionId,
+            plan: pendingContext.plan ?? "unknown",
+            period: pendingContext.period ?? "unknown",
+            payment_status: data.payment_status ?? "unknown",
+            session_status: data.status ?? "unknown",
+            reason: "payment_not_completed",
+          });
+          if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
           return;
         }
         if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
