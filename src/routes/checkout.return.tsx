@@ -3,6 +3,8 @@ import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 import { trackEvent } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
+import { getStripeEnvironment } from "@/lib/stripe";
 
 export const Route = createFileRoute("/checkout/return")({
   component: CheckoutReturnPage,
@@ -23,8 +25,37 @@ function CheckoutReturnPage() {
     if (!sessionId) return;
     const key = `ga_purchase_tracked_${sessionId}`;
     if (typeof window !== "undefined" && window.sessionStorage.getItem(key)) return;
-    trackEvent("purchase", { transaction_id: sessionId });
-    if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
+
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("get-checkout-session", {
+          body: { sessionId, environment: getStripeEnvironment() },
+        });
+        if (cancelled) return;
+        if (error || !data) {
+          trackEvent("purchase", { transaction_id: sessionId });
+        } else if (data.payment_status === "paid" || data.status === "complete") {
+          trackEvent("purchase", {
+            transaction_id: sessionId,
+            value: data.amount_total ?? 0,
+            currency: data.currency ?? "USD",
+            items: data.items ?? [],
+          });
+        } else {
+          // Not paid — don't fire purchase
+          return;
+        }
+        if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
+      } catch {
+        trackEvent("purchase", { transaction_id: sessionId });
+        if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, [sessionId]);
 
   return (
