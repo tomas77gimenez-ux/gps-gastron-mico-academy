@@ -97,6 +97,46 @@ function PlanesPage() {
     });
   }, []);
 
+  // Track subscription state transitions (e.g. user canceled/reactivated from Stripe portal)
+  useEffect(() => {
+    if (subscription.loading) return;
+    if (typeof window === "undefined") return;
+    const key = `sub_state_${userId ?? "anon"}`;
+    const snapshot = JSON.stringify({
+      hasActive: subscription.hasActive,
+      status: subscription.status,
+      cancelAtPeriodEnd: subscription.cancelAtPeriodEnd,
+    });
+    const prev = window.sessionStorage.getItem(key);
+    if (prev && prev !== snapshot) {
+      const prevState = JSON.parse(prev) as {
+        hasActive: boolean;
+        status: string | null;
+        cancelAtPeriodEnd: boolean;
+      };
+      if (!prevState.cancelAtPeriodEnd && subscription.cancelAtPeriodEnd) {
+        trackEvent("subscription_canceled", {
+          status: subscription.status ?? "unknown",
+          source: "stripe_portal",
+        });
+      } else if (prevState.cancelAtPeriodEnd && !subscription.cancelAtPeriodEnd && subscription.hasActive) {
+        trackEvent("subscription_reactivated", {
+          status: subscription.status ?? "unknown",
+          source: "stripe_portal",
+        });
+      } else if (prevState.hasActive && !subscription.hasActive) {
+        trackEvent("subscription_ended", {
+          previous_status: prevState.status ?? "unknown",
+        });
+      } else if (!prevState.hasActive && subscription.hasActive) {
+        trackEvent("subscription_activated", {
+          status: subscription.status ?? "unknown",
+        });
+      }
+    }
+    window.sessionStorage.setItem(key, snapshot);
+  }, [subscription.loading, subscription.hasActive, subscription.status, subscription.cancelAtPeriodEnd, userId]);
+
   // Map active subscription's price_id back to a plan slug
   // We can infer from product_id stored. Here we read the subscriptions row directly via priceId hint.
   // useSubscription only exposes product_id. We additionally fetch the price_id once.
