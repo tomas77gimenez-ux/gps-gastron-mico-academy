@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/r
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n";
+import { GA_MEASUREMENT_ID } from "@/lib/analytics";
 
 import appCss from "../styles.css?url";
 
@@ -46,6 +47,17 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
+    scripts: GA_MEASUREMENT_ID
+      ? [
+          {
+            src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
+            async: true,
+          },
+          {
+            children: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}window.gtag = gtag;gtag('js', new Date());gtag('config', '${GA_MEASUREMENT_ID}');`,
+          },
+        ]
+      : [],
   }),
   shellComponent: RootShell,
   component: RootComponent,
