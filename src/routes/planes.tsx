@@ -123,6 +123,10 @@ function PlanesPage() {
 
   async function openPortal() {
     setPortalLoading(true);
+    trackEvent("manage_subscription_clicked", {
+      plan_status: subscription.status ?? "unknown",
+      cancel_at_period_end: subscription.cancelAtPeriodEnd,
+    });
     try {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
