@@ -79,6 +79,7 @@ export const Route = createFileRoute("/planes")({
 
 function PlanesPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
+  const [checkoutSessionId, setCheckoutSessionId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
@@ -87,6 +88,27 @@ function PlanesPage() {
   const subscription = useSubscription();
 
   const yearlyDiscount = 0.8; // 20% off
+
+  // Fire checkout_abandoned if user closes the dialog or leaves the page
+  // before completing payment. Cleared in /checkout/return when purchase fires.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const handleBeforeUnload = () => {
+      const pending = window.sessionStorage.getItem("pending_checkout_session");
+      if (pending) {
+        const parsed = JSON.parse(pending);
+        trackEvent("checkout_abandoned", {
+          session_id: parsed.sessionId,
+          plan: parsed.plan,
+          period: parsed.period,
+          reason: "page_unload",
+        });
+        window.sessionStorage.removeItem("pending_checkout_session");
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -339,6 +361,7 @@ function PlanesPage() {
                     }`}
                     onClick={() => {
                       setCheckoutPriceId(activePriceId);
+                      setCheckoutSessionId(null);
                       trackEvent("checkout_opened", {
                         plan: plan.id,
                         period: billing,
@@ -433,7 +456,32 @@ function PlanesPage() {
         </motion.div>
       </div>
 
-      <Dialog open={!!checkoutPriceId} onOpenChange={(open) => !open && setCheckoutPriceId(null)}>
+      <Dialog
+        open={!!checkoutPriceId}
+        onOpenChange={(open) => {
+          if (open) return;
+          // Dialog being closed — if there's a pending session, treat as abandoned
+          if (typeof window !== "undefined") {
+            const pending = window.sessionStorage.getItem("pending_checkout_session");
+            if (pending) {
+              try {
+                const parsed = JSON.parse(pending);
+                trackEvent("checkout_abandoned", {
+                  session_id: parsed.sessionId,
+                  plan: parsed.plan,
+                  period: parsed.period,
+                  reason: "dialog_closed",
+                });
+              } catch {
+                // ignore
+              }
+              window.sessionStorage.removeItem("pending_checkout_session");
+            }
+          }
+          setCheckoutPriceId(null);
+          setCheckoutSessionId(null);
+        }}
+      >
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogTitle>{t("planes.completarSub")}</DialogTitle>
           {checkoutPriceId && (
@@ -442,6 +490,23 @@ function PlanesPage() {
               customerEmail={userEmail}
               userId={userId}
               returnUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
+              onSessionCreated={(sessionId) => {
+                setCheckoutSessionId(sessionId);
+                if (typeof window !== "undefined") {
+                  // Find the plan slug from the active priceId
+                  const planMatch = plans.find(
+                    (p) => p.priceIdMonthly === checkoutPriceId || p.priceIdYearly === checkoutPriceId,
+                  );
+                  window.sessionStorage.setItem(
+                    "pending_checkout_session",
+                    JSON.stringify({
+                      sessionId,
+                      plan: planMatch?.id ?? "unknown",
+                      period: billing,
+                    }),
+                  );
+                }
+              }}
             />
           )}
         </DialogContent>
