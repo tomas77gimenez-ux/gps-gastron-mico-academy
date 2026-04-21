@@ -12,6 +12,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/analytics";
 
 const plans = [
   {
@@ -155,7 +156,10 @@ function PlanesPage() {
           <div className="inline-flex items-center gap-1 mt-8 p-1 bg-card border border-border rounded-full">
             <button
               type="button"
-              onClick={() => setBilling("monthly")}
+              onClick={() => {
+                setBilling("monthly");
+                trackEvent("plans_billing_toggle", { period: "monthly" });
+              }}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
                 billing === "monthly"
                   ? "bg-primary text-primary-foreground"
@@ -166,7 +170,10 @@ function PlanesPage() {
             </button>
             <button
               type="button"
-              onClick={() => setBilling("yearly")}
+              onClick={() => {
+                setBilling("yearly");
+                trackEvent("plans_billing_toggle", { period: "yearly" });
+              }}
               className={`px-5 py-2 rounded-full text-sm font-medium transition-colors inline-flex items-center gap-2 ${
                 billing === "yearly"
                   ? "bg-primary text-primary-foreground"
@@ -286,7 +293,16 @@ function PlanesPage() {
                         ? "bg-primary text-primary-foreground hover:bg-primary/90"
                         : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                     }`}
-                    onClick={() => setCheckoutPriceId(activePriceId)}
+                    onClick={() => {
+                      setCheckoutPriceId(activePriceId);
+                      trackEvent("checkout_opened", {
+                        plan: plan.id,
+                        period: billing,
+                        price_id: activePriceId,
+                        value: billing === "monthly" ? plan.monthlyPrice : yearlyPrice,
+                        currency: "USD",
+                      });
+                    }}
                   >
                     {t("planes.suscribirme")}
                   </Button>
