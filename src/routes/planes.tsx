@@ -293,7 +293,16 @@ function PlanesPage() {
                         ? "bg-primary text-primary-foreground hover:bg-primary/90"
                         : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                     }`}
-                    onClick={() => setCheckoutPriceId(activePriceId)}
+                    onClick={() => {
+                      setCheckoutPriceId(activePriceId);
+                      trackEvent("checkout_opened", {
+                        plan: plan.id,
+                        period: billing,
+                        price_id: activePriceId,
+                        value: billing === "monthly" ? plan.monthlyPrice : yearlyPrice,
+                        currency: "USD",
+                      });
+                    }}
                   >
                     {t("planes.suscribirme")}
                   </Button>
