@@ -206,43 +206,43 @@ const translations = {
   "home.howItWorks.title2": { es: "datos, formación y comunidad", en: "data, training and community", pt: "dados, formação e comunidade" },
   "home.howItWorks.desc": {
     es: "GPS Gastronômico reúne todo lo que tu restaurante necesita para crecer con números claros: diagnostica tu salud financiera, aprende con cursos prácticos y aplica con acompañamiento experto.",
-    en: "GPS Gastronômico brings together everything your restaurant needs to grow with clear numbers: diagnose your financial health, learn with practical courses, and apply with expert guidance.",,
+    en: "GPS Gastronômico brings together everything your restaurant needs to grow with clear numbers: diagnose your financial health, learn with practical courses, and apply with expert guidance.",
   pt: "GPS Gastronômico reúne tudo o que seu restaurante precisa para crescer com números claros: diagnostique sua saúde financeira, aprenda com cursos práticos e aplique com acompanhamento especializado."
   },
   "home.howItWorks.b1Title": { es: "Diagnóstico financiero en tiempo real", en: "Real-time financial diagnosis", pt: "Diagnóstico financeiro em tempo real" },
   "home.howItWorks.b1Desc": {
     es: "Carga tus números semana a semana y mira cómo evolucionan tu facturación, CMV y margen al instante.",
-    en: "Enter your numbers week by week and watch revenue, COGS and margin evolve instantly.",,
+    en: "Enter your numbers week by week and watch revenue, COGS and margin evolve instantly.",
   pt: "Carregue seus números semana a semana e veja como evoluem seu faturamento, CMV e margem instantaneamente."
   },
   "home.howItWorks.b2Title": { es: "Cursos prácticos de gestión", en: "Practical management courses", pt: "Cursos práticos de gestão" },
   "home.howItWorks.b2Desc": {
     es: "Mentorías y módulos paso a paso para dominar food cost, KPIs, equipos y crecimiento.",
-    en: "Mentorships and step-by-step modules to master food cost, KPIs, teams and growth.",,
+    en: "Mentorships and step-by-step modules to master food cost, KPIs, teams and growth.",
   pt: "Mentorias e módulos passo a passo para dominar food cost, KPIs, equipes e crescimento."
   },
   "home.howItWorks.b3Title": { es: "Decisiones basadas en datos", en: "Data-driven decisions", pt: "Decisões baseadas em dados" },
   "home.howItWorks.b3Desc": {
     es: "Dashboards claros que te dicen dónde estás perdiendo dinero y qué palanca mover primero.",
-    en: "Clear dashboards that show where you're losing money and which lever to pull first.",,
+    en: "Clear dashboards that show where you're losing money and which lever to pull first.",
   pt: "Dashboards claros que mostram onde você está perdendo dinheiro e qual alavanca puxar primeiro."
   },
   "home.howItWorks.b4Title": { es: "Acompañamiento experto", en: "Expert mentorship", pt: "Acompanhamento especializado" },
   "home.howItWorks.b4Desc": {
     es: "Acceso al método y al equipo de Daniel Gimenez, con +15 años transformando restaurantes.",
-    en: "Access to Daniel Gimenez's method and team, with 15+ years transforming restaurants.",,
+    en: "Access to Daniel Gimenez's method and team, with 15+ years transforming restaurants.",
   pt: "Acesso ao método e à equipe de Daniel Gimenez, com +15 anos transformando restaurantes."
   },
   "home.howItWorks.imgAlt": {
     es: "Vista del dashboard financiero de GPS Gastronômico",
-    en: "View of the GPS Gastronômico financial dashboard",,
+    en: "View of the GPS Gastronômico financial dashboard",
   pt: "Visualização do dashboard financeiro do GPS Gastronômico"
   },
 
   // Footer
   "footer.tagline": {
     es: "Plataforma de formación y consultoría para profesionales gastronómicos. Datos, procesos y mentoría para transformar tu restaurante.",
-    en: "Training and consulting platform for gastronomic professionals. Data, processes and mentorship to transform your restaurant.",,
+    en: "Training and consulting platform for gastronomic professionals. Data, processes and mentorship to transform your restaurant.",
   pt: "Plataforma de formação e consultoria para profissionais gastronômicos. Dados, processos e mentoria para transformar seu restaurante."
   },
   "footer.explorar": { es: "Explorar", en: "Explore", pt: "Explorar" },
@@ -274,56 +274,56 @@ const translations = {
   "home.faq.title2": { es: "dudas", en: "questions", pt: "dúvidas" },
   "home.faq.desc": {
     es: "Todo lo que necesitas saber antes de empezar con GPS Gastronômico.",
-    en: "Everything you need to know before starting with GPS Gastronômico.",,
+    en: "Everything you need to know before starting with GPS Gastronômico.",
   pt: "Tudo o que você precisa saber antes de começar com o GPS Gastronômico."
   },
 
   "home.faq.q1": { es: "¿Qué incluye la membresía?", en: "What does the membership include?", pt: "O que inclui a assinatura?" },
   "home.faq.a1": {
     es: "Acceso a todos los cursos, dashboard financiero (DRE) en tiempo real, herramientas de gestión, comunidad privada y mentorías en vivo según tu plan.",
-    en: "Access to all courses, real-time financial dashboard (DRE), management tools, private community and live mentoring sessions depending on your plan.",,
+    en: "Access to all courses, real-time financial dashboard (DRE), management tools, private community and live mentoring sessions depending on your plan.",
   pt: "Acesso a todos os cursos, dashboard financeiro (DRE) em tempo real, ferramentas de gestão, comunidade privada e mentorias ao vivo conforme seu plano."
   },
 
   "home.faq.q2": { es: "¿Cuáles son los planes disponibles?", en: "What plans are available?", pt: "Quais são os planos disponíveis?" },
   "home.faq.a2": {
     es: "Tenemos un plan mensual y un plan anual con descuento. Puedes ver el detalle completo y comparativa en la sección de Planes.",
-    en: "We offer a monthly plan and a discounted annual plan. You can see the full breakdown and comparison in the Plans section.",,
+    en: "We offer a monthly plan and a discounted annual plan. You can see the full breakdown and comparison in the Plans section.",
   pt: "Temos um plano mensal e um plano anual com desconto. Você pode ver o detalhamento completo e a comparação na seção de Planos."
   },
 
   "home.faq.q3": { es: "¿Puedo cancelar cuando quiera?", en: "Can I cancel anytime?", pt: "Posso cancelar quando quiser?" },
   "home.faq.a3": {
     es: "Sí. Puedes cancelar tu suscripción en cualquier momento desde tu perfil, sin penalizaciones ni preguntas.",
-    en: "Yes. You can cancel your subscription anytime from your profile, with no penalties or questions asked.",,
+    en: "Yes. You can cancel your subscription anytime from your profile, with no penalties or questions asked.",
   pt: "Sim. Você pode cancelar sua assinatura a qualquer momento pelo seu perfil, sem penalidades nem perguntas."
   },
 
   "home.faq.q4": { es: "¿Los cursos otorgan certificado?", en: "Do courses provide a certificate?", pt: "Os cursos dão certificado?" },
   "home.faq.a4": {
     es: "Sí. Al completar cada curso recibes un certificado digital firmado por Daniel Gimenez que puedes compartir en LinkedIn y CVs.",
-    en: "Yes. Upon completing each course you receive a digital certificate signed by Daniel Gimenez that you can share on LinkedIn and your CV.",,
+    en: "Yes. Upon completing each course you receive a digital certificate signed by Daniel Gimenez that you can share on LinkedIn and your CV.",
   pt: "Sim. Ao concluir cada curso você recebe um certificado digital assinado por Daniel Gimenez para compartilhar no LinkedIn e no currículo."
   },
 
   "home.faq.q5": { es: "¿Cómo funciona la mentoría?", en: "How does the mentorship work?", pt: "Como funciona a mentoria?" },
   "home.faq.a5": {
     es: "Las mentorías son sesiones grupales en vivo (y opcionalmente 1:1 en planes premium) donde revisamos tu DRE, tus desafíos operativos y diseñamos un plan de acción concreto.",
-    en: "Mentorships are live group sessions (and optionally 1:1 in premium plans) where we review your DRE, operational challenges and design a concrete action plan.",,
+    en: "Mentorships are live group sessions (and optionally 1:1 in premium plans) where we review your DRE, operational challenges and design a concrete action plan.",
   pt: "As mentorias são sessões em grupo ao vivo (e opcionalmente 1:1 nos planos premium) onde revisamos seu DRE, seus desafios operacionais e desenhamos um plano de ação concreto."
   },
 
   "home.faq.q6": { es: "¿Necesito conocimientos previos de gestión?", en: "Do I need prior management knowledge?", pt: "Preciso ter conhecimentos prévios de gestão?" },
   "home.faq.a6": {
     es: "No. La metodología está pensada para todos los niveles, desde dueños sin formación financiera hasta chefs ejecutivos y gerentes de cadenas.",
-    en: "No. The methodology is designed for all levels, from owners without financial training to executive chefs and chain managers.",,
+    en: "No. The methodology is designed for all levels, from owners without financial training to executive chefs and chain managers.",
   pt: "Não. A metodologia é pensada para todos os níveis, desde donos sem formação financeira até chefs executivos e gerentes de redes."
   },
 
   "home.faq.q7": { es: "¿En cuánto tiempo veo resultados?", en: "How long until I see results?", pt: "Em quanto tempo vejo resultados?" },
   "home.faq.a7": {
     es: "La mayoría de nuestros mentorados ven mejoras concretas en margen y food cost en los primeros 60-90 días aplicando el método.",
-    en: "Most of our mentees see concrete improvements in margin and food cost within the first 60-90 days applying the method.",,
+    en: "Most of our mentees see concrete improvements in margin and food cost within the first 60-90 days applying the method.",
   pt: "A maioria dos nossos mentorados vê melhorias concretas em margem e food cost nos primeiros 60-90 dias aplicando o método."
   },
 
@@ -332,7 +332,7 @@ const translations = {
   "home.plans.title2": { es: "tu restaurante", en: "your restaurant", pt: "seu restaurante" },
   "home.plans.desc": {
     es: "Empezá gratis o accedé a todo el método con nuestros planes de membresía.",
-    en: "Start free or unlock the full method with our membership plans.",,
+    en: "Start free or unlock the full method with our membership plans.",
   pt: "Comece grátis ou acesse todo o método com nossos planos de assinatura."
   },
   "home.plans.popular": { es: "Más popular", en: "Most popular", pt: "Mais popular" },
