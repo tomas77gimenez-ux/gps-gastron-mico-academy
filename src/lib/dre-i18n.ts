@@ -114,7 +114,10 @@ const dreTranslations: Record<string, { es: string; en: string }> = {
 };
 
 export function dreT(key: string, lang: Lang): string {
-  return dreTranslations[key]?.[lang] ?? key;
+  const entry = dreTranslations[key];
+  if (!entry) return key;
+  // Fallback to Spanish for languages without a dedicated translation (e.g. pt)
+  return (entry as Record<string, string>)[lang] ?? entry.es ?? key;
 }
 
 export function tChannel(name: string, lang: Lang): string {
