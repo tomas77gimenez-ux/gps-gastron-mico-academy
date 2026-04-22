@@ -7,12 +7,17 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, type Lang } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+
+// Helper: pick a translation from an object keyed by language, falling back to es
+function pickLang<T>(obj: Partial<Record<Lang, T>> & { es: T }, lang: Lang): T {
+  return obj[lang] ?? obj.es;
+}
 
 const plans = [
   {
