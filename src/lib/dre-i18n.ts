@@ -1,7 +1,7 @@
 import type { Lang } from "./i18n";
 
 // Translations for DRE step/section/field labels by ID
-const dreTranslations: Record<string, { es: string; en: string }> = {
+const dreTranslations: Record<string, { es: string; en: string; pt?: string }> = {
   // Steps
   "step.revenue.title": { es: "Facturación", en: "Revenue", pt: "Faturamento" },
   "step.revenue.subtitle": { es: "Ingresa las ventas brutas de tu operación por canal", en: "Enter your gross sales by channel", pt: "Insira as vendas brutas da sua operação por canal" },
