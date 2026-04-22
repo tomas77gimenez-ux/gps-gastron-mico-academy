@@ -99,14 +99,20 @@ export function Navbar() {
 
           {/* Right actions */}
           <div className="flex items-center gap-1">
-            {/* Language toggle */}
+            {/* Language toggle: ES → EN → PT → ES */}
             <button
               onClick={toggleLang}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors uppercase"
-              title={lang === "es" ? "Switch to English" : "Cambiar a Español"}
+              title={
+                lang === "es"
+                  ? "Switch to English"
+                  : lang === "en"
+                    ? "Mudar para Português"
+                    : "Cambiar a Español"
+              }
             >
               <Globe className="w-4 h-4" />
-              {lang === "es" ? "EN" : "ES"}
+              {lang === "es" ? "EN" : lang === "en" ? "PT" : "ES"}
             </button>
 
             <button

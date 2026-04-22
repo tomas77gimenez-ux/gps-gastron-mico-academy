@@ -7,12 +7,17 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, type Lang } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/analytics";
+
+// Helper: pick a translation from an object keyed by language, falling back to es
+function pickLang<T>(obj: Partial<Record<Lang, T>> & { es: T }, lang: Lang): T {
+  return obj[lang] ?? obj.es;
+}
 
 const plans = [
   {
@@ -340,8 +345,8 @@ function PlanesPage() {
                   <plan.icon className="w-6 h-6 text-primary" />
                 </div>
 
-                <h2 className="text-2xl font-bold font-display mb-1">{plan.name[lang]}</h2>
-                <p className="text-sm text-muted-foreground mb-6">{plan.description[lang]}</p>
+                <h2 className="text-2xl font-bold font-display mb-1">{pickLang(plan.name, lang)}</h2>
+                <p className="text-sm text-muted-foreground mb-6">{pickLang(plan.description, lang)}</p>
 
                 <div className="mb-6">
                   <div className="flex items-baseline gap-2">
@@ -361,7 +366,7 @@ function PlanesPage() {
                 </div>
 
                 <ul className="space-y-3 mb-8 flex-1">
-                  {plan.features[lang].map((feature) => (
+                  {pickLang(plan.features, lang).map((feature: string) => (
                     <li key={feature} className="flex items-start gap-2 text-sm">
                       <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                       <span className="text-foreground">{feature}</span>
@@ -435,8 +440,8 @@ function PlanesPage() {
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
             <div className="grid grid-cols-3 bg-secondary/40 border-b border-border">
               <div className="px-4 py-4 text-sm font-semibold">{t("planes.feature")}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center">{plans[0].name[lang]}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{plans[1].name[lang]}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[0].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(plans[1].name, lang)}</div>
             </div>
             {compareFeatures.map((row, idx) => (
               <div

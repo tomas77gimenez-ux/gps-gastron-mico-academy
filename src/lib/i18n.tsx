@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 
-export type Lang = "es" | "en";
+export type Lang = "es" | "en" | "pt";
 
 const translations = {
   // Navbar
@@ -368,7 +368,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("gps-lang") as Lang;
-      if (saved && (saved === "en" || saved === "es")) {
+      if (saved === "en" || saved === "es" || saved === "pt") {
         setLang(saved);
       }
     }
@@ -382,11 +382,15 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const toggleLang = useCallback(() => {
-    changeLang(lang === "es" ? "en" : "es");
+    const next: Lang = lang === "es" ? "en" : lang === "en" ? "pt" : "es";
+    changeLang(next);
   }, [lang, changeLang]);
 
   const t = useCallback((key: TranslationKey): string => {
-    return translations[key]?.[lang] ?? key;
+    const entry = translations[key] as Record<Lang, string> | undefined;
+    if (!entry) return key;
+    // Fallback: pt -> es when a pt translation isn't provided yet
+    return entry[lang] ?? entry.es ?? entry.en ?? key;
   }, [lang]);
 
   return (
