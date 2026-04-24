@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Lesson } from "@/lib/admin-types";
-import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2 } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
@@ -43,10 +43,14 @@ function LessonForm({ lesson, onSave, onCancel }: {
     content_type: lesson?.content_type ?? "video",
     duration: lesson?.duration ?? "",
     is_free: lesson?.is_free ?? false,
+    panda_video_id: lesson?.panda_video_id ?? "",
+    panda_library_id: lesson?.panda_library_id ?? "",
   });
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
-  const [mode, setMode] = useState<"upload" | "url">(form.video_url?.startsWith("http") ? "url" : "upload");
+  const [mode, setMode] = useState<"panda" | "upload" | "url">(
+    lesson?.panda_video_id ? "panda" : lesson?.video_url?.startsWith("http") ? "url" : "upload"
+  );
   const fileRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
   const [uploadStats, setUploadStats] = useState<{ loaded: number; total: number; speed: number; eta: number } | null>(null);
@@ -146,17 +150,39 @@ function LessonForm({ lesson, onSave, onCancel }: {
         </div>
         <div className="sm:col-span-2">
           <label className="block text-xs font-medium mb-1">Contenido del Video</label>
-          <div className="flex gap-2 mb-2">
+          <div className="grid grid-cols-3 gap-2 mb-2">
+            <button type="button" onClick={() => setMode("panda")}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "panda" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Sparkles className="w-3 h-3" /> Panda Video
+            </button>
             <button type="button" onClick={() => setMode("upload")}
-              className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "upload" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-              <Upload className="w-3 h-3" /> Subir archivo
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "upload" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Upload className="w-3 h-3" /> Subir
             </button>
             <button type="button" onClick={() => setMode("url")}
-              className={`flex-1 px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "url" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
-              <Link2 className="w-3 h-3" /> URL externa
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "url" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Link2 className="w-3 h-3" /> URL
             </button>
           </div>
-          {mode === "upload" ? (
+          {mode === "panda" ? (
+            <div className="space-y-2">
+              <input
+                value={form.panda_library_id}
+                onChange={e => setForm(f => ({ ...f, panda_library_id: e.target.value }))}
+                className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Library ID (ej: vz-abc12345-678)"
+              />
+              <input
+                value={form.panda_video_id}
+                onChange={e => setForm(f => ({ ...f, panda_video_id: e.target.value }))}
+                className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Video ID (ej: 8a7b6c5d-1234-...)"
+              />
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                💡 Sube el video en <a href="https://dashboard.pandavideo.com.br" target="_blank" rel="noopener" className="text-primary hover:underline">pandavideo.com.br</a> y pega aquí el Library ID y el Video ID. Encontrás ambos en la URL del player de embed: <code className="text-primary">player-{`{library}`}.tv.pandavideo.com.br/embed/?v={`{video}`}</code>
+              </p>
+            </div>
+          ) : mode === "upload" ? (
             <div className="space-y-2">
               <input ref={fileRef} type="file" accept="video/*" onChange={handleFile} className="hidden" />
               {!uploading && (
