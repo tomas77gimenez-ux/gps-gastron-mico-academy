@@ -16,7 +16,7 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, video_url, poster_url, is_free, sort_order")
+        .select("id, title, description, duration, video_url, poster_url, is_free, sort_order, panda_video_id, panda_library_id")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -50,6 +50,8 @@ interface Lesson {
   poster_url: string | null;
   is_free: boolean;
   sort_order: number;
+  panda_video_id: string | null;
+  panda_library_id: string | null;
 }
 
 function CourseDetailPage() {
@@ -59,6 +61,7 @@ function CourseDetailPage() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+  const hasMedia = (l: Lesson) => Boolean(l.panda_video_id && l.panda_library_id) || Boolean(l.video_url);
 
   if (!course) {
     return (
@@ -80,7 +83,16 @@ function CourseDetailPage() {
           {/* Left: Player + info */}
           <div>
             <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
-              {activeLesson && canPlay(activeLesson) && activeLesson.video_url ? (
+              {activeLesson && canPlay(activeLesson) && activeLesson.panda_video_id && activeLesson.panda_library_id ? (
+                <iframe
+                  key={activeLesson.id}
+                  src={`https://player-${activeLesson.panda_library_id}.tv.pandavideo.com.br/embed/?v=${activeLesson.panda_video_id}`}
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  className="w-full h-full border-0 bg-black"
+                  title={activeLesson.title}
+                />
+              ) : activeLesson && canPlay(activeLesson) && activeLesson.video_url ? (
                 <video
                   key={activeLesson.id}
                   src={activeLesson.video_url}
