@@ -193,6 +193,8 @@ export type Database = {
           duration: string | null
           id: string
           is_free: boolean
+          panda_library_id: string | null
+          panda_video_id: string | null
           poster_url: string | null
           sort_order: number
           title: string
@@ -207,6 +209,8 @@ export type Database = {
           duration?: string | null
           id?: string
           is_free?: boolean
+          panda_library_id?: string | null
+          panda_video_id?: string | null
           poster_url?: string | null
           sort_order?: number
           title: string
@@ -221,6 +225,8 @@ export type Database = {
           duration?: string | null
           id?: string
           is_free?: boolean
+          panda_library_id?: string | null
+          panda_video_id?: string | null
           poster_url?: string | null
           sort_order?: number
           title?: string
