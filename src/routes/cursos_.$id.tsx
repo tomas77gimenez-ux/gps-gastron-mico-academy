@@ -61,7 +61,6 @@ function CourseDetailPage() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
-  const hasMedia = (l: Lesson) => Boolean(l.panda_video_id && l.panda_library_id) || Boolean(l.video_url);
 
   if (!course) {
     return (
