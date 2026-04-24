@@ -35,6 +35,8 @@ export interface Lesson {
   is_free: boolean;
   created_at: string;
   updated_at: string;
+  panda_video_id?: string | null;
+  panda_library_id?: string | null;
 }
 
 export interface CourseMaterial {
