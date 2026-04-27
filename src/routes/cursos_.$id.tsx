@@ -1,10 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, ExternalLink } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -60,8 +60,25 @@ function CourseDetailPage() {
   const sub = useSubscription();
   const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
+  const [isEmbeddedLovablePreview, setIsEmbeddedLovablePreview] = useState(false);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let embedded = false;
+    try {
+      embedded = window.self !== window.top;
+    } catch {
+      embedded = true;
+    }
+
+    const referrer = typeof document !== "undefined" ? document.referrer : "";
+    const isLovableEditor = /lovable\.(dev|app)|lovableproject\.com/i.test(referrer);
+
+    setIsEmbeddedLovablePreview(embedded && isLovableEditor);
+  }, []);
 
   const { progress, reload } = useCourseProgress(course?.id);
   usePandaProgressTracker({
@@ -100,6 +117,24 @@ function CourseDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           {/* Left: Player + info */}
           <div>
+            {activeLesson?.panda_video_id && isEmbeddedLovablePreview && (
+              <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">O Panda pode bloquear o preview embutido do editor.</p>
+                    <p className="text-xs text-muted-foreground">Abra esta aula em uma janela separada para testar a reprodução real sem o bloqueio de subdomínio do editor.</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => window.open(window.location.href, "_blank", "noopener,noreferrer")}
+                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
+                  >
+                    <ExternalLink className="h-4 w-4" /> Abrir preview separado
+                  </button>
+                </div>
+              </div>
+            )}
+
             <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
               {activeLesson && canPlay(activeLesson) && pandaSrc ? (
                 <iframe
