@@ -85,38 +85,49 @@ function CourseDetailPage() {
     [activeLesson, materials]
   );
 
+  const triggerBrowserDownload = (downloadUrl: string) => {
+    const frame = document.createElement("iframe");
+    frame.style.display = "none";
+    frame.setAttribute("aria-hidden", "true");
+    frame.src = downloadUrl;
+    document.body.appendChild(frame);
+
+    const cleanup = () => {
+      frame.remove();
+    };
+
+    frame.addEventListener("load", cleanup, { once: true });
+    window.setTimeout(cleanup, 60_000);
+  };
+
   const handleMaterialDownload = async (material: Material) => {
     const publicPrefix = "/storage/v1/object/public/course-content/";
-    const url = new URL(material.file_url);
-    const pathIndex = url.pathname.indexOf(publicPrefix);
-
-    if (pathIndex === -1) {
-      window.open(material.file_url, "_blank", "noopener,noreferrer");
-      return;
-    }
-
-    const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
     const extension = material.file_type?.toLowerCase() || "pdf";
     const filename = `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
 
     setDownloadingMaterialId(material.id);
+
     try {
-      const { data: blob, error } = await supabase.storage
+      const url = new URL(material.file_url);
+      const pathIndex = url.pathname.indexOf(publicPrefix);
+
+      if (pathIndex === -1) {
+        triggerBrowserDownload(material.file_url);
+        return;
+      }
+
+      const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
+      const { data } = supabase.storage
         .from("course-content")
-        .download(storagePath);
+        .getPublicUrl(storagePath, { download: filename });
 
-      if (error || !blob) throw error ?? new Error("Download failed");
+      if (!data?.publicUrl) {
+        throw new Error("Download URL not available");
+      }
 
-      const blobUrl = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      URL.revokeObjectURL(blobUrl);
+      triggerBrowserDownload(data.publicUrl);
     } catch {
-      window.open(material.file_url, "_blank", "noopener,noreferrer");
+      triggerBrowserDownload(material.file_url);
     } finally {
       setDownloadingMaterialId(current => (current === material.id ? null : current));
     }
