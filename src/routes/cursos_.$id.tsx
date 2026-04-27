@@ -75,7 +75,6 @@ function CourseDetailPage() {
   const loaderData = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials?: Material[] };
   const { course, lessons } = loaderData;
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
-  const [downloadingMaterialId, setDownloadingMaterialId] = useState<string | null>(null);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
@@ -85,74 +84,35 @@ function CourseDetailPage() {
     [activeLesson, materials]
   );
 
-  const triggerBrowserDownload = (blob: Blob, filename: string) => {
-    const blobUrl = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-
-    link.href = blobUrl;
-    link.download = filename;
-    link.rel = "noopener";
-    link.style.display = "none";
-
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-
-    window.setTimeout(() => {
-      URL.revokeObjectURL(blobUrl);
-    }, 60_000);
-  };
-
-  const handleMaterialDownload = async (material: Material) => {
+  const getMaterialDownloadUrl = (material: Material) => {
     const publicPrefix = "/storage/v1/object/public/course-content/";
     const extension = material.file_type?.toLowerCase() || "pdf";
     const filename = `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
 
-    setDownloadingMaterialId(material.id);
-
     try {
       const url = new URL(material.file_url, window.location.origin);
       const pathIndex = url.pathname.indexOf(publicPrefix);
-      let blob: Blob | null = null;
 
       if (pathIndex !== -1) {
         const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
-        const { data, error } = await supabase.storage
+        const { data } = supabase.storage
           .from("course-content")
-          .download(storagePath);
+          .getPublicUrl(storagePath, { download: filename });
 
-        if (error) throw error;
-        blob = data;
-      } else {
-        const response = await fetch(material.file_url, { credentials: "omit" });
-        if (!response.ok) {
-          throw new Error(`Download failed with status ${response.status}`);
+        if (data?.publicUrl) {
+          return data.publicUrl;
         }
-        blob = await response.blob();
       }
 
-      if (!blob) {
-        throw new Error("Empty download response");
-      }
-
-      triggerBrowserDownload(blob, filename);
+      const separator = material.file_url.includes("?") ? "&" : "?";
+      return `${material.file_url}${separator}download=${encodeURIComponent(filename)}`;
     } catch (error) {
-      console.error("Erro ao baixar material:", {
+      console.error("Erro ao montar URL de download:", {
         materialId: material.id,
         materialUrl: material.file_url,
         error,
       });
-
-      const fallbackLink = document.createElement("a");
-      fallbackLink.href = material.file_url;
-      fallbackLink.target = "_blank";
-      fallbackLink.rel = "noopener noreferrer";
-      fallbackLink.style.display = "none";
-      document.body.appendChild(fallbackLink);
-      fallbackLink.click();
-      fallbackLink.remove();
-    } finally {
-      setDownloadingMaterialId(current => (current === material.id ? null : current));
+      return material.file_url;
     }
   };
 
@@ -326,12 +286,13 @@ function CourseDetailPage() {
                       Material complementario
                     </p>
                     <div className="flex flex-col gap-2">
-                    {activeMaterials.map(m => (
-                      <button
+                    {activeMaterials.map(m => {
+                      const downloadUrl = getMaterialDownloadUrl(m);
+
+                      return (
+                      <a
                         key={m.id}
-                        type="button"
-                        onClick={() => void handleMaterialDownload(m)}
-                        disabled={downloadingMaterialId === m.id}
+                        href={downloadUrl}
                         className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -346,11 +307,10 @@ function CourseDetailPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 text-primary">
-                          {downloadingMaterialId === m.id && <span className="text-[11px] font-medium">Baixando...</span>}
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
                         </div>
-                      </button>
-                    ))}
+                      </a>
+                    )})}
                     </div>
                   </div>
                 )}
