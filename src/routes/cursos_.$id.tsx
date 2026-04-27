@@ -107,6 +107,7 @@ function CourseDetailPage() {
                   src={pandaSrc}
                   allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
+                  referrerPolicy="strict-origin-when-cross-origin"
                   className="w-full h-full border-0 bg-black"
                   title={activeLesson.title}
                 />
