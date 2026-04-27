@@ -78,7 +78,7 @@ function CourseDetailPage() {
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
   const pandaSrc = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
-    ? `https://player-${activeLesson.panda_library_id}.tv.pandavideo.com.br/embed/?v=${activeLesson.panda_video_id}&saveProgress=true&startTime=${Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0)}`
+    ? `https://player-${activeLesson.panda_library_id}.tv.pandavideo.com/embed/?v=${activeLesson.panda_video_id}&saveProgress=true&startTime=${Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0)}`
     : null;
 
   if (!course) {
