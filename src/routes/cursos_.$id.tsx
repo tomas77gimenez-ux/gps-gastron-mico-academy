@@ -286,12 +286,13 @@ function CourseDetailPage() {
                       Material complementario
                     </p>
                     <div className="flex flex-col gap-2">
-                    {activeMaterials.map(m => (
-                      <button
+                    {activeMaterials.map(m => {
+                      const downloadUrl = getMaterialDownloadUrl(m);
+
+                      return (
+                      <a
                         key={m.id}
-                        type="button"
-                        onClick={() => void handleMaterialDownload(m)}
-                        disabled={downloadingMaterialId === m.id}
+                        href={downloadUrl}
                         className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -306,11 +307,10 @@ function CourseDetailPage() {
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0 text-primary">
-                          {downloadingMaterialId === m.id && <span className="text-[11px] font-medium">Baixando...</span>}
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
                         </div>
-                      </button>
-                    ))}
+                      </a>
+                    )})}
                     </div>
                   </div>
                 )}
