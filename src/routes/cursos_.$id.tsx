@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Hls from "hls.js";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, ExternalLink } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -60,31 +61,17 @@ function CourseDetailPage() {
   const sub = useSubscription();
   const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
-  const [isEmbeddedLovablePreview, setIsEmbeddedLovablePreview] = useState(false);
+  const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    let embedded = false;
-    try {
-      embedded = window.self !== window.top;
-    } catch {
-      embedded = true;
-    }
-
-    const referrer = typeof document !== "undefined" ? document.referrer : "";
-    const isLovableEditor = /lovable\.(dev|app)|lovableproject\.com/i.test(referrer);
-
-    setIsEmbeddedLovablePreview(embedded && isLovableEditor);
-  }, []);
 
   const { progress, reload } = useCourseProgress(course?.id);
   usePandaProgressTracker({
     lessonId: activeLesson?.panda_video_id ? activeLesson.id : null,
     courseId: course?.id ?? null,
     enabled: !!activeLesson && canPlay(activeLesson),
+    mode: activeLesson?.panda_video_id ? "html5" : "iframe",
+    videoRef: pandaVideoRef,
     onUpdate: reload,
   });
 
@@ -94,8 +81,8 @@ function CourseDetailPage() {
   );
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
-  const pandaSrc = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
-    ? `https://player-${activeLesson.panda_library_id}.tv.pandavideo.com/embed/?v=${activeLesson.panda_video_id}&saveProgress=true&startTime=${Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0)}`
+  const pandaStreamUrl = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
+    ? `https://b-${activeLesson.panda_library_id}.tv.pandavideo.com.br/${activeLesson.panda_video_id}/playlist.m3u8`
     : null;
 
   if (!course) {
