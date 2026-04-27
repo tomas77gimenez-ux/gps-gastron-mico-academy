@@ -75,6 +75,7 @@ function CourseDetailPage() {
   const loaderData = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials?: Material[] };
   const { course, lessons } = loaderData;
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
+  const [downloadingMaterialId, setDownloadingMaterialId] = useState<string | null>(null);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
@@ -83,6 +84,41 @@ function CourseDetailPage() {
     () => (activeLesson ? materials.filter(m => m.lesson_id === activeLesson.id) : []),
     [activeLesson, materials]
   );
+
+  const handleMaterialDownload = async (material: Material) => {
+    const publicPrefix = "/storage/v1/object/public/course-content/";
+    const url = new URL(material.file_url);
+    const pathIndex = url.pathname.indexOf(publicPrefix);
+
+    if (pathIndex === -1) {
+      window.open(material.file_url, "_blank", "noopener,noreferrer");
+      return;
+    }
+
+    const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
+    const extension = material.file_type?.toLowerCase() || "pdf";
+    const filename = `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
+
+    try {
+      setDownloadingMaterialId(material.id);
+      const { data, error } = await supabase.storage.from("course-content").download(storagePath);
+
+      if (error || !data) throw error ?? new Error("Download failed");
+
+      const objectUrl = URL.createObjectURL(data);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(objectUrl);
+    } catch {
+      window.open(material.file_url, "_blank", "noopener,noreferrer");
+    } finally {
+      setDownloadingMaterialId(current => (current === material.id ? null : current));
+    }
+  };
 
   // Fallback: garante que os materiais sejam buscados no cliente
   useEffect(() => {
@@ -255,12 +291,11 @@ function CourseDetailPage() {
                     </p>
                     <div className="flex flex-col gap-2">
                     {activeMaterials.map(m => (
-                      <a
+                      <button
                         key={m.id}
-                        href={m.file_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        download
+                        type="button"
+                        onClick={() => void handleMaterialDownload(m)}
+                        disabled={downloadingMaterialId === m.id}
                         className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -274,8 +309,11 @@ function CourseDetailPage() {
                             </p>
                           </div>
                         </div>
-                        <Download className="w-4 h-4 text-primary shrink-0 group-hover:translate-y-0.5 transition-transform" />
-                      </a>
+                        <div className="flex items-center gap-2 shrink-0 text-primary">
+                          {downloadingMaterialId === m.id && <span className="text-[11px] font-medium">Baixando...</span>}
+                          <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
+                        </div>
+                      </button>
                     ))}
                     </div>
                   </div>
