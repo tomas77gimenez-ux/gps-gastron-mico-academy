@@ -84,36 +84,18 @@ function CourseDetailPage() {
     [activeLesson, materials]
   );
 
-  const getMaterialDownloadUrl = (material: Material) => {
-    const publicPrefix = "/storage/v1/object/public/course-content/";
+  const getMaterialFilename = (material: Material) => {
     const extension = material.file_type?.toLowerCase() || "pdf";
-    const filename = `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
+    return `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
+  };
 
-    try {
-      const url = new URL(material.file_url, window.location.origin);
-      const pathIndex = url.pathname.indexOf(publicPrefix);
+  const getMaterialDownloadUrl = (material: Material) => {
+    const params = new URLSearchParams({
+      src: material.file_url,
+      filename: getMaterialFilename(material),
+    });
 
-      if (pathIndex !== -1) {
-        const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
-        const { data } = supabase.storage
-          .from("course-content")
-          .getPublicUrl(storagePath, { download: filename });
-
-        if (data?.publicUrl) {
-          return data.publicUrl;
-        }
-      }
-
-      const separator = material.file_url.includes("?") ? "&" : "?";
-      return `${material.file_url}${separator}download=${encodeURIComponent(filename)}`;
-    } catch (error) {
-      console.error("Erro ao montar URL de download:", {
-        materialId: material.id,
-        materialUrl: material.file_url,
-        error,
-      });
-      return material.file_url;
-    }
+    return `/api/public/material-download?${params.toString()}`;
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
@@ -293,6 +275,7 @@ function CourseDetailPage() {
                       <a
                         key={m.id}
                         href={downloadUrl}
+                        download={getMaterialFilename(m)}
                         className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
                       >
                         <div className="flex items-center gap-3 min-w-0">
