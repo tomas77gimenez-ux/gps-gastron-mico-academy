@@ -1,10 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Hls from "hls.js";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, ExternalLink } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -60,31 +61,17 @@ function CourseDetailPage() {
   const sub = useSubscription();
   const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
-  const [isEmbeddedLovablePreview, setIsEmbeddedLovablePreview] = useState(false);
+  const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
-
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    let embedded = false;
-    try {
-      embedded = window.self !== window.top;
-    } catch {
-      embedded = true;
-    }
-
-    const referrer = typeof document !== "undefined" ? document.referrer : "";
-    const isLovableEditor = /lovable\.(dev|app)|lovableproject\.com/i.test(referrer);
-
-    setIsEmbeddedLovablePreview(embedded && isLovableEditor);
-  }, []);
 
   const { progress, reload } = useCourseProgress(course?.id);
   usePandaProgressTracker({
     lessonId: activeLesson?.panda_video_id ? activeLesson.id : null,
     courseId: course?.id ?? null,
     enabled: !!activeLesson && canPlay(activeLesson),
+    mode: activeLesson?.panda_video_id ? "html5" : "iframe",
+    videoRef: pandaVideoRef,
     onUpdate: reload,
   });
 
@@ -94,9 +81,57 @@ function CourseDetailPage() {
   );
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
-  const pandaSrc = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
-    ? `https://player-${activeLesson.panda_library_id}.tv.pandavideo.com/embed/?v=${activeLesson.panda_video_id}&saveProgress=true&startTime=${Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0)}`
+  const pandaStreamUrl = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
+    ? `https://b-${activeLesson.panda_library_id}.tv.pandavideo.com.br/${activeLesson.panda_video_id}/playlist.m3u8`
     : null;
+  const resumeSeconds = activeLesson ? Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0) : 0;
+
+  useEffect(() => {
+    const video = pandaVideoRef.current;
+    if (!video || !pandaStreamUrl) return;
+
+    let hls: Hls | null = null;
+
+    const applyResume = () => {
+      if (resumeSeconds <= 0) return;
+      if (Math.abs((video.currentTime || 0) - resumeSeconds) < 2) return;
+      try {
+        video.currentTime = resumeSeconds;
+      } catch {
+        // no-op
+      }
+    };
+
+    video.crossOrigin = "anonymous";
+    video.poster = activeLesson?.poster_url ?? "";
+
+    if (video.canPlayType("application/vnd.apple.mpegurl")) {
+      video.src = pandaStreamUrl;
+      video.addEventListener("loadedmetadata", applyResume);
+      video.load();
+
+      return () => {
+        video.removeEventListener("loadedmetadata", applyResume);
+        video.removeAttribute("src");
+        video.load();
+      };
+    }
+
+    if (Hls.isSupported()) {
+      hls = new Hls({ enableWorker: true });
+      hls.loadSource(pandaStreamUrl);
+      hls.attachMedia(video);
+      hls.on(Hls.Events.MANIFEST_PARSED, applyResume);
+
+      return () => {
+        hls?.destroy();
+        video.removeAttribute("src");
+        video.load();
+      };
+    }
+
+    return undefined;
+  }, [activeLesson?.id, activeLesson?.poster_url, pandaStreamUrl, resumeSeconds]);
 
   if (!course) {
     return (
@@ -117,34 +152,16 @@ function CourseDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           {/* Left: Player + info */}
           <div>
-            {activeLesson?.panda_video_id && isEmbeddedLovablePreview && (
-              <div className="mb-4 rounded-xl border border-primary/30 bg-primary/5 p-4">
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">O Panda pode bloquear o preview embutido do editor.</p>
-                    <p className="text-xs text-muted-foreground">Abra esta aula em uma janela separada para testar a reprodução real sem o bloqueio de subdomínio do editor.</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => window.open(window.location.href, "_blank", "noopener,noreferrer")}
-                    className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
-                  >
-                    <ExternalLink className="h-4 w-4" /> Abrir preview separado
-                  </button>
-                </div>
-              </div>
-            )}
-
             <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
-              {activeLesson && canPlay(activeLesson) && pandaSrc ? (
-                <iframe
+              {activeLesson && canPlay(activeLesson) && pandaStreamUrl ? (
+                <video
                   key={activeLesson.id}
-                  src={pandaSrc}
-                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-                  allowFullScreen
-                  referrerPolicy="strict-origin-when-cross-origin"
-                  className="w-full h-full border-0 bg-black"
-                  title={activeLesson.title}
+                  ref={pandaVideoRef}
+                  poster={activeLesson.poster_url ?? undefined}
+                  controls
+                  playsInline
+                  preload="metadata"
+                  className="w-full h-full object-contain bg-black"
                 />
               ) : activeLesson && canPlay(activeLesson) && activeLesson.video_url ? (
                 <video
