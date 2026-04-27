@@ -72,7 +72,9 @@ interface Material {
 function CourseDetailPage() {
   const { t } = useI18n();
   const sub = useSubscription();
-  const { course, lessons, materials } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials: Material[] };
+  const loaderData = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials?: Material[] };
+  const { course, lessons } = loaderData;
+  const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
@@ -81,6 +83,22 @@ function CourseDetailPage() {
     () => (activeLesson ? materials.filter(m => m.lesson_id === activeLesson.id) : []),
     [activeLesson, materials]
   );
+
+  // Fallback: garante que os materiais sejam buscados no cliente
+  useEffect(() => {
+    if (!course?.id) return;
+    let cancelled = false;
+    (async () => {
+      const lessonIds = lessons.map(l => l.id);
+      if (lessonIds.length === 0) return;
+      const { data } = await supabase
+        .from("course_materials")
+        .select("id, lesson_id, title, file_url, file_type, file_size")
+        .in("lesson_id", lessonIds);
+      if (!cancelled && data) setMaterials(data as Material[]);
+    })();
+    return () => { cancelled = true; };
+  }, [course?.id, lessons]);
 
   const { progress, reload } = useCourseProgress(course?.id);
   usePandaProgressTracker({
@@ -231,7 +249,11 @@ function CourseDetailPage() {
                   <p className="text-sm text-muted-foreground leading-relaxed">{activeLesson.description}</p>
                 )}
                 {activeMaterials.length > 0 && (
-                  <div className="mt-4 flex flex-col gap-2">
+                  <div className="mt-4">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                      Material complementario
+                    </p>
+                    <div className="flex flex-col gap-2">
                     {activeMaterials.map(m => (
                       <a
                         key={m.id}
@@ -255,6 +277,7 @@ function CourseDetailPage() {
                         <Download className="w-4 h-4 text-primary shrink-0 group-hover:translate-y-0.5 transition-transform" />
                       </a>
                     ))}
+                    </div>
                   </div>
                 )}
               </div>
