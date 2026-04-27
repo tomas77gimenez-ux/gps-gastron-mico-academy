@@ -25,6 +25,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
 
 const TiendaRoute = TiendaRouteImport.update({
   id: '/tienda',
@@ -106,6 +107,12 @@ const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
   path: '/checkout/return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicMaterialDownloadRoute =
+  ApiPublicMaterialDownloadRouteImport.update({
+    id: '/api/public/material-download',
+    path: '/api/public/material-download',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -124,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
+  '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -142,6 +150,7 @@ export interface FileRoutesByTo {
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
+  '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -161,6 +170,7 @@ export interface FileRoutesById {
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
+  '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
+    | '/api/public/material-download'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -199,6 +210,7 @@ export interface FileRouteTypes {
     | '/tienda'
     | '/checkout/return'
     | '/cursos/$id'
+    | '/api/public/material-download'
   id:
     | '__root__'
     | '/'
@@ -217,6 +229,7 @@ export interface FileRouteTypes {
     | '/tienda'
     | '/checkout/return'
     | '/cursos_/$id'
+    | '/api/public/material-download'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -236,6 +249,7 @@ export interface RootRouteChildren {
   TiendaRoute: typeof TiendaRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CursosIdRoute: typeof CursosIdRoute
+  ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -352,6 +366,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/material-download': {
+      id: '/api/public/material-download'
+      path: '/api/public/material-download'
+      fullPath: '/api/public/material-download'
+      preLoaderRoute: typeof ApiPublicMaterialDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -372,6 +393,7 @@ const rootRouteChildren: RootRouteChildren = {
   TiendaRoute: TiendaRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
   CursosIdRoute: CursosIdRoute,
+  ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
