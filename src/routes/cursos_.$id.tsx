@@ -1,9 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2 } from "lucide-react";
+import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -62,6 +63,24 @@ function CourseDetailPage() {
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
 
+  const { progress, reload } = useCourseProgress(course?.id);
+  usePandaProgressTracker({
+    lessonId: activeLesson?.panda_video_id ? activeLesson.id : null,
+    courseId: course?.id ?? null,
+    enabled: !!activeLesson && canPlay(activeLesson),
+    onUpdate: reload,
+  });
+
+  const completedCount = useMemo(
+    () => Object.values(progress).filter(p => p.completed).length,
+    [progress]
+  );
+  const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
+
+  const pandaSrc = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
+    ? `https://player-${activeLesson.panda_library_id}.tv.pandavideo.com.br/embed/?v=${activeLesson.panda_video_id}&saveProgress=true&startTime=${Math.floor(progress[activeLesson.id]?.progress_seconds ?? 0)}`
+    : null;
+
   if (!course) {
     return (
       <div className="min-h-screen pt-24 px-4 text-center">
@@ -82,10 +101,10 @@ function CourseDetailPage() {
           {/* Left: Player + info */}
           <div>
             <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
-              {activeLesson && canPlay(activeLesson) && activeLesson.panda_video_id && activeLesson.panda_library_id ? (
+              {activeLesson && canPlay(activeLesson) && pandaSrc ? (
                 <iframe
                   key={activeLesson.id}
-                  src={`https://player-${activeLesson.panda_library_id}.tv.pandavideo.com.br/embed/?v=${activeLesson.panda_video_id}`}
+                  src={pandaSrc}
                   allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
                   allowFullScreen
                   className="w-full h-full border-0 bg-black"
@@ -164,6 +183,20 @@ function CourseDetailPage() {
                 <h3 className="font-semibold text-sm">{t("cursos.aulas")}</h3>
                 <span className="text-xs text-muted-foreground">{lessons.length}</span>
               </div>
+              {sub.hasActive && lessons.length > 0 && (
+                <div className="px-4 py-3 border-b border-border bg-secondary/20">
+                  <div className="flex items-center justify-between text-xs mb-1.5">
+                    <span className="text-muted-foreground">Progreso</span>
+                    <span className="font-semibold text-primary">{completedCount}/{lessons.length} · {overallPct}%</span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
+                    <div
+                      className="h-full bg-primary transition-all duration-500"
+                      style={{ width: `${overallPct}%` }}
+                    />
+                  </div>
+                </div>
+              )}
               {lessons.length === 0 ? (
                 <p className="p-4 text-sm text-muted-foreground">{t("cursos.sinAulas")}</p>
               ) : (
@@ -171,6 +204,11 @@ function CourseDetailPage() {
                   {lessons.map((lesson, i) => {
                     const playable = canPlay(lesson);
                     const isActive = lesson.id === activeLessonId;
+                    const lessonProg = progress[lesson.id];
+                    const isCompleted = !!lessonProg?.completed;
+                    const partial = !isCompleted && lessonProg && lessonProg.duration_seconds
+                      ? Math.min(100, Math.round((lessonProg.progress_seconds / lessonProg.duration_seconds) * 100))
+                      : 0;
                     return (
                       <li key={lesson.id}>
                         <button
@@ -180,9 +218,13 @@ function CourseDetailPage() {
                           }`}
                         >
                           <div className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
-                            isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
+                            isCompleted
+                              ? "bg-green-500/20 text-green-400 border border-green-500/40"
+                              : isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
                           }`}>
-                            {playable ? (isActive ? <Play className="w-3 h-3 ml-0.5" /> : i + 1) : <Lock className="w-3 h-3" />}
+                            {!playable ? <Lock className="w-3 h-3" />
+                              : isCompleted ? <Check className="w-3.5 h-3.5" />
+                              : isActive ? <Play className="w-3 h-3 ml-0.5" /> : i + 1}
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
@@ -197,6 +239,11 @@ function CourseDetailPage() {
                             </div>
                             {lesson.duration && (
                               <span className="text-xs text-muted-foreground">{lesson.duration}</span>
+                            )}
+                            {partial > 0 && (
+                              <div className="mt-1.5 h-0.5 rounded-full bg-secondary overflow-hidden">
+                                <div className="h-full bg-primary/60" style={{ width: `${partial}%` }} />
+                              </div>
                             )}
                           </div>
                         </button>
