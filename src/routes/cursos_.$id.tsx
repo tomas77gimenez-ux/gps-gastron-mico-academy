@@ -99,26 +99,26 @@ function CourseDetailPage() {
     const extension = material.file_type?.toLowerCase() || "pdf";
     const filename = `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
 
+    setDownloadingMaterialId(material.id);
     try {
-      setDownloadingMaterialId(material.id);
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("course-content").getPublicUrl(storagePath, {
-        download: filename,
-      });
+      const { data: blob, error } = await supabase.storage
+        .from("course-content")
+        .download(storagePath);
 
+      if (error || !blob) throw error ?? new Error("Download failed");
+
+      const blobUrl = URL.createObjectURL(blob);
       const link = document.createElement("a");
-      link.href = publicUrl;
+      link.href = blobUrl;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       link.remove();
+      URL.revokeObjectURL(blobUrl);
     } catch {
       window.open(material.file_url, "_blank", "noopener,noreferrer");
     } finally {
-      window.setTimeout(() => {
-        setDownloadingMaterialId(current => (current === material.id ? null : current));
-      }, 800);
+      setDownloadingMaterialId(current => (current === material.id ? null : current));
     }
   };
 
