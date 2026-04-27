@@ -179,7 +179,7 @@ function LessonForm({ lesson, onSave, onCancel }: {
                 placeholder="Video ID (ej: 8a7b6c5d-1234-...)"
               />
               <p className="text-[10px] text-muted-foreground leading-relaxed">
-                💡 Sube el video en <a href="https://dashboard.pandavideo.com.br" target="_blank" rel="noopener" className="text-primary hover:underline">pandavideo.com.br</a> y pega aquí el Library ID y el Video ID. Encontrás ambos en la URL del player de embed: <code className="text-primary">player-{`{library}`}.tv.pandavideo.com.br/embed/?v={`{video}`}</code>
+                💡 Sube el video en <a href="https://dashboard.pandavideo.com.br" target="_blank" rel="noopener" className="text-primary hover:underline">pandavideo.com.br</a> y pega aquí el Library ID y el Video ID. Encontrás ambos en la URL del player de embed: <code className="text-primary">player-{`{library}`}.tv.pandavideo.com/embed/?v={`{video}`}</code>
               </p>
             </div>
           ) : mode === "upload" ? (
