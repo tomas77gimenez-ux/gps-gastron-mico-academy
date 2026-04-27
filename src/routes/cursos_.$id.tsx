@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText } from "lucide-react";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -22,7 +22,11 @@ export const Route = createFileRoute("/cursos_/$id")({
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
-    return { course, lessons: lessons ?? [] };
+    const { data: materials } = await supabase
+      .from("course_materials")
+      .select("id, lesson_id, title, file_url, file_type, file_size")
+      .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
+    return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
   head: () => ({
     meta: [
@@ -56,14 +60,27 @@ interface Lesson {
   panda_library_id: string | null;
 }
 
+interface Material {
+  id: string;
+  lesson_id: string | null;
+  title: string;
+  file_url: string;
+  file_type: string;
+  file_size: number | null;
+}
+
 function CourseDetailPage() {
   const { t } = useI18n();
   const sub = useSubscription();
-  const { course, lessons } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[] };
+  const { course, lessons, materials } = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials: Material[] };
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+  const activeMaterials = useMemo(
+    () => (activeLesson ? materials.filter(m => m.lesson_id === activeLesson.id) : []),
+    [activeLesson, materials]
+  );
 
   const { progress, reload } = useCourseProgress(course?.id);
   usePandaProgressTracker({
@@ -212,6 +229,33 @@ function CourseDetailPage() {
                 <h2 className="text-lg font-semibold mb-2">{activeLesson.title}</h2>
                 {activeLesson.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">{activeLesson.description}</p>
+                )}
+                {activeMaterials.length > 0 && (
+                  <div className="mt-4 flex flex-col gap-2">
+                    {activeMaterials.map(m => (
+                      <a
+                        key={m.id}
+                        href={m.file_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        download
+                        className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
+                      >
+                        <div className="flex items-center gap-3 min-w-0">
+                          <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
+                            <FileText className="w-4 h-4 text-primary" />
+                          </div>
+                          <div className="min-w-0">
+                            <p className="text-sm font-semibold truncate">{m.title}</p>
+                            <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
+                              {m.file_type}{m.file_size ? ` · ${(m.file_size / (1024 * 1024)).toFixed(1)} MB` : ""}
+                            </p>
+                          </div>
+                        </div>
+                        <Download className="w-4 h-4 text-primary shrink-0 group-hover:translate-y-0.5 transition-transform" />
+                      </a>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
