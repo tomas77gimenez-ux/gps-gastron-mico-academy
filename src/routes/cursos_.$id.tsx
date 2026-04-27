@@ -85,19 +85,22 @@ function CourseDetailPage() {
     [activeLesson, materials]
   );
 
-  const triggerBrowserDownload = (downloadUrl: string) => {
-    const frame = document.createElement("iframe");
-    frame.style.display = "none";
-    frame.setAttribute("aria-hidden", "true");
-    frame.src = downloadUrl;
-    document.body.appendChild(frame);
+  const triggerBrowserDownload = (blob: Blob, filename: string) => {
+    const blobUrl = URL.createObjectURL(blob);
+    const link = document.createElement("a");
 
-    const cleanup = () => {
-      frame.remove();
-    };
+    link.href = blobUrl;
+    link.download = filename;
+    link.rel = "noopener";
+    link.style.display = "none";
 
-    frame.addEventListener("load", cleanup, { once: true });
-    window.setTimeout(cleanup, 60_000);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+
+    window.setTimeout(() => {
+      URL.revokeObjectURL(blobUrl);
+    }, 60_000);
   };
 
   const handleMaterialDownload = async (material: Material) => {
@@ -108,26 +111,46 @@ function CourseDetailPage() {
     setDownloadingMaterialId(material.id);
 
     try {
-      const url = new URL(material.file_url);
+      const url = new URL(material.file_url, window.location.origin);
       const pathIndex = url.pathname.indexOf(publicPrefix);
+      let blob: Blob | null = null;
 
-      if (pathIndex === -1) {
-        triggerBrowserDownload(material.file_url);
-        return;
+      if (pathIndex !== -1) {
+        const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
+        const { data, error } = await supabase.storage
+          .from("course-content")
+          .download(storagePath);
+
+        if (error) throw error;
+        blob = data;
+      } else {
+        const response = await fetch(material.file_url, { credentials: "omit" });
+        if (!response.ok) {
+          throw new Error(`Download failed with status ${response.status}`);
+        }
+        blob = await response.blob();
       }
 
-      const storagePath = decodeURIComponent(url.pathname.slice(pathIndex + publicPrefix.length));
-      const { data } = supabase.storage
-        .from("course-content")
-        .getPublicUrl(storagePath, { download: filename });
-
-      if (!data?.publicUrl) {
-        throw new Error("Download URL not available");
+      if (!blob) {
+        throw new Error("Empty download response");
       }
 
-      triggerBrowserDownload(data.publicUrl);
-    } catch {
-      triggerBrowserDownload(material.file_url);
+      triggerBrowserDownload(blob, filename);
+    } catch (error) {
+      console.error("Erro ao baixar material:", {
+        materialId: material.id,
+        materialUrl: material.file_url,
+        error,
+      });
+
+      const fallbackLink = document.createElement("a");
+      fallbackLink.href = material.file_url;
+      fallbackLink.target = "_blank";
+      fallbackLink.rel = "noopener noreferrer";
+      fallbackLink.style.display = "none";
+      document.body.appendChild(fallbackLink);
+      fallbackLink.click();
+      fallbackLink.remove();
     } finally {
       setDownloadingMaterialId(current => (current === material.id ? null : current));
     }
