@@ -101,22 +101,24 @@ function CourseDetailPage() {
 
     try {
       setDownloadingMaterialId(material.id);
-      const { data, error } = await supabase.storage.from("course-content").download(storagePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from("course-content").getPublicUrl(storagePath, {
+        download: filename,
+      });
 
-      if (error || !data) throw error ?? new Error("Download failed");
-
-      const objectUrl = URL.createObjectURL(data);
       const link = document.createElement("a");
-      link.href = objectUrl;
+      link.href = publicUrl;
       link.download = filename;
       document.body.appendChild(link);
       link.click();
       link.remove();
-      URL.revokeObjectURL(objectUrl);
     } catch {
       window.open(material.file_url, "_blank", "noopener,noreferrer");
     } finally {
-      setDownloadingMaterialId(current => (current === material.id ? null : current));
+      window.setTimeout(() => {
+        setDownloadingMaterialId(current => (current === material.id ? null : current));
+      }, 800);
     }
   };
 
