@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback, type RefObject } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
@@ -50,6 +50,8 @@ export function usePandaProgressTracker(opts: {
   lessonId: string | null;
   courseId: string | null;
   enabled: boolean;
+  mode?: "iframe" | "html5";
+  videoRef?: RefObject<HTMLVideoElement | null>;
   onUpdate?: () => void;
 }) {
   const { user } = useAuthSession();
@@ -79,7 +81,7 @@ export function usePandaProgressTracker(opts: {
   }, [user, opts.lessonId, opts.courseId, opts.enabled, opts.onUpdate]);
 
   useEffect(() => {
-    if (!opts.enabled || !opts.lessonId) return;
+    if (!opts.enabled || !opts.lessonId || opts.mode === "html5") return;
     setCompleted(false);
     stateRef.current = { current: 0, duration: 0 };
     lastSaved.current = 0;
@@ -109,7 +111,56 @@ export function usePandaProgressTracker(opts: {
       save(true);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [opts.lessonId, opts.enabled]);
+  }, [opts.lessonId, opts.enabled, opts.mode]);
+
+  useEffect(() => {
+    if (!opts.enabled || !opts.lessonId || opts.mode !== "html5") return;
+
+    const video = opts.videoRef?.current;
+    if (!video) return;
+
+    setCompleted(false);
+    stateRef.current = {
+      current: video.currentTime || 0,
+      duration: Number.isFinite(video.duration) ? video.duration : 0,
+    };
+    lastSaved.current = 0;
+
+    const syncState = () => {
+      stateRef.current.current = video.currentTime || 0;
+      stateRef.current.duration = Number.isFinite(video.duration) ? video.duration : 0;
+    };
+
+    const handleTimeUpdate = () => {
+      syncState();
+      save(false);
+    };
+
+    const handlePauseOrEnd = () => {
+      syncState();
+      save(true);
+    };
+
+    video.addEventListener("loadedmetadata", syncState);
+    video.addEventListener("timeupdate", handleTimeUpdate);
+    video.addEventListener("pause", handlePauseOrEnd);
+    video.addEventListener("ended", handlePauseOrEnd);
+
+    const interval = setInterval(() => {
+      syncState();
+      save(false);
+    }, 15000);
+
+    return () => {
+      video.removeEventListener("loadedmetadata", syncState);
+      video.removeEventListener("timeupdate", handleTimeUpdate);
+      video.removeEventListener("pause", handlePauseOrEnd);
+      video.removeEventListener("ended", handlePauseOrEnd);
+      clearInterval(interval);
+      syncState();
+      save(true);
+    };
+  }, [opts.lessonId, opts.enabled, opts.mode, opts.videoRef, save]);
 
   return { completed };
 }
