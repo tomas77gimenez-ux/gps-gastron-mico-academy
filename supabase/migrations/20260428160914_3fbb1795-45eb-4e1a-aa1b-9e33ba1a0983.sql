@@ -1,0 +1,1 @@
+UPDATE public.courses SET thumbnail_url = 'https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/thumbnails/conceptos-basicos-industria-gastronomica.jpg' WHERE id = '98ff6f23-5d4e-49fa-bf3e-5b9a8db14ec4';
