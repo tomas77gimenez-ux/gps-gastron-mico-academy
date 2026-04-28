@@ -1,0 +1,1 @@
+UPDATE public.lessons SET poster_url = 'https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/lessons/1.4-tener-ganar-cover.png' WHERE course_id = '98ff6f23-5d4e-49fa-bf3e-5b9a8db14ec4' AND sort_order IN (1, 2, 3);
