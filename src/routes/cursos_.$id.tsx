@@ -363,14 +363,32 @@ function CourseDetailPage() {
                             isActive ? "bg-primary/10" : "hover:bg-secondary/50"
                           }`}
                         >
-                          <div className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center text-xs font-semibold ${
-                            isCompleted
-                              ? "bg-green-500/20 text-green-400 border border-green-500/40"
-                              : isActive ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-                          }`}>
-                            {!playable ? <Lock className="w-3 h-3" />
-                              : isCompleted ? <Check className="w-3.5 h-3.5" />
-                              : isActive ? <Play className="w-3 h-3 ml-0.5" /> : i + 1}
+                          <div className="relative shrink-0 w-20 h-12 rounded-md overflow-hidden bg-secondary border border-border">
+                            {lesson.poster_url ? (
+                              <img
+                                src={lesson.poster_url}
+                                alt=""
+                                loading="lazy"
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                                {i + 1}
+                              </div>
+                            )}
+                            <div className={`absolute inset-0 flex items-center justify-center ${
+                              isActive || isCompleted || !playable ? "bg-black/45" : "bg-black/20"
+                            }`}>
+                              {!playable ? (
+                                <Lock className="w-4 h-4 text-white" />
+                              ) : isCompleted ? (
+                                <Check className="w-4 h-4 text-green-400" />
+                              ) : isActive ? (
+                                <Play className="w-4 h-4 text-white ml-0.5" />
+                              ) : (
+                                <Play className="w-4 h-4 text-white/80 ml-0.5" />
+                              )}
+                            </div>
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-0.5">
