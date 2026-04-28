@@ -99,14 +99,12 @@ function CourseDetailPage() {
   };
 
   const handleMaterialDownload = (material: Material) => {
-    const link = document.createElement("a");
-    link.href = getMaterialDownloadUrl(material);
-    link.download = getMaterialFilename(material);
-    link.rel = "noopener noreferrer";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
+    const downloadUrl = getMaterialDownloadUrl(material);
+    const newWindow = window.open(downloadUrl, "_blank", "noopener,noreferrer");
+
+    if (!newWindow) {
+      window.location.assign(downloadUrl);
+    }
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
