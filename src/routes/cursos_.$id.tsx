@@ -151,8 +151,9 @@ function CourseDetailPage() {
       }
     };
 
-    video.crossOrigin = "anonymous";
-    video.poster = activeLesson?.poster_url ?? "";
+    // Don't set crossOrigin: not needed for public HLS and breaks poster caching
+    video.removeAttribute("crossorigin");
+    if (activeLesson?.poster_url) video.poster = activeLesson.poster_url;
 
     if (video.canPlayType("application/vnd.apple.mpegurl")) {
       video.src = pandaStreamUrl;
@@ -167,10 +168,18 @@ function CourseDetailPage() {
     }
 
     if (Hls.isSupported()) {
-      hls = new Hls({ enableWorker: true });
+      hls = new Hls({ enableWorker: true, xhrSetup: (xhr) => { xhr.withCredentials = false; } });
       hls.loadSource(pandaStreamUrl);
       hls.attachMedia(video);
       hls.on(Hls.Events.MANIFEST_PARSED, applyResume);
+      hls.on(Hls.Events.ERROR, (_evt, data) => {
+        if (data.fatal) {
+          // Fallback: try native src as last resort
+          try { hls?.destroy(); } catch {}
+          video.src = pandaStreamUrl;
+          video.load();
+        }
+      });
 
       return () => {
         hls?.destroy();
