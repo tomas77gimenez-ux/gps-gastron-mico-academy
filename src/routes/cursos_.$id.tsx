@@ -366,6 +366,16 @@ function CourseDetailPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => { e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); }}
+                            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); } }}
+                            className="text-[11px] underline underline-offset-2 hover:text-primary/80"
+                            title="Modo alternativo (mismo navegador)"
+                          >
+                            Alt
+                          </span>
                         </div>
                       </button>
                     ))}
