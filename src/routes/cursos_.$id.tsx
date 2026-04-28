@@ -6,6 +6,7 @@ import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
 import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText } from "lucide-react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -98,12 +99,52 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const handleMaterialDownload = (material: Material) => {
+  const handleMaterialDownload = async (material: Material) => {
     const downloadUrl = getMaterialDownloadUrl(material);
-    const newWindow = window.open(downloadUrl, "_blank", "noopener,noreferrer");
+    const filename = getMaterialFilename(material);
+    const toastId = toast.loading("Preparando descarga...");
+    console.log("[download] start", { url: downloadUrl, filename });
 
-    if (!newWindow) {
-      window.location.assign(downloadUrl);
+    try {
+      const res = await fetch(downloadUrl, { credentials: "include" });
+      const disposition = res.headers.get("content-disposition");
+      const contentType = res.headers.get("content-type");
+      const contentLength = res.headers.get("content-length");
+      console.log("[download] response", {
+        status: res.status,
+        ok: res.ok,
+        contentDisposition: disposition,
+        contentType,
+        contentLength,
+        hasAttachment: disposition?.toLowerCase().includes("attachment") ?? false,
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      if (!disposition?.toLowerCase().includes("attachment")) {
+        console.warn("[download] missing Content-Disposition: attachment header");
+      }
+
+      const blob = await res.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
+
+      toast.success("Descarga iniciada", {
+        id: toastId,
+        description: filename,
+      });
+      console.log("[download] success", { filename, size: blob.size });
+    } catch (err) {
+      console.error("[download] failed", err);
+      toast.error("No se pudo descargar el archivo", {
+        id: toastId,
+        description: err instanceof Error ? err.message : "Intentá de nuevo.",
+      });
     }
   };
 
