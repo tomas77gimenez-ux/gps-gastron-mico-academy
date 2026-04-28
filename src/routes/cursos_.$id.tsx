@@ -98,6 +98,27 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
+  const handleMaterialDownload = async (material: Material) => {
+    const response = await fetch(getMaterialDownloadUrl(material), {
+      credentials: "include",
+    });
+
+    if (!response.ok) {
+      throw new Error("No se pudo descargar el material");
+    }
+
+    const blob = await response.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = blobUrl;
+    link.download = getMaterialFilename(material);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.URL.revokeObjectURL(blobUrl);
+  };
+
   // Fallback: garante que os materiais sejam buscados no cliente
   useEffect(() => {
     if (!course?.id) return;
@@ -277,15 +298,14 @@ function CourseDetailPage() {
                       Material complementario
                     </p>
                     <div className="flex flex-col gap-2">
-                    {activeMaterials.map(m => {
-                      const downloadUrl = getMaterialDownloadUrl(m);
-
-                      return (
-                      <a
+                      {activeMaterials.map(m => (
+                      <button
                         key={m.id}
-                        href={downloadUrl}
-                        download={getMaterialFilename(m)}
-                        className="inline-flex items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group"
+                        type="button"
+                        onClick={() => {
+                          void handleMaterialDownload(m);
+                        }}
+                        className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
@@ -301,8 +321,8 @@ function CourseDetailPage() {
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
                         </div>
-                      </a>
-                    )})}
+                      </button>
+                    ))}
                     </div>
                   </div>
                 )}
