@@ -99,12 +99,30 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const handleMaterialDownload = async (material: Material) => {
+  const isSafari = () => {
+    if (typeof navigator === "undefined") return false;
+    const ua = navigator.userAgent;
+    return /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
+  };
+
+  const navigateDownloadFallback = (url: string, filename: string) => {
+    console.log("[download] fallback: same-tab navigation", { url, filename });
+    window.location.assign(url);
+  };
+
+  const handleMaterialDownload = async (material: Material, opts?: { forceNavigate?: boolean }) => {
     const downloadUrl = getMaterialDownloadUrl(material);
     const filename = getMaterialFilename(material);
-    const toastId = toast.loading("Preparando descarga...");
-    console.log("[download] start", { url: downloadUrl, filename });
+    const safari = isSafari();
+    console.log("[download] start", { url: downloadUrl, filename, safari, forceNavigate: opts?.forceNavigate });
 
+    if (opts?.forceNavigate || safari) {
+      toast.success("Descarga iniciada", { description: filename });
+      navigateDownloadFallback(downloadUrl, filename);
+      return;
+    }
+
+    const toastId = toast.loading("Preparando descarga...");
     try {
       const res = await fetch(downloadUrl, { credentials: "include" });
       const disposition = res.headers.get("content-disposition");
@@ -140,11 +158,12 @@ function CourseDetailPage() {
       });
       console.log("[download] success", { filename, size: blob.size });
     } catch (err) {
-      console.error("[download] failed", err);
-      toast.error("No se pudo descargar el archivo", {
+      console.error("[download] failed, using same-tab fallback", err);
+      toast.message("Reintentando descarga...", {
         id: toastId,
-        description: err instanceof Error ? err.message : "Intentá de nuevo.",
+        description: filename,
       });
+      navigateDownloadFallback(downloadUrl, filename);
     }
   };
 
@@ -347,6 +366,16 @@ function CourseDetailPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            onClick={(e) => { e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); }}
+                            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); } }}
+                            className="text-[11px] underline underline-offset-2 hover:text-primary/80"
+                            title="Modo alternativo (mismo navegador)"
+                          >
+                            Alt
+                          </span>
                         </div>
                       </button>
                     ))}
