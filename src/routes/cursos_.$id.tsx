@@ -98,25 +98,15 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const handleMaterialDownload = async (material: Material) => {
-    const response = await fetch(getMaterialDownloadUrl(material), {
-      credentials: "include",
-    });
-
-    if (!response.ok) {
-      throw new Error("No se pudo descargar el material");
-    }
-
-    const blob = await response.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
+  const handleMaterialDownload = (material: Material) => {
     const link = document.createElement("a");
-
-    link.href = blobUrl;
+    link.href = getMaterialDownloadUrl(material);
     link.download = getMaterialFilename(material);
+    link.rel = "noopener noreferrer";
+    link.target = "_blank";
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(blobUrl);
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
@@ -302,9 +292,7 @@ function CourseDetailPage() {
                       <button
                         key={m.id}
                         type="button"
-                        onClick={() => {
-                          void handleMaterialDownload(m);
-                        }}
+                        onClick={() => handleMaterialDownload(m)}
                         className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0">
