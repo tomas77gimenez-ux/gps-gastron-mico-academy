@@ -317,10 +317,35 @@ function CourseDetailPage() {
                   </div>
                 </div>
               ) : (
-                <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                  <BookOpen className="w-10 h-10 text-primary/40" />
-                  <span className="text-sm">{t("cursos.sinVideo")}</span>
-                </div>
+                activeLesson && canPlay(activeLesson) && activeMaterials.length > 0 ? (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary px-6 text-center">
+                    {course.thumbnail_url && (
+                      <img src={course.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+                    )}
+                    <div className="relative z-10 flex flex-col items-center gap-3 max-w-md">
+                      <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+                        <FileText className="w-7 h-7 text-primary" />
+                      </div>
+                      <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
+                      <p className="text-sm text-muted-foreground">
+                        Esta clase está compuesta por un documento editable. Descargá el material a continuación para trabajarlo en tu computadora.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => handleMaterialDownload(activeMaterials[0])}
+                        className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        Descargar material
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                    <BookOpen className="w-10 h-10 text-primary/40" />
+                    <span className="text-sm">{t("cursos.sinVideo")}</span>
+                  </div>
+                )
               )}
             </div>
 
