@@ -107,14 +107,14 @@ function CourseDetailPage() {
   };
 
   const triggerBrowserDownload = (url: string) => {
-    console.log("[download] submit", { url });
-    const form = document.createElement("form");
-    form.method = "GET";
-    form.action = url;
-    form.style.display = "none";
-    document.body.appendChild(form);
-    form.submit();
-    form.remove();
+    console.log("[download] iframe request", { url });
+    const iframe = document.createElement("iframe");
+    iframe.style.display = "none";
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    window.setTimeout(() => {
+      iframe.remove();
+    }, 60_000);
   };
 
   const handleMaterialDownload = (material: Material, opts?: { forceNavigate?: boolean }) => {
