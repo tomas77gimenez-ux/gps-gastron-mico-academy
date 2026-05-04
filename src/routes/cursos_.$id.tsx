@@ -106,28 +106,14 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const triggerBrowserDownload = (url: string) => {
-    console.log("[download] iframe request", { url });
-    const iframe = document.createElement("iframe");
-    iframe.style.display = "none";
-    iframe.src = url;
-    document.body.appendChild(iframe);
-    window.setTimeout(() => {
-      iframe.remove();
-    }, 60_000);
-  };
-
-  const handleMaterialDownload = (material: Material, opts?: { forceNavigate?: boolean }) => {
-    const downloadUrl = getMaterialDownloadUrl(material);
+  const notifyMaterialDownload = (material: Material) => {
     const filename = getMaterialFilename(material);
     console.log("[download] start", {
-      url: downloadUrl,
+      url: getMaterialDownloadUrl(material),
       filename,
-      forceNavigate: opts?.forceNavigate,
     });
 
     toast.success("Descarga iniciada", { description: filename });
-    triggerBrowserDownload(downloadUrl);
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
