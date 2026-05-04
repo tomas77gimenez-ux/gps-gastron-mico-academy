@@ -279,14 +279,15 @@ function CourseDetailPage() {
                       <p className="text-sm text-muted-foreground">
                         Esta clase está compuesta por un documento editable. Descargá el material a continuación para trabajarlo en tu computadora.
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => handleMaterialDownload(activeMaterials[0])}
+                      <a
+                        href={getMaterialDownloadUrl(activeMaterials[0])}
+                        download={getMaterialFilename(activeMaterials[0])}
+                        onClick={() => notifyMaterialDownload(activeMaterials[0])}
                         className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
                       >
                         <Download className="w-4 h-4" />
                         Descargar material
-                      </button>
+                      </a>
                     </div>
                   </div>
                 ) : (
@@ -321,10 +322,11 @@ function CourseDetailPage() {
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
-                      <button
+                      <a
                         key={m.id}
-                        type="button"
-                        onClick={() => handleMaterialDownload(m)}
+                        href={getMaterialDownloadUrl(m)}
+                        download={getMaterialFilename(m)}
+                        onClick={() => notifyMaterialDownload(m)}
                         className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group text-left"
                       >
                         <div className="flex items-center gap-3 min-w-0">
@@ -340,18 +342,11 @@ function CourseDetailPage() {
                         </div>
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
-                          <span
-                            role="button"
-                            tabIndex={0}
-                            onClick={(e) => { e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); }}
-                            onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); e.stopPropagation(); handleMaterialDownload(m, { forceNavigate: true }); } }}
-                            className="text-[11px] underline underline-offset-2 hover:text-primary/80"
-                            title="Modo alternativo (mismo navegador)"
-                          >
-                            Alt
+                          <span className="text-[11px] underline underline-offset-2 hover:text-primary/80">
+                            Descargar
                           </span>
                         </div>
-                      </button>
+                      </a>
                     ))}
                     </div>
                   </div>
