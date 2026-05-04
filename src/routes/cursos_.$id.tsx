@@ -107,7 +107,19 @@ function CourseDetailPage() {
 
   const navigateDownloadFallback = (url: string, filename: string) => {
     console.log("[download] fallback: same-tab navigation", { url, filename });
-    window.location.assign(url);
+    // Em iframes (preview), window.location.assign para download é bloqueado.
+    // Tentamos abrir em nova aba; se popup bloqueado, criamos um anchor com target=_blank.
+    const opened = window.open(url, "_blank", "noopener,noreferrer");
+    if (!opened) {
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    }
   };
 
   const handleMaterialDownload = async (material: Material, opts?: { forceNavigate?: boolean }) => {
