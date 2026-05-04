@@ -200,7 +200,7 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
     <Link
       to="/cursos/$id"
       params={{ id: course.id }}
-      className="group rounded-xl border border-border bg-card overflow-hidden hover:border-primary/40 transition-all hover:-translate-y-0.5"
+      className="group rounded-xl bg-card overflow-hidden ring-1 ring-border/40 hover:ring-primary/40 transition-all hover:-translate-y-0.5"
     >
       <div className="relative aspect-video bg-secondary overflow-hidden">
         {course.thumbnail_url ? (
