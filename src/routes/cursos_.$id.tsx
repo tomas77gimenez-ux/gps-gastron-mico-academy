@@ -99,27 +99,12 @@ function CourseDetailPage() {
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const isSafari = () => {
-    if (typeof navigator === "undefined") return false;
-    const ua = navigator.userAgent;
-    return /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
-  };
-
-  const isInsideIframe = () => {
-    if (typeof window === "undefined") return false;
-    try {
-      return window.self !== window.top;
-    } catch {
-      return true;
-    }
-  };
-
   const navigateDownloadFallback = (url: string, filename: string) => {
     console.log("[download] fallback: anchor click", { url, filename });
-    // Anchor com download dispara o download direto sem abrir aba em branco.
     const a = document.createElement("a");
     a.href = url;
     a.download = filename;
+    a.target = "_blank";
     a.rel = "noopener";
     document.body.appendChild(a);
     a.click();
@@ -128,28 +113,24 @@ function CourseDetailPage() {
 
   const handleMaterialDownload = async (material: Material, opts?: { forceNavigate?: boolean }) => {
     const downloadUrl = getMaterialDownloadUrl(material);
+    const fetchUrl = material.file_url;
     const filename = getMaterialFilename(material);
-    const safari = isSafari();
-    const insideIframe = isInsideIframe();
-    const shouldUseNavigationFallback = Boolean(opts?.forceNavigate || (safari && !insideIframe));
     console.log("[download] start", {
       url: downloadUrl,
+      fetchUrl,
       filename,
-      safari,
-      insideIframe,
       forceNavigate: opts?.forceNavigate,
-      shouldUseNavigationFallback,
     });
 
-    if (shouldUseNavigationFallback) {
+    if (opts?.forceNavigate) {
       toast.success("Descarga iniciada", { description: filename });
-      navigateDownloadFallback(downloadUrl, filename);
+      navigateDownloadFallback(fetchUrl, filename);
       return;
     }
 
     const toastId = toast.loading("Preparando descarga...");
     try {
-      const res = await fetch(downloadUrl, { credentials: "include" });
+      const res = await fetch(fetchUrl);
       const disposition = res.headers.get("content-disposition");
       const contentType = res.headers.get("content-type");
       const contentLength = res.headers.get("content-length");
@@ -163,9 +144,6 @@ function CourseDetailPage() {
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      if (!disposition?.toLowerCase().includes("attachment")) {
-        console.warn("[download] missing Content-Disposition: attachment header");
-      }
 
       const blob = await res.blob();
       const blobUrl = URL.createObjectURL(blob);
@@ -188,7 +166,7 @@ function CourseDetailPage() {
         id: toastId,
         description: filename,
       });
-      navigateDownloadFallback(downloadUrl, filename);
+      navigateDownloadFallback(fetchUrl, filename);
     }
   };
 
