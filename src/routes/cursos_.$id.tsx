@@ -96,78 +96,38 @@ function CourseDetailPage() {
       filename: getMaterialFilename(material),
     });
 
+    if (typeof window !== "undefined") {
+      const previewToken = new URLSearchParams(window.location.search).get("__lovable_token");
+      if (previewToken) {
+        params.set("__lovable_token", previewToken);
+      }
+    }
+
     return `/api/public/material-download?${params.toString()}`;
   };
 
-  const navigateDownloadFallback = (url: string, filename: string) => {
-    console.log("[download] fallback: anchor click", { url, filename });
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = filename;
-    a.target = "_blank";
-    a.rel = "noopener";
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
+  const triggerBrowserDownload = (url: string) => {
+    console.log("[download] submit", { url });
+    const form = document.createElement("form");
+    form.method = "GET";
+    form.action = url;
+    form.style.display = "none";
+    document.body.appendChild(form);
+    form.submit();
+    form.remove();
   };
 
-  const handleMaterialDownload = async (material: Material, opts?: { forceNavigate?: boolean }) => {
+  const handleMaterialDownload = (material: Material, opts?: { forceNavigate?: boolean }) => {
     const downloadUrl = getMaterialDownloadUrl(material);
-    const fetchUrl = material.file_url;
     const filename = getMaterialFilename(material);
     console.log("[download] start", {
       url: downloadUrl,
-      fetchUrl,
       filename,
       forceNavigate: opts?.forceNavigate,
     });
 
-    if (opts?.forceNavigate) {
-      toast.success("Descarga iniciada", { description: filename });
-      navigateDownloadFallback(fetchUrl, filename);
-      return;
-    }
-
-    const toastId = toast.loading("Preparando descarga...");
-    try {
-      const res = await fetch(fetchUrl);
-      const disposition = res.headers.get("content-disposition");
-      const contentType = res.headers.get("content-type");
-      const contentLength = res.headers.get("content-length");
-      console.log("[download] response", {
-        status: res.status,
-        ok: res.ok,
-        contentDisposition: disposition,
-        contentType,
-        contentLength,
-        hasAttachment: disposition?.toLowerCase().includes("attachment") ?? false,
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-      const blob = await res.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = blobUrl;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000);
-
-      toast.success("Descarga iniciada", {
-        id: toastId,
-        description: filename,
-      });
-      console.log("[download] success", { filename, size: blob.size });
-    } catch (err) {
-      console.error("[download] failed, using same-tab fallback", err);
-      toast.message("Reintentando descarga...", {
-        id: toastId,
-        description: filename,
-      });
-      navigateDownloadFallback(fetchUrl, filename);
-    }
+    toast.success("Descarga iniciada", { description: filename });
+    triggerBrowserDownload(downloadUrl);
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
