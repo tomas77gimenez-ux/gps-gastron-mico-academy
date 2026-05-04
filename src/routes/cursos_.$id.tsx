@@ -105,6 +105,15 @@ function CourseDetailPage() {
     return /^((?!chrome|android|crios|fxios|edg).)*safari/i.test(ua);
   };
 
+  const isInsideIframe = () => {
+    if (typeof window === "undefined") return false;
+    try {
+      return window.self !== window.top;
+    } catch {
+      return true;
+    }
+  };
+
   const navigateDownloadFallback = (url: string, filename: string) => {
     console.log("[download] fallback: anchor click", { url, filename });
     // Anchor com download dispara o download direto sem abrir aba em branco.
@@ -121,9 +130,18 @@ function CourseDetailPage() {
     const downloadUrl = getMaterialDownloadUrl(material);
     const filename = getMaterialFilename(material);
     const safari = isSafari();
-    console.log("[download] start", { url: downloadUrl, filename, safari, forceNavigate: opts?.forceNavigate });
+    const insideIframe = isInsideIframe();
+    const shouldUseNavigationFallback = Boolean(opts?.forceNavigate || (safari && !insideIframe));
+    console.log("[download] start", {
+      url: downloadUrl,
+      filename,
+      safari,
+      insideIframe,
+      forceNavigate: opts?.forceNavigate,
+      shouldUseNavigationFallback,
+    });
 
-    if (opts?.forceNavigate || safari) {
+    if (shouldUseNavigationFallback) {
       toast.success("Descarga iniciada", { description: filename });
       navigateDownloadFallback(downloadUrl, filename);
       return;
