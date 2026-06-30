@@ -80,7 +80,7 @@ export const Route = createFileRoute("/asistente")({
   head: () => ({
     meta: [
       { title: "Asistente IA — GPS Gastronômico" },
-      { name: "description", content: "Asistente inteligente para resolver tus dudas de gestión gastronómica." },,
+      { name: "description", content: "Asistente inteligente para resolver tus dudas de gestión gastronómica." },
       { property: "og:title", content: 'Asistente IA — GPS Gastronômico' },
       { property: "og:description", content: 'Asistente inteligente para tu restaurante.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/asistente" },

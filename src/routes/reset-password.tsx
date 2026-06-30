@@ -9,7 +9,7 @@ export const Route = createFileRoute("/reset-password")({
   head: () => ({
     meta: [
       { title: "Nueva Contraseña — GPS Gastronômico" },
-      { name: "description", content: "Establece una nueva contraseña para tu cuenta." },,
+      { name: "description", content: "Establece una nueva contraseña para tu cuenta." },
       { property: "og:title", content: 'Nueva Contraseña — GPS Gastronômico' },
       { property: "og:description", content: 'Define una nueva contraseña para tu cuenta.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/reset-password" },

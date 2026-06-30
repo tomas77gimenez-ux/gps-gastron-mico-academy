@@ -14,7 +14,7 @@ export const Route = createFileRoute("/perfil")({
   head: () => ({
     meta: [
       { title: "Mi Perfil — GPS Gastronômico" },
-      { name: "description", content: "Gestiona tu cuenta, cursos y compras." },,
+      { name: "description", content: "Gestiona tu cuenta, cursos y compras." },
       { property: "og:title", content: 'Mi Perfil — GPS Gastronômico' },
       { property: "og:description", content: 'Gestiona tu cuenta, suscripción y certificados.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/perfil" },

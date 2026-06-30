@@ -11,7 +11,7 @@ export const Route = createFileRoute("/checkout/return")({
   head: () => ({
     meta: [
       { title: "Resultado del Pago — GPS Gastronômico" },
-      { name: "description", content: "Resultado de tu intento de pago." },,
+      { name: "description", content: "Resultado de tu intento de pago." },
       { property: "og:title", content: 'Resultado del Pago — GPS Gastronômico' },
       { property: "og:description", content: 'Confirmación del resultado del pago.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/checkout/return" },
