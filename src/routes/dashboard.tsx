@@ -13,7 +13,12 @@ export const Route = createFileRoute("/dashboard")({
     meta: [
       { title: "Dashboard — GPS Gastronômico" },
       { name: "description", content: "Analiza la salud financiera de tu restaurante con el DRE interactivo." },
+      { property: "og:title", content: 'Dashboard — GPS Gastronômico' },
+      { property: "og:description", content: 'Panel financiero (DRE) en tiempo real de tu restaurante.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/dashboard" },
+      { name: "robots", content: "noindex,nofollow" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/dashboard" }],
   }),
 });
 

@@ -11,7 +11,12 @@ export const Route = createFileRoute("/admin")({
     meta: [
       { title: "Admin — GPS Gastronômico" },
       { name: "description", content: "Panel de administración de cursos y contenido." },
+      { property: "og:title", content: 'Admin — GPS Gastronômico' },
+      { property: "og:description", content: 'Panel de administración.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/admin" },
+      { name: "robots", content: "noindex,nofollow" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/admin" }],
   }),
 });
 

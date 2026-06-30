@@ -1,0 +1,14 @@
+# GPS Gastronômico
+
+> Plataforma de formación, mentoría y herramientas de gestión para profesionales gastronómicos (restaurantes, chefs y operadores).
+
+GPS Gastronômico ofrece cursos, dashboard financiero (DRE) en tiempo real, mentoría con Daniel Giménez y servicios premium para mejorar la rentabilidad y los procesos de un restaurante.
+
+## Páginas
+
+- [Inicio](/): Resumen del método GPS, planes y preguntas frecuentes.
+- [Mentoría · Método GPS](/cursos): Programa de mentoría y catálogo de cursos.
+- [Planes de Membresía](/planes): Comparativa de planes mensual y anual.
+- [Tienda](/tienda): Servicios premium y productos exclusivos (auditorías, libro, marketing, diseño).
+- [Términos y Condiciones](/terminos): Términos de uso de la plataforma.
+- [Política de Privacidad](/privacidad): Tratamiento de datos personales.

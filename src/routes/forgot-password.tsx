@@ -10,7 +10,12 @@ export const Route = createFileRoute("/forgot-password")({
     meta: [
       { title: "Recuperar Contraseña — GPS Gastronômico" },
       { name: "description", content: "Recupera tu contraseña de GPS Gastronômico." },
+      { property: "og:title", content: 'Recuperar Contraseña — GPS Gastronômico' },
+      { property: "og:description", content: 'Recupera el acceso a tu cuenta GPS Gastronômico.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/forgot-password" },
+      { name: "robots", content: "noindex,nofollow" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/forgot-password" }],
   }),
 });
 

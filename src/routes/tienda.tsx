@@ -73,6 +73,39 @@ export const Route = createFileRoute("/tienda")({
     meta: [
       { title: "Tienda — GPS Gastronômico" },
       { name: "description", content: "Servicios premium y productos exclusivos para profesionales gastronómicos." },
+      { property: "og:title", content: "Tienda — GPS Gastronômico" },
+      { property: "og:description", content: "Servicios premium y productos exclusivos para profesionales gastronómicos." },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/tienda" },
+    ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/tienda" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "ItemList",
+          name: "Tienda GPS Gastronômico",
+          itemListElement: products.map((p, i) => ({
+            "@type": "ListItem",
+            position: i + 1,
+            item: {
+              "@type": "Product",
+              name: p.title,
+              description: p.description,
+              ...(p.priceLabel
+                ? {
+                    offers: {
+                      "@type": "Offer",
+                      price: p.priceLabel.replace(/[^0-9.]/g, ""),
+                      priceCurrency: "USD",
+                      availability: "https://schema.org/InStock",
+                    },
+                  }
+                : {}),
+            },
+          })),
+        }),
+      },
     ],
   }),
 });

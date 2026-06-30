@@ -13,7 +13,11 @@ export const Route = createFileRoute("/login")({
     meta: [
       { title: "Iniciar Sesión — GPS Gastronômico" },
       { name: "description", content: "Accede a tu cuenta de GPS Gastronômico." },
+      { property: "og:title", content: 'Iniciar Sesión — GPS Gastronômico' },
+      { property: "og:description", content: 'Inicia sesión en tu cuenta de GPS Gastronômico.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/login" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/login" }],
   }),
 });
 
