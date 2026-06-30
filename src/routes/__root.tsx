@@ -43,6 +43,12 @@ export const Route = createRootRoute({
       { property: "og:site_name", content: "GPS Gastronômico" },
       { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary" },
+      { property: "og:title", content: "GPS Gastronômico — Gestión · Procesos · Sustentabilidad" },
+      { name: "twitter:title", content: "GPS Gastronômico — Gestión · Procesos · Sustentabilidad" },
+      { property: "og:description", content: "Plataforma de formación para profesionales gastronómicos." },
+      { name: "twitter:description", content: "Plataforma de formación para profesionales gastronómicos." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87874cee-37d0-4e34-946a-026b9f3638b1/id-preview-5a23be39--d9ff2e26-e28e-4b16-b196-265bf1484244.lovable.app-1782835173024.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/87874cee-37d0-4e34-946a-026b9f3638b1/id-preview-5a23be39--d9ff2e26-e28e-4b16-b196-265bf1484244.lovable.app-1782835173024.png" },
     ],
     links: [
       {
