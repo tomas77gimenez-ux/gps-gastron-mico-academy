@@ -177,9 +177,11 @@ function PerfilPage() {
             <div className="text-center py-6">
               <p className="font-medium mb-1">{t("perfil.sinSuscripcion")}</p>
               <p className="text-sm text-muted-foreground mb-4">{t("perfil.sinSuscripcionDesc")}</p>
-              <Button asChild>
-                <Link to="/planes">{t("perfil.verPlanes")}</Link>
-              </Button>
+              {!sub.hasActive && (
+                <Button asChild>
+                  <Link to="/planes">{t("perfil.verPlanes")}</Link>
+                </Button>
+              )}
             </div>
           )}
         </section>

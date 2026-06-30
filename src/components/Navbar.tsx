@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useSubscription } from "@/hooks/useSubscription";
 
 export function Navbar() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuthSession();
+  const sub = useSubscription();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const { t, lang, toggleLang } = useI18n();
 
-  const navItems = [
+  const allNavItems = [
     { to: "/", label: t("nav.inicio"), icon: Home },
     { to: "/dashboard", label: t("nav.dre"), icon: LayoutDashboard },
     { to: "/cursos", label: t("nav.mentoria"), icon: Film },
@@ -22,6 +24,10 @@ export function Navbar() {
     { to: "/tienda", label: t("nav.productos"), icon: ShoppingCart },
     { to: "/perfil", label: t("nav.perfil"), icon: User },
   ] as const;
+
+  const navItems = sub.hasActive
+    ? allNavItems.filter((item) => item.to !== "/planes")
+    : allNavItems;
 
   useEffect(() => {
     let active = true;
