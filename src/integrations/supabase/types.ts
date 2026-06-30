@@ -60,13 +60,6 @@ export type Database = {
             referencedRelation: "lessons"
             referencedColumns: ["id"]
           },
-          {
-            foreignKeyName: "course_materials_lesson_id_fkey"
-            columns: ["lesson_id"]
-            isOneToOne: false
-            referencedRelation: "lessons_public"
-            referencedColumns: ["id"]
-          },
         ]
       }
       courses: {
@@ -384,32 +377,17 @@ export type Database = {
       }
     }
     Views: {
-      lessons_public: {
-        Row: {
-          content_type: string | null
-          course_id: string | null
-          created_at: string | null
-          description: string | null
-          duration: string | null
-          id: string | null
-          is_free: boolean | null
-          poster_url: string | null
-          sort_order: number | null
-          title: string | null
-          updated_at: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lessons_course_id_fkey"
-            columns: ["course_id"]
-            isOneToOne: false
-            referencedRelation: "courses"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
+      [_ in never]: never
     }
     Functions: {
+      get_lesson_video: {
+        Args: { _lesson_id: string }
+        Returns: {
+          panda_library_id: string
+          panda_video_id: string
+          video_url: string
+        }[]
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
