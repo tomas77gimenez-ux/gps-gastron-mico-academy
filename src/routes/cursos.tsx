@@ -12,7 +12,11 @@ export const Route = createFileRoute("/cursos")({
     meta: [
       { title: "Mentoría · Método GPS — GPS Gastronômico" },
       { name: "description", content: "Método GPS: 3 Pilares y 9 Módulos para transformar la gestión de tu restaurante." },
+      { property: "og:title", content: "Mentoría · Método GPS" },
+      { property: "og:description", content: "Método GPS: 3 Pilares y 9 Módulos para transformar la gestión de tu restaurante." },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/cursos" },
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/cursos" }],
   }),
 });
 
