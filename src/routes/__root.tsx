@@ -50,8 +50,29 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
-    scripts: GA_MEASUREMENT_ID
-      ? [
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "GPS Gastronômico",
+          url: "https://plataforma-test1.lovable.app",
+          description:
+            "Plataforma de formación, mentoría y herramientas de gestión para profesionales gastronómicos.",
+        }),
+      },
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "GPS Gastronômico",
+          url: "https://plataforma-test1.lovable.app",
+        }),
+      },
+      ...(GA_MEASUREMENT_ID
+        ? [
           {
             src: `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`,
             async: true,
@@ -60,7 +81,8 @@ export const Route = createRootRoute({
             children: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}window.gtag = gtag;gtag('js', new Date());gtag('config', '${GA_MEASUREMENT_ID}');`,
           },
         ]
-      : [],
+        : []),
+    ],
   }),
   shellComponent: RootShell,
   component: RootComponent,
