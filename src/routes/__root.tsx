@@ -40,6 +40,8 @@ export const Route = createRootRoute({
       { name: "description", content: "Plataforma de formación para profesionales gastronómicos." },
       { name: "author", content: "GPS Gastronômico" },
       { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "GPS Gastronômico" },
+      { property: "og:locale", content: "es_ES" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [
@@ -48,6 +50,15 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
+    scripts: undefined as never,
+  }),
+  shellComponent: RootShell,
+  component: RootComponent,
+  notFoundComponent: NotFoundComponent,
+});
+
+// JSON-LD injection helpers handled per-route via head.scripts.
+const _ld = null;
     scripts: GA_MEASUREMENT_ID
       ? [
           {
