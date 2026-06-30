@@ -50,15 +50,6 @@ export const Route = createRootRoute({
         href: appCss,
       },
     ],
-    scripts: undefined as never,
-  }),
-  shellComponent: RootShell,
-  component: RootComponent,
-  notFoundComponent: NotFoundComponent,
-});
-
-// JSON-LD injection helpers handled per-route via head.scripts.
-const _ld = null;
     scripts: GA_MEASUREMENT_ID
       ? [
           {
