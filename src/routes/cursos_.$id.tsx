@@ -29,12 +29,52 @@ export const Route = createFileRoute("/cursos_/$id")({
       .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
-  head: () => ({
-    meta: [
-      { title: "Curso — GPS Gastronômico" },
-      { name: "description", content: "Aulas y materiales del curso." },
-    ],
-  }),
+  head: ({ loaderData, params }) => {
+    const course = (loaderData as { course?: { title?: string; description?: string | null; thumbnail_url?: string | null; instructor?: string } } | undefined)?.course;
+    const title = course?.title
+      ? `${course.title} — GPS Gastronômico`
+      : "Curso — GPS Gastronômico";
+    const description =
+      (course?.description?.slice(0, 160)) ||
+      "Curso del Método GPS Gastronômico con clases en video y materiales complementarios.";
+    const canonical = `https://plataforma-test1.lovable.app/cursos/${params?.id ?? ""}`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: course?.title ?? "Curso" },
+        { property: "og:description", content: description },
+        { property: "og:url", content: canonical },
+        { property: "og:type", content: "article" },
+        ...(course?.thumbnail_url
+          ? [{ property: "og:image", content: course.thumbnail_url }]
+          : []),
+      ],
+      links: [{ rel: "canonical", href: canonical }],
+      scripts: course
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Course",
+                name: course.title,
+                description,
+                provider: {
+                  "@type": "Organization",
+                  name: "GPS Gastronômico",
+                  sameAs: "https://plataforma-test1.lovable.app",
+                },
+                ...(course.instructor
+                  ? { instructor: { "@type": "Person", name: course.instructor } }
+                  : {}),
+                ...(course.thumbnail_url ? { image: course.thumbnail_url } : {}),
+              }),
+            },
+          ]
+        : [],
+    };
+  },
 });
 
 interface Course {
