@@ -380,6 +380,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_lesson_video: {
+        Args: { _lesson_id: string }
+        Returns: {
+          panda_library_id: string
+          panda_video_id: string
+          video_url: string
+        }[]
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
         Returns: boolean
