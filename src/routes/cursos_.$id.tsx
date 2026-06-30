@@ -19,7 +19,7 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, video_url, poster_url, is_free, sort_order, panda_video_id, panda_library_id")
+        .select("id, title, description, duration, poster_url, is_free, sort_order")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -114,12 +114,45 @@ function CourseDetailPage() {
   const { t } = useI18n();
   const sub = useSubscription();
   const loaderData = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials?: Material[] };
-  const { course, lessons } = loaderData;
+  const { course } = loaderData;
+  const [lessons, setLessons] = useState<Lesson[]>(
+    (loaderData.lessons ?? []).map((l) => ({
+      ...l,
+      video_url: null,
+      panda_video_id: null,
+      panda_library_id: null,
+    }))
+  );
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
   const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+
+  // Fetch sensitive video identifiers via subscription-gated RPC when active lesson changes
+  useEffect(() => {
+    if (!activeLessonId) return;
+    const current = lessons.find((l) => l.id === activeLessonId);
+    if (!current) return;
+    if (current.panda_video_id || current.video_url) return; // already loaded
+    let cancelled = false;
+    (async () => {
+      const { data, error } = await supabase.rpc("get_lesson_video", { _lesson_id: activeLessonId });
+      if (cancelled || error || !data || data.length === 0) return;
+      const row = data[0] as { panda_video_id: string | null; panda_library_id: string | null; video_url: string | null };
+      setLessons((prev) =>
+        prev.map((l) =>
+          l.id === activeLessonId
+            ? { ...l, panda_video_id: row.panda_video_id, panda_library_id: row.panda_library_id, video_url: row.video_url }
+            : l
+        )
+      );
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [activeLessonId, lessons]);
+
   const activeMaterials = useMemo(
     () => (activeLesson ? materials.filter(m => m.lesson_id === activeLesson.id) : []),
     [activeLesson, materials]
