@@ -60,6 +60,13 @@ export type Database = {
             referencedRelation: "lessons"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "course_materials_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "lessons_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       courses: {
@@ -377,7 +384,30 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      lessons_public: {
+        Row: {
+          content_type: string | null
+          course_id: string | null
+          created_at: string | null
+          description: string | null
+          duration: string | null
+          id: string | null
+          is_free: boolean | null
+          poster_url: string | null
+          sort_order: number | null
+          title: string | null
+          updated_at: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lessons_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       has_active_subscription: {
