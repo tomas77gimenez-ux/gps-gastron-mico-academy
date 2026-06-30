@@ -10,8 +10,12 @@ export const Route = createFileRoute("/registro")({
   head: () => ({
     meta: [
       { title: "Registro — GPS Gastronômico" },
-      { name: "description", content: "Crea tu cuenta en GPS Gastronômico." },
+      { name: "description", content: "Crea tu cuenta en GPS Gastronômico." },,
+      { property: "og:title", content: 'Registro — GPS Gastronômico' },
+      { property: "og:description", content: 'Crea tu cuenta gratis y comienza tu transformación gastronómica.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/registro" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/registro" }],
   }),
 });
 

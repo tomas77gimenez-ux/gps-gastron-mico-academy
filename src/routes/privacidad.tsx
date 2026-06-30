@@ -6,8 +6,12 @@ export const Route = createFileRoute("/privacidad")({
   head: () => ({
     meta: [
       { title: "Política de Privacidad — GPS Gastronômico" },
-      { name: "description", content: "Política de privacidad y tratamiento de datos en GPS Gastronômico." },
+      { name: "description", content: "Política de privacidad y tratamiento de datos en GPS Gastronômico." },,
+      { property: "og:title", content: 'Política de Privacidad — GPS Gastronômico' },
+      { property: "og:description", content: 'Política de privacidad y tratamiento de datos personales.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/privacidad" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/privacidad" }],
   }),
 });
 

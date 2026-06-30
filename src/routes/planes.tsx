@@ -77,8 +77,12 @@ export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
       { title: "Planes de Membresía — GPS Gastronômico" },
-      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante. Básico o Premium." },
+      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante. Básico o Premium." },,
+      { property: "og:title", content: 'Planes de Membresía — GPS Gastronômico' },
+      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante. Básico o Premium.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/planes" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/planes" }],
   }),
 });
 

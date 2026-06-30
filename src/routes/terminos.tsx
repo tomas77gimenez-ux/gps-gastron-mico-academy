@@ -6,8 +6,12 @@ export const Route = createFileRoute("/terminos")({
   head: () => ({
     meta: [
       { title: "Términos y Condiciones — GPS Gastronômico" },
-      { name: "description", content: "Términos y condiciones de uso de la plataforma GPS Gastronômico." },
+      { name: "description", content: "Términos y condiciones de uso de la plataforma GPS Gastronômico." },,
+      { property: "og:title", content: 'Términos y Condiciones — GPS Gastronômico' },
+      { property: "og:description", content: 'Términos y condiciones de uso de GPS Gastronômico.' },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/terminos" }
     ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/terminos" }],
   }),
 });
 
