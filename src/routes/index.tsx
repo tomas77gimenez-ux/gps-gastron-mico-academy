@@ -20,6 +20,33 @@ export const Route = createFileRoute("/")({
       { name: "description", content: "Plataforma de formación para profesionales gastronómicos. Cursos, herramientas y mentoría para transformar tu restaurante." },
       { property: "og:title", content: "GPS Gastronômico" },
       { property: "og:description", content: "Plataforma de formación para profesionales gastronómicos." },
+      { property: "og:url", content: "https://plataforma-test1.lovable.app/" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:title", content: "GPS Gastronômico" },
+      { name: "twitter:description", content: "Plataforma de formación para profesionales gastronómicos." },
+    ],
+    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: [
+            ["¿Qué incluye la membresía?", "Acceso a todos los cursos, dashboard financiero (DRE) en tiempo real, herramientas de gestión, comunidad privada y mentorías en vivo según tu plan."],
+            ["¿Cuáles son los planes disponibles?", "Tenemos un plan mensual y un plan anual con descuento. Puedes ver el detalle completo y comparativa en la sección de Planes."],
+            ["¿Puedo cancelar cuando quiera?", "Sí. Puedes cancelar tu suscripción en cualquier momento desde tu perfil, sin penalizaciones ni preguntas."],
+            ["¿Los cursos otorgan certificado?", "Sí. Al completar cada curso recibes un certificado digital firmado por Daniel Gimenez que puedes compartir en LinkedIn y CVs."],
+            ["¿Cómo funciona la mentoría?", "Las mentorías son sesiones grupales en vivo (y opcionalmente 1:1 en planes premium) donde revisamos tu DRE, tus desafíos operativos y diseñamos un plan de acción concreto."],
+            ["¿Necesito conocimientos previos de gestión?", "No. La metodología está pensada para todos los niveles, desde dueños sin formación financiera hasta chefs ejecutivos y gerentes de cadenas."],
+            ["¿En cuánto tiempo veo resultados?", "La mayoría de nuestros mentorados ven mejoras concretas en margen y food cost en los primeros 60-90 días aplicando el método."],
+          ].map(([q, a]) => ({
+            "@type": "Question",
+            name: q,
+            acceptedAnswer: { "@type": "Answer", text: a },
+          })),
+        }),
+      },
     ],
   }),
 });

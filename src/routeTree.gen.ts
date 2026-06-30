@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TiendaRouteImport } from './routes/tienda'
 import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
@@ -35,6 +36,11 @@ const TiendaRoute = TiendaRouteImport.update({
 const TerminosRoute = TerminosRouteImport.update({
   id: '/terminos',
   path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -146,6 +153,7 @@ export interface FileRoutesByTo {
   '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -166,6 +174,7 @@ export interface FileRoutesById {
   '/privacidad': typeof PrivacidadRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
   '/checkout/return': typeof CheckoutReturnRoute
@@ -187,6 +196,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
     | '/checkout/return'
@@ -206,6 +216,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
     | '/checkout/return'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/privacidad'
     | '/registro'
     | '/reset-password'
+    | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
     | '/checkout/return'
@@ -245,6 +257,7 @@ export interface RootRouteChildren {
   PrivacidadRoute: typeof PrivacidadRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
   TiendaRoute: typeof TiendaRoute
   CheckoutReturnRoute: typeof CheckoutReturnRoute
@@ -266,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/terminos'
       fullPath: '/terminos'
       preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -389,6 +409,7 @@ const rootRouteChildren: RootRouteChildren = {
   PrivacidadRoute: PrivacidadRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
   TiendaRoute: TiendaRoute,
   CheckoutReturnRoute: CheckoutReturnRoute,
