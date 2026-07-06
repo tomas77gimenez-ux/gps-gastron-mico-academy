@@ -5,6 +5,7 @@ import { CourseManager } from "@/components/admin/CourseManager";
 import { UserManager } from "@/components/admin/UserManager";
 import { Shield, LogIn, BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthSession } from "@/hooks/useAuthSession";
 
 export const Route = createFileRoute("/admin")({
   component: AdminPage,
@@ -22,9 +23,9 @@ export const Route = createFileRoute("/admin")({
 });
 
 function AdminPage() {
-  const [user, setUser] = useState<any>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const { isReady, user } = useAuthSession();
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [roleChecked, setRoleChecked] = useState(false);
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
@@ -32,36 +33,27 @@ function AdminPage() {
   const [tab, setTab] = useState<"courses" | "users">("courses");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: currentUser.id,
-          _role: "admin",
-        });
+    let cancelled = false;
+    if (!isReady) return;
+    if (!user) {
+      setIsAdmin(false);
+      setRoleChecked(true);
+      return;
+    }
+    setRoleChecked(false);
+    supabase
+      .rpc("has_role", { _user_id: user.id, _role: "admin" })
+      .then(({ data }) => {
+        if (cancelled) return;
         setIsAdmin(!!data);
-      } else {
-        setIsAdmin(false);
-      }
-      setLoading(false);
-    });
+        setRoleChecked(true);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isReady, user?.id]);
 
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: currentUser.id,
-          _role: "admin",
-        });
-        setIsAdmin(!!data);
-      }
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const loading = !isReady || (!!user && !roleChecked);
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();
