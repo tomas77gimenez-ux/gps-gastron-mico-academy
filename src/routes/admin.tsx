@@ -32,35 +32,43 @@ function AdminPage() {
   const [tab, setTab] = useState<"courses" | "users">("courses");
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      const currentUser = session?.user ?? null;
+    let cancelled = false;
+
+    async function check(currentUser: any) {
+      if (cancelled) return;
       setUser(currentUser);
-      if (currentUser) {
-        const { data } = await supabase.rpc("has_role", {
-          _user_id: currentUser.id,
-          _role: "admin",
-        });
-        setIsAdmin(!!data);
-      } else {
+      if (!currentUser) {
         setIsAdmin(false);
+        setLoading(false);
+        return;
       }
-      setLoading(false);
-    });
-
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      const currentUser = session?.user ?? null;
-      setUser(currentUser);
-      if (currentUser) {
+      try {
         const { data } = await supabase.rpc("has_role", {
           _user_id: currentUser.id,
           _role: "admin",
         });
+        if (cancelled) return;
         setIsAdmin(!!data);
+      } catch {
+        if (cancelled) return;
+        setIsAdmin(false);
+      } finally {
+        if (!cancelled) setLoading(false);
       }
-      setLoading(false);
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      check(session?.user ?? null);
     });
 
-    return () => subscription.unsubscribe();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      check(session?.user ?? null);
+    });
+
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
   }, []);
 
   async function handleLogin(e: React.FormEvent) {
