@@ -1,3 +1,10 @@
+export type PlanTier = "basico" | "premium";
+
+export const PLAN_TIERS: { value: PlanTier; label: string }[] = [
+  { value: "basico", label: "Básico" },
+  { value: "premium", label: "Premium" },
+];
+
 export interface Course {
   id: string;
   title: string;
@@ -37,6 +44,7 @@ export interface Lesson {
   updated_at: string;
   panda_video_id?: string | null;
   panda_library_id?: string | null;
+  required_plan?: PlanTier;
 }
 
 export interface CourseMaterial {
@@ -48,4 +56,5 @@ export interface CourseMaterial {
   file_type: string;
   file_size: number | null;
   created_at: string;
+  required_plan?: PlanTier;
 }
