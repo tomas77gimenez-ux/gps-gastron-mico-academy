@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { CourseMaterial } from "@/lib/admin-types";
-import { Upload, Trash2, FileText, Download, Loader2 } from "lucide-react";
+import type { CourseMaterial, PlanTier } from "@/lib/admin-types";
+import { PLAN_TIERS } from "@/lib/admin-types";
+import { Upload, Trash2, FileText, Download, Loader2, Crown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 function formatSize(bytes: number | null) {
@@ -16,6 +17,7 @@ export function MaterialUpload({ courseId }: { courseId: string }) {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [requiredPlan, setRequiredPlan] = useState<PlanTier>("basico");
 
   async function loadMaterials() {
     const { data } = await supabase
@@ -56,6 +58,7 @@ export function MaterialUpload({ courseId }: { courseId: string }) {
       file_url: urlData.publicUrl,
       file_type: ext,
       file_size: file.size,
+      required_plan: requiredPlan,
     } as any);
 
     if (insertErr) setError(insertErr.message);
@@ -82,7 +85,25 @@ export function MaterialUpload({ courseId }: { courseId: string }) {
         <h4 className="text-sm font-semibold flex items-center gap-1.5">
           <FileText className="w-4 h-4 text-primary" /> Materiales ({materials.length})
         </h4>
-        <div className="relative">
+        <div className="flex items-center gap-2">
+          <div className="flex gap-1 p-0.5 rounded-md bg-secondary/50 text-xs">
+            {PLAN_TIERS.map(p => (
+              <button
+                key={p.value}
+                type="button"
+                onClick={() => setRequiredPlan(p.value)}
+                className={`px-2 py-1 rounded inline-flex items-center gap-1 transition-all ${
+                  requiredPlan === p.value
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground"
+                }`}
+                title={`Nuevo material será ${p.label}`}
+              >
+                {p.value === "premium" ? <Crown className="w-3 h-3" /> : <Star className="w-3 h-3" />}
+                {p.label}
+              </button>
+            ))}
+          </div>
           <input ref={fileRef} type="file" onChange={handleUpload} className="hidden"
             accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.zip,.jpg,.png,.mp3,.mp4" />
           <Button variant="outline" size="sm" onClick={() => fileRef.current?.click()} disabled={uploading}>
@@ -102,6 +123,11 @@ export function MaterialUpload({ courseId }: { courseId: string }) {
               <p className="text-sm font-medium truncate">{mat.title}</p>
               <p className="text-xs text-muted-foreground">
                 {mat.file_type.toUpperCase()} · {formatSize(mat.file_size)}
+                {(mat.required_plan ?? "basico") === "premium" ? (
+                  <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
+                ) : (
+                  <span className="ml-2 text-blue-300 inline-flex items-center gap-0.5"><Star className="w-3 h-3" /> Básico</span>
+                )}
               </p>
             </div>
             <a href={mat.file_url} target="_blank" rel="noopener noreferrer"
