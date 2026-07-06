@@ -337,14 +337,19 @@ function CourseDetailPage() {
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                      <Lock className="w-7 h-7 text-primary" />
+                      {activeNeedsUpgrade ? <Crown className="w-7 h-7 text-primary" /> : <Lock className="w-7 h-7 text-primary" />}
                     </div>
-                    <p className="text-sm text-foreground/80 max-w-sm">{t("cursos.aulaBloqueada")}</p>
+                    <p className="text-sm text-foreground/80 max-w-sm">
+                      {activeNeedsUpgrade
+                        ? "Esta lección requiere el Plan Premium."
+                        : t("cursos.aulaBloqueada")}
+                    </p>
                     <Link
                       to="/planes"
                       className="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" /> {t("cursos.verPlanes")}
+                      {activeNeedsUpgrade ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                      {activeNeedsUpgrade ? "Actualizar a Premium" : t("cursos.verPlanes")}
                     </Link>
                   </div>
                 </div>
