@@ -295,6 +295,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
       sort_order: lessons.length,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      required_plan: form.required_plan ?? "basico",
     } as any);
     if (err) { setError(err.message); return; }
     setCreating(false);
@@ -311,6 +312,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
       is_free: form.is_free,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      required_plan: form.required_plan ?? "basico",
     } as any).eq("id", id);
     if (err) { setError(err.message); return; }
     setEditing(null);
