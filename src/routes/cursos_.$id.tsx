@@ -387,15 +387,15 @@ function CourseDetailPage() {
                       <p className="text-sm text-muted-foreground">
                         Esta clase está compuesta por un documento editable. Descargá el material a continuación para trabajarlo en tu computadora.
                       </p>
-                      <a
-                        href={getMaterialDownloadUrl(activeMaterials[0])}
-                        download={getMaterialFilename(activeMaterials[0])}
-                        onClick={() => notifyMaterialDownload(activeMaterials[0])}
-                        className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+                      <button
+                        type="button"
+                        onClick={() => handleDownload(activeMaterials[0])}
+                        disabled={downloadingId === activeMaterials[0].id}
+                        className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
                       >
                         <Download className="w-4 h-4" />
-                        Descargar material
-                      </a>
+                        {downloadingId === activeMaterials[0].id ? "Descargando..." : "Descargar material"}
+                      </button>
                     </div>
                   </div>
                 ) : (
@@ -431,12 +431,12 @@ function CourseDetailPage() {
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
                       canDownload(m) ? (
-                      <a
+                      <button
                         key={m.id}
-                        href={getMaterialDownloadUrl(m)}
-                        download={getMaterialFilename(m)}
-                        onClick={() => notifyMaterialDownload(m)}
-                        className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group text-left"
+                        type="button"
+                        onClick={() => handleDownload(m)}
+                        disabled={downloadingId === m.id}
+                        className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:border-primary/50 transition-colors px-4 py-3 group text-left disabled:opacity-60"
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
@@ -452,10 +452,10 @@ function CourseDetailPage() {
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
                           <span className="text-[11px] underline underline-offset-2 hover:text-primary/80">
-                            Descargar
+                            {downloadingId === m.id ? "..." : "Descargar"}
                           </span>
                         </div>
-                      </a>
+                      </button>
                       ) : (
                         <Link
                           key={m.id}
