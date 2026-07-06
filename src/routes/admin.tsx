@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CourseManager } from "@/components/admin/CourseManager";
-import { Shield, LogIn } from "lucide-react";
+import { UserManager } from "@/components/admin/UserManager";
+import { Shield, LogIn, BookOpen, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/admin")({
@@ -28,6 +29,7 @@ function AdminPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
+  const [tab, setTab] = useState<"courses" | "users">("courses");
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -161,14 +163,32 @@ function AdminPage() {
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
               <Shield className="w-3.5 h-3.5" /> Admin
             </div>
-            <h1 className="text-2xl font-bold font-display">Gestión de Contenido</h1>
+            <h1 className="text-2xl font-bold font-display">Panel de Administración</h1>
             <p className="text-muted-foreground text-sm mt-1">
-              Administra cursos, lecciones y materiales · {user.email}
+              {user.email}
             </p>
           </div>
           <Button variant="outline" size="sm" onClick={handleLogout}>Cerrar Sesión</Button>
         </div>
-        <CourseManager />
+        <div className="flex gap-1 p-1 rounded-lg bg-secondary/50 w-fit mb-6">
+          <button
+            onClick={() => setTab("courses")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
+              tab === "courses" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <BookOpen className="w-4 h-4" /> Cursos
+          </button>
+          <button
+            onClick={() => setTab("users")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
+              tab === "users" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Users className="w-4 h-4" /> Usuarios
+          </button>
+        </div>
+        {tab === "courses" ? <CourseManager /> : <UserManager />}
       </div>
     </div>
   );
