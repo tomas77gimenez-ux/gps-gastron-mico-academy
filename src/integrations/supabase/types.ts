@@ -23,6 +23,7 @@ export type Database = {
           file_url: string
           id: string
           lesson_id: string | null
+          required_plan: Database["public"]["Enums"]["plan_tier"]
           title: string
         }
         Insert: {
@@ -33,6 +34,7 @@ export type Database = {
           file_url: string
           id?: string
           lesson_id?: string | null
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
           title: string
         }
         Update: {
@@ -43,6 +45,7 @@ export type Database = {
           file_url?: string
           id?: string
           lesson_id?: string | null
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
           title?: string
         }
         Relationships: [
@@ -235,6 +238,7 @@ export type Database = {
           panda_library_id: string | null
           panda_video_id: string | null
           poster_url: string | null
+          required_plan: Database["public"]["Enums"]["plan_tier"]
           sort_order: number
           title: string
           updated_at: string
@@ -251,6 +255,7 @@ export type Database = {
           panda_library_id?: string | null
           panda_video_id?: string | null
           poster_url?: string | null
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
           sort_order?: number
           title: string
           updated_at?: string
@@ -267,6 +272,7 @@ export type Database = {
           panda_library_id?: string | null
           panda_video_id?: string | null
           poster_url?: string | null
+          required_plan?: Database["public"]["Enums"]["plan_tier"]
           sort_order?: number
           title?: string
           updated_at?: string
@@ -316,12 +322,15 @@ export type Database = {
           current_period_end: string | null
           current_period_start: string | null
           environment: string
+          granted_by: string | null
           id: string
-          price_id: string
-          product_id: string
+          notes: string | null
+          plan_tier: Database["public"]["Enums"]["plan_tier"] | null
+          price_id: string | null
+          product_id: string | null
           status: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
           updated_at: string | null
           user_id: string
         }
@@ -331,12 +340,15 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           environment?: string
+          granted_by?: string | null
           id?: string
-          price_id: string
-          product_id: string
+          notes?: string | null
+          plan_tier?: Database["public"]["Enums"]["plan_tier"] | null
+          price_id?: string | null
+          product_id?: string | null
           status?: string
-          stripe_customer_id: string
-          stripe_subscription_id: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -346,12 +358,15 @@ export type Database = {
           current_period_end?: string | null
           current_period_start?: string | null
           environment?: string
+          granted_by?: string | null
           id?: string
-          price_id?: string
-          product_id?: string
+          notes?: string | null
+          plan_tier?: Database["public"]["Enums"]["plan_tier"] | null
+          price_id?: string | null
+          product_id?: string | null
           status?: string
-          stripe_customer_id?: string
-          stripe_subscription_id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
           updated_at?: string | null
           user_id?: string
         }
@@ -380,6 +395,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_users: {
+        Args: never
+        Returns: {
+          created_at: string
+          current_period_end: string
+          email: string
+          environment: string
+          is_admin: boolean
+          plan_tier: Database["public"]["Enums"]["plan_tier"]
+          status: string
+          subscription_id: string
+          user_id: string
+        }[]
+      }
       get_lesson_video: {
         Args: { _lesson_id: string }
         Returns: {
@@ -388,8 +417,24 @@ export type Database = {
           video_url: string
         }[]
       }
+      grant_subscription: {
+        Args: {
+          _duration_days: number
+          _notes?: string
+          _plan: Database["public"]["Enums"]["plan_tier"]
+          _user_id: string
+        }
+        Returns: string
+      }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
+      has_plan_access: {
+        Args: {
+          _required: Database["public"]["Enums"]["plan_tier"]
+          _user_id: string
+        }
         Returns: boolean
       }
       has_role: {
@@ -399,9 +444,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      revoke_subscription: {
+        Args: { _subscription_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
+      plan_tier: "basico" | "premium"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -530,6 +580,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
+      plan_tier: ["basico", "premium"],
     },
   },
 } as const
