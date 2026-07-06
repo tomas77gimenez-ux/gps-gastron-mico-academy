@@ -131,7 +131,13 @@ function CourseDetailPage() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
-  const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+  const canPlay = (lesson: Lesson) =>
+    lesson.is_free || hasPlanAccess(sub.planTier, lesson.required_plan ?? "basico");
+  const canDownload = (material: Material) =>
+    hasPlanAccess(sub.planTier, material.required_plan ?? "basico");
+  const activeLessonRequired: PlanTier = activeLesson?.required_plan ?? "basico";
+  const activeNeedsUpgrade =
+    activeLesson && !canPlay(activeLesson) && sub.planTier === "basico" && activeLessonRequired === "premium";
 
   // Fetch sensitive video identifiers via subscription-gated RPC when active lesson changes
   useEffect(() => {
