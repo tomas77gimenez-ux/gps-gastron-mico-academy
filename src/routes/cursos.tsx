@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight } from "lucide-react";
+import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { PILLARS } from "@/lib/admin-types";
+import { hasPlanAccess } from "@/lib/plan-access";
+import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
   component: CursosPage,
@@ -34,6 +36,7 @@ interface CourseRow {
   module_number: number | null;
   lessonCount: number;
   hasFreeLesson: boolean;
+  minRequiredPlan: PlanTier | null;
 }
 
 function CursosPage() {
@@ -58,19 +61,26 @@ function CursosPage() {
         if (courseErr) console.error("[cursos] courses query error:", courseErr);
 
         const ids = (courseData ?? []).map(c => c.id);
-        let lessonMap: Record<string, { count: number; hasFree: boolean }> = {};
+        let lessonMap: Record<string, { count: number; hasFree: boolean; minPlan: PlanTier | null }> = {};
         if (ids.length > 0) {
           const { data: lessonData, error: lessonErr } = await supabase
             .from("lessons")
-            .select("course_id, is_free")
+            .select("course_id, is_free, required_plan")
             .in("course_id", ids);
           if (lessonErr) console.error("[cursos] lessons query error:", lessonErr);
-          for (const id of ids) lessonMap[id] = { count: 0, hasFree: false };
+          for (const id of ids) lessonMap[id] = { count: 0, hasFree: false, minPlan: null };
           for (const l of lessonData ?? []) {
             const m = lessonMap[l.course_id];
             if (m) {
               m.count += 1;
               if (l.is_free) m.hasFree = true;
+              if (!l.is_free) {
+                const rp = (l.required_plan as PlanTier | null) ?? "basico";
+                if (rp === "basico" || m.minPlan === null) {
+                  // Básico é o mínimo; se algum requer básico, esse vira o mínimo
+                  if (m.minPlan !== "basico") m.minPlan = rp;
+                }
+              }
             }
           }
         }
@@ -80,6 +90,7 @@ function CursosPage() {
           ...c,
           lessonCount: lessonMap[c.id]?.count ?? 0,
           hasFreeLesson: lessonMap[c.id]?.hasFree ?? false,
+          minRequiredPlan: lessonMap[c.id]?.minPlan ?? null,
         })));
       } catch (e) {
         console.error("[cursos] unexpected error:", e);
@@ -165,7 +176,7 @@ function CursosPage() {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                       {modules.map(course => (
-                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                        <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                       ))}
                     </div>
                   )}
@@ -182,7 +193,7 @@ function CursosPage() {
                     <h3 className="text-lg font-bold font-display mb-4">{category}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                       {list.map(course => (
-                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                        <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                       ))}
                     </div>
                   </section>
