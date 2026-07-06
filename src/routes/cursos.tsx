@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight } from "lucide-react";
+import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { PILLARS } from "@/lib/admin-types";
+import { hasPlanAccess } from "@/lib/plan-access";
+import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
   component: CursosPage,
@@ -34,6 +36,7 @@ interface CourseRow {
   module_number: number | null;
   lessonCount: number;
   hasFreeLesson: boolean;
+  minRequiredPlan: PlanTier | null;
 }
 
 function CursosPage() {
@@ -58,19 +61,26 @@ function CursosPage() {
         if (courseErr) console.error("[cursos] courses query error:", courseErr);
 
         const ids = (courseData ?? []).map(c => c.id);
-        let lessonMap: Record<string, { count: number; hasFree: boolean }> = {};
+        let lessonMap: Record<string, { count: number; hasFree: boolean; minPlan: PlanTier | null }> = {};
         if (ids.length > 0) {
           const { data: lessonData, error: lessonErr } = await supabase
             .from("lessons")
-            .select("course_id, is_free")
+            .select("course_id, is_free, required_plan")
             .in("course_id", ids);
           if (lessonErr) console.error("[cursos] lessons query error:", lessonErr);
-          for (const id of ids) lessonMap[id] = { count: 0, hasFree: false };
+          for (const id of ids) lessonMap[id] = { count: 0, hasFree: false, minPlan: null };
           for (const l of lessonData ?? []) {
             const m = lessonMap[l.course_id];
             if (m) {
               m.count += 1;
               if (l.is_free) m.hasFree = true;
+              if (!l.is_free) {
+                const rp = (l.required_plan as PlanTier | null) ?? "basico";
+                if (rp === "basico" || m.minPlan === null) {
+                  // Básico é o mínimo; se algum requer básico, esse vira o mínimo
+                  if (m.minPlan !== "basico") m.minPlan = rp;
+                }
+              }
             }
           }
         }
@@ -80,6 +90,7 @@ function CursosPage() {
           ...c,
           lessonCount: lessonMap[c.id]?.count ?? 0,
           hasFreeLesson: lessonMap[c.id]?.hasFree ?? false,
+          minRequiredPlan: lessonMap[c.id]?.minPlan ?? null,
         })));
       } catch (e) {
         console.error("[cursos] unexpected error:", e);
@@ -165,7 +176,7 @@ function CursosPage() {
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                       {modules.map(course => (
-                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                        <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                       ))}
                     </div>
                   )}
@@ -182,7 +193,7 @@ function CursosPage() {
                     <h3 className="text-lg font-bold font-display mb-4">{category}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                       {list.map(course => (
-                        <CourseGridCard key={course.id} course={course} hasAccess={sub.hasActive} />
+                        <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                       ))}
                     </div>
                   </section>
@@ -196,8 +207,11 @@ function CursosPage() {
   );
 }
 
-function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: boolean }) {
+function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: PlanTier | null }) {
   const { t } = useI18n();
+  const requiredPlan: PlanTier = course.minRequiredPlan ?? "basico";
+  const hasAccess = hasPlanAccess(userPlan, requiredPlan);
+  const needsUpgrade = userPlan === "basico" && requiredPlan === "premium";
   const locked = !hasAccess && !course.hasFreeLesson;
 
   return (
@@ -224,7 +238,9 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
         {locked ? (
           <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
             <Lock className="w-8 h-8 text-primary" />
-            <span className="text-xs font-medium text-foreground/80">{t("cursos.bloqueado")}</span>
+            <span className="text-xs font-medium text-foreground/80">
+              {needsUpgrade ? "Requiere Premium" : t("cursos.bloqueado")}
+            </span>
           </div>
         ) : (
           <>
@@ -240,11 +256,22 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
             )}
           </>
         )}
+
+        {requiredPlan === "premium" && (
+          <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-primary/90 text-primary-foreground px-2 py-0.5 rounded inline-flex items-center gap-1">
+            <Crown className="w-3 h-3" /> Premium
+          </span>
+        )}
       </div>
       <div className="p-4">
         <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground mb-2">
           <span>{course.level}</span>
           {course.estimated_duration && <><span>·</span><span>{course.estimated_duration}</span></>}
+          {requiredPlan === "basico" && (
+            <span className="ml-auto inline-flex items-center gap-0.5 text-blue-300 normal-case">
+              <Star className="w-3 h-3" /> Básico
+            </span>
+          )}
         </div>
         <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}

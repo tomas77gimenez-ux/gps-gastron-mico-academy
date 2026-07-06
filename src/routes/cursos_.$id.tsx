@@ -5,8 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText } from "lucide-react";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star } from "lucide-react";
 import { toast } from "sonner";
+import { hasPlanAccess } from "@/lib/plan-access";
+import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos_/$id")({
   component: CourseDetailPage,
@@ -19,13 +21,13 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, poster_url, is_free, sort_order")
+        .select("id, title, description, duration, poster_url, is_free, sort_order, required_plan")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
     const { data: materials } = await supabase
       .from("course_materials")
-      .select("id, lesson_id, title, file_url, file_type, file_size")
+      .select("id, lesson_id, title, file_url, file_type, file_size, required_plan")
       .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
@@ -99,6 +101,7 @@ interface Lesson {
   sort_order: number;
   panda_video_id: string | null;
   panda_library_id: string | null;
+  required_plan?: PlanTier;
 }
 
 interface Material {
@@ -108,6 +111,7 @@ interface Material {
   file_url: string;
   file_type: string;
   file_size: number | null;
+  required_plan?: PlanTier;
 }
 
 function CourseDetailPage() {
@@ -127,7 +131,13 @@ function CourseDetailPage() {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
   const activeLesson = lessons.find(l => l.id === activeLessonId) ?? null;
-  const canPlay = (lesson: Lesson) => sub.hasActive || lesson.is_free;
+  const canPlay = (lesson: Lesson) =>
+    lesson.is_free || hasPlanAccess(sub.planTier, lesson.required_plan ?? "basico");
+  const canDownload = (material: Material) =>
+    hasPlanAccess(sub.planTier, material.required_plan ?? "basico");
+  const activeLessonRequired: PlanTier = activeLesson?.required_plan ?? "basico";
+  const activeNeedsUpgrade =
+    activeLesson && !canPlay(activeLesson) && sub.planTier === "basico" && activeLessonRequired === "premium";
 
   // Fetch sensitive video identifiers via subscription-gated RPC when active lesson changes
   useEffect(() => {
@@ -327,14 +337,19 @@ function CourseDetailPage() {
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                      <Lock className="w-7 h-7 text-primary" />
+                      {activeNeedsUpgrade ? <Crown className="w-7 h-7 text-primary" /> : <Lock className="w-7 h-7 text-primary" />}
                     </div>
-                    <p className="text-sm text-foreground/80 max-w-sm">{t("cursos.aulaBloqueada")}</p>
+                    <p className="text-sm text-foreground/80 max-w-sm">
+                      {activeNeedsUpgrade
+                        ? "Esta lección requiere el Plan Premium."
+                        : t("cursos.aulaBloqueada")}
+                    </p>
                     <Link
                       to="/planes"
                       className="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2"
                     >
-                      <Sparkles className="w-4 h-4" /> {t("cursos.verPlanes")}
+                      {activeNeedsUpgrade ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
+                      {activeNeedsUpgrade ? "Actualizar a Premium" : t("cursos.verPlanes")}
                     </Link>
                   </div>
                 </div>
@@ -395,6 +410,7 @@ function CourseDetailPage() {
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
+                      canDownload(m) ? (
                       <a
                         key={m.id}
                         href={getMaterialDownloadUrl(m)}
@@ -420,6 +436,31 @@ function CourseDetailPage() {
                           </span>
                         </div>
                       </a>
+                      ) : (
+                        <Link
+                          key={m.id}
+                          to="/planes"
+                          className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-secondary/40 px-4 py-3 group text-left opacity-80 hover:opacity-100 transition-opacity"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center">
+                              <Lock className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate flex items-center gap-1.5">
+                                {m.title}
+                                <span className="text-[10px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                  <Crown className="w-3 h-3" /> Premium
+                                </span>
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                Actualizá a Premium para descargar
+                              </p>
+                            </div>
+                          </div>
+                          <Crown className="w-4 h-4 shrink-0 text-primary" />
+                        </Link>
+                      )
                     ))}
                     </div>
                   </div>
@@ -516,6 +557,11 @@ function CourseDetailPage() {
                               {lesson.is_free && !sub.hasActive && (
                                 <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded">
                                   {t("cursos.gratis")}
+                                </span>
+                              )}
+                              {!lesson.is_free && (lesson.required_plan ?? "basico") === "premium" && !hasPlanAccess(sub.planTier, "premium") && (
+                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                  <Crown className="w-2.5 h-2.5" /> Premium
                                 </span>
                               )}
                             </div>

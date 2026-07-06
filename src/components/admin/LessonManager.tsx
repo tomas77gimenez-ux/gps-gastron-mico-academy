@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import type { Lesson } from "@/lib/admin-types";
-import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2, Sparkles } from "lucide-react";
+import type { Lesson, PlanTier } from "@/lib/admin-types";
+import { PLAN_TIERS } from "@/lib/admin-types";
+import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2, Sparkles, Crown, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 
@@ -45,6 +46,7 @@ function LessonForm({ lesson, onSave, onCancel }: {
     is_free: lesson?.is_free ?? false,
     panda_video_id: lesson?.panda_video_id ?? "",
     panda_library_id: lesson?.panda_library_id ?? "",
+    required_plan: (lesson?.required_plan ?? "basico") as PlanTier,
   });
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
@@ -221,6 +223,34 @@ function LessonForm({ lesson, onSave, onCancel }: {
             className="rounded border-input" id="is-free" />
           <label htmlFor="is-free" className="text-xs">Lección gratuita (preview)</label>
         </div>
+        <div className="sm:col-span-2">
+          <label className="block text-xs font-medium mb-1">Plan requerido</label>
+          <div className="grid grid-cols-2 gap-2">
+            {PLAN_TIERS.map(p => (
+              <button
+                key={p.value}
+                type="button"
+                onClick={() => setForm(f => ({ ...f, required_plan: p.value }))}
+                disabled={form.is_free}
+                className={`px-3 py-2 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1.5 border ${
+                  form.required_plan === p.value && !form.is_free
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "border-border bg-secondary/40 text-muted-foreground"
+                } ${form.is_free ? "opacity-50 cursor-not-allowed" : "hover:text-foreground"}`}
+              >
+                {p.value === "premium" ? <Crown className="w-3 h-3" /> : <Star className="w-3 h-3" />}
+                {p.label}
+              </button>
+            ))}
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-1">
+            {form.is_free
+              ? "Lección gratuita: visible sin plan."
+              : form.required_plan === "premium"
+                ? "Solo suscriptores Premium podrán ver esta lección."
+                : "Suscriptores Básico y Premium podrán ver esta lección."}
+          </p>
+        </div>
       </div>
       <div className="flex gap-2 justify-end">
         <Button variant="outline" size="sm" onClick={onCancel}><X className="w-3 h-3 mr-1" /> Cancelar</Button>
@@ -265,6 +295,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
       sort_order: lessons.length,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      required_plan: form.required_plan ?? "basico",
     } as any);
     if (err) { setError(err.message); return; }
     setCreating(false);
@@ -281,6 +312,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
       is_free: form.is_free,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      required_plan: form.required_plan ?? "basico",
     } as any).eq("id", id);
     if (err) { setError(err.message); return; }
     setEditing(null);
@@ -331,6 +363,12 @@ export function LessonManager({ courseId }: { courseId: string }) {
                   <p className="text-xs text-muted-foreground">
                     {lesson.duration ?? "—"} · {lesson.content_type}
                     {lesson.is_free && <span className="ml-2 text-green-400">Gratis</span>}
+                    {!lesson.is_free && lesson.required_plan === "premium" && (
+                      <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
+                    )}
+                    {!lesson.is_free && (lesson.required_plan ?? "basico") === "basico" && (
+                      <span className="ml-2 text-blue-300 inline-flex items-center gap-0.5"><Star className="w-3 h-3" /> Básico</span>
+                    )}
                   </p>
                 </div>
                 <button onClick={() => setEditing(lesson.id)} className="p-1.5 rounded hover:bg-secondary"><Pencil className="w-3 h-3" /></button>
