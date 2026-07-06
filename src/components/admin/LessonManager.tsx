@@ -363,6 +363,12 @@ export function LessonManager({ courseId }: { courseId: string }) {
                   <p className="text-xs text-muted-foreground">
                     {lesson.duration ?? "—"} · {lesson.content_type}
                     {lesson.is_free && <span className="ml-2 text-green-400">Gratis</span>}
+                    {!lesson.is_free && lesson.required_plan === "premium" && (
+                      <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
+                    )}
+                    {!lesson.is_free && (lesson.required_plan ?? "basico") === "basico" && (
+                      <span className="ml-2 text-blue-300 inline-flex items-center gap-0.5"><Star className="w-3 h-3" /> Básico</span>
+                    )}
                   </p>
                 </div>
                 <button onClick={() => setEditing(lesson.id)} className="p-1.5 rounded hover:bg-secondary"><Pencil className="w-3 h-3" /></button>
