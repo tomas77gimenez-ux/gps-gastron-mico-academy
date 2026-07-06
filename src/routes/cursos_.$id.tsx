@@ -410,6 +410,7 @@ function CourseDetailPage() {
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
+                      canDownload(m) ? (
                       <a
                         key={m.id}
                         href={getMaterialDownloadUrl(m)}
@@ -435,6 +436,31 @@ function CourseDetailPage() {
                           </span>
                         </div>
                       </a>
+                      ) : (
+                        <Link
+                          key={m.id}
+                          to="/planes"
+                          className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-secondary/40 px-4 py-3 group text-left opacity-80 hover:opacity-100 transition-opacity"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center">
+                              <Lock className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate flex items-center gap-1.5">
+                                {m.title}
+                                <span className="text-[10px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                  <Crown className="w-3 h-3" /> Premium
+                                </span>
+                              </p>
+                              <p className="text-[11px] text-muted-foreground">
+                                Actualizá a Premium para descargar
+                              </p>
+                            </div>
+                          </div>
+                          <Crown className="w-4 h-4 shrink-0 text-primary" />
+                        </Link>
+                      )
                     ))}
                     </div>
                   </div>
