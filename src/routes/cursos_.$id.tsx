@@ -101,6 +101,7 @@ interface Lesson {
   sort_order: number;
   panda_video_id: string | null;
   panda_library_id: string | null;
+  required_plan?: PlanTier;
 }
 
 interface Material {
@@ -110,6 +111,7 @@ interface Material {
   file_url: string;
   file_type: string;
   file_size: number | null;
+  required_plan?: PlanTier;
 }
 
 function CourseDetailPage() {
