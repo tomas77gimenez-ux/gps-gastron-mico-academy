@@ -207,8 +207,11 @@ function CursosPage() {
   );
 }
 
-function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: boolean }) {
+function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: PlanTier | null }) {
   const { t } = useI18n();
+  const requiredPlan: PlanTier = course.minRequiredPlan ?? "basico";
+  const hasAccess = hasPlanAccess(userPlan, requiredPlan);
+  const needsUpgrade = userPlan === "basico" && requiredPlan === "premium";
   const locked = !hasAccess && !course.hasFreeLesson;
 
   return (
@@ -235,7 +238,9 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
         {locked ? (
           <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
             <Lock className="w-8 h-8 text-primary" />
-            <span className="text-xs font-medium text-foreground/80">{t("cursos.bloqueado")}</span>
+            <span className="text-xs font-medium text-foreground/80">
+              {needsUpgrade ? "Requiere Premium" : t("cursos.bloqueado")}
+            </span>
           </div>
         ) : (
           <>
@@ -251,11 +256,22 @@ function CourseGridCard({ course, hasAccess }: { course: CourseRow; hasAccess: b
             )}
           </>
         )}
+
+        {requiredPlan === "premium" && (
+          <span className="absolute top-2 left-2 text-[10px] font-semibold uppercase tracking-wide bg-primary/90 text-primary-foreground px-2 py-0.5 rounded inline-flex items-center gap-1">
+            <Crown className="w-3 h-3" /> Premium
+          </span>
+        )}
       </div>
       <div className="p-4">
         <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground mb-2">
           <span>{course.level}</span>
           {course.estimated_duration && <><span>·</span><span>{course.estimated_duration}</span></>}
+          {requiredPlan === "basico" && (
+            <span className="ml-auto inline-flex items-center gap-0.5 text-blue-300 normal-case">
+              <Star className="w-3 h-3" /> Básico
+            </span>
+          )}
         </div>
         <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}
