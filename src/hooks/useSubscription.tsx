@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import type { PlanTier } from "@/lib/admin-types";
 
 interface SubscriptionState {
   loading: boolean;
@@ -11,6 +12,8 @@ interface SubscriptionState {
   status: string | null;
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
+  planTier: PlanTier | null;
+  environment: string | null;
 }
 
 const initial: SubscriptionState = {
@@ -21,6 +24,8 @@ const initial: SubscriptionState = {
   status: null,
   currentPeriodEnd: null,
   cancelAtPeriodEnd: false,
+  planTier: null,
+  environment: null,
 };
 
 function isActive(status: string | null, periodEnd: string | null): boolean {
@@ -44,18 +49,25 @@ export function useSubscription() {
       const preferredEnvironment = getStripeEnvironment();
       const { data, error } = await supabase
         .from("subscriptions")
-        .select("product_id, status, current_period_end, cancel_at_period_end, environment")
+        .select("product_id, status, current_period_end, cancel_at_period_end, environment, plan_tier")
         .eq("user_id", userId)
         .order("updated_at", { ascending: false })
         .limit(10);
 
       if (error) throw error;
 
-      const selectedSubscription =
-        data?.find((item) => item.environment === preferredEnvironment) ??
-        data?.find((item) => isActive(item.status ?? null, item.current_period_end ?? null)) ??
-        data?.[0] ??
-        null;
+      // Prefer any ACTIVE subscription first (manual grant, live, or sandbox);
+      // Premium wins over Básico when both are active.
+      const actives = (data ?? []).filter((item) =>
+        isActive(item.status ?? null, item.current_period_end ?? null),
+      );
+      const preferredActive =
+        actives.find((i) => i.plan_tier === "premium") ??
+        actives.find((i) => i.environment === "manual") ??
+        actives.find((i) => i.environment === preferredEnvironment) ??
+        actives[0];
+
+      const selectedSubscription = preferredActive ?? data?.[0] ?? null;
 
       setState({
         loading: false,
@@ -65,6 +77,8 @@ export function useSubscription() {
         status: selectedSubscription?.status ?? null,
         currentPeriodEnd: selectedSubscription?.current_period_end ?? null,
         cancelAtPeriodEnd: !!selectedSubscription?.cancel_at_period_end,
+        planTier: (selectedSubscription?.plan_tier as PlanTier | null | undefined) ?? null,
+        environment: selectedSubscription?.environment ?? null,
       });
     } catch {
       setState({
@@ -75,6 +89,8 @@ export function useSubscription() {
         status: null,
         currentPeriodEnd: null,
         cancelAtPeriodEnd: false,
+        planTier: null,
+        environment: null,
       });
     }
   }
