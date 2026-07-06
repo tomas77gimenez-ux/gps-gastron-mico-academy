@@ -559,6 +559,11 @@ function CourseDetailPage() {
                                   {t("cursos.gratis")}
                                 </span>
                               )}
+                              {!lesson.is_free && (lesson.required_plan ?? "basico") === "premium" && !hasPlanAccess(sub.planTier, "premium") && (
+                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                  <Crown className="w-2.5 h-2.5" /> Premium
+                                </span>
+                              )}
                             </div>
                             {lesson.duration && (
                               <span className="text-xs text-muted-foreground">{lesson.duration}</span>
