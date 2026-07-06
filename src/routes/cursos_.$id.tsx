@@ -27,7 +27,7 @@ export const Route = createFileRoute("/cursos_/$id")({
     ]);
     const { data: materials } = await supabase
       .from("course_materials")
-      .select("id, lesson_id, title, file_url, file_type, file_size, required_plan")
+      .select("id, lesson_id, title, file_type, file_size, required_plan")
       .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
@@ -108,7 +108,6 @@ interface Material {
   id: string;
   lesson_id: string | null;
   title: string;
-  file_url: string;
   file_type: string;
   file_size: number | null;
   required_plan?: PlanTier;
@@ -170,33 +169,54 @@ function CourseDetailPage() {
 
   const getMaterialFilename = (material: Material) => {
     const extension = material.file_type?.toLowerCase() || "pdf";
-    return `${material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material"}.${extension}`;
+    const base = material.title.replace(/[^a-z0-9-_ ]/gi, "").trim() || "material";
+    return `${base}.${extension}`;
   };
 
-  const getMaterialDownloadUrl = (material: Material) => {
-    const params = new URLSearchParams({
-      src: material.file_url,
-      filename: getMaterialFilename(material),
-    });
-
-    if (typeof window !== "undefined") {
-      const previewToken = new URLSearchParams(window.location.search).get("__lovable_token");
-      if (previewToken) {
-        params.set("__lovable_token", previewToken);
+  const [downloadingId, setDownloadingId] = useState<string | null>(null);
+  const handleDownload = async (material: Material) => {
+    if (downloadingId) return;
+    setDownloadingId(material.id);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData.session?.access_token;
+      if (!token) {
+        toast.error("Iniciá sesión para descargar");
+        return;
       }
+      const res = await fetch(
+        `/api/public/material-download?material_id=${encodeURIComponent(material.id)}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (res.status === 401) {
+        toast.error("Sesión expirada", { description: "Volvé a iniciar sesión." });
+        return;
+      }
+      if (res.status === 403) {
+        toast.error("Sin acceso a este material", {
+          description: "Actualizá tu plan para descargarlo.",
+        });
+        return;
+      }
+      if (!res.ok) {
+        toast.error("No se pudo descargar", { description: `Error ${res.status}` });
+        return;
+      }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = getMaterialFilename(material);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      toast.success("Descarga iniciada", { description: getMaterialFilename(material) });
+    } catch (err: any) {
+      toast.error("Error al descargar", { description: err?.message ?? "Intentá nuevamente" });
+    } finally {
+      setDownloadingId(null);
     }
-
-    return `/api/public/material-download?${params.toString()}`;
-  };
-
-  const notifyMaterialDownload = (material: Material) => {
-    const filename = getMaterialFilename(material);
-    console.log("[download] start", {
-      url: getMaterialDownloadUrl(material),
-      filename,
-    });
-
-    toast.success("Descarga iniciada", { description: filename });
   };
 
   // Fallback: garante que os materiais sejam buscados no cliente
@@ -208,7 +228,7 @@ function CourseDetailPage() {
       if (lessonIds.length === 0) return;
       const { data } = await supabase
         .from("course_materials")
-        .select("id, lesson_id, title, file_url, file_type, file_size")
+        .select("id, lesson_id, title, file_type, file_size, required_plan")
         .in("lesson_id", lessonIds);
       if (!cancelled && data) setMaterials(data as Material[]);
     })();
