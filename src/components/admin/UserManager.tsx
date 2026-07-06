@@ -103,7 +103,7 @@ export function UserManager() {
       _user_id: grantTarget.user_id,
       _plan: form.plan,
       _duration_days: form.duration,
-      _notes: form.notes || null,
+      _notes: form.notes || undefined,
     });
     setSaving(false);
     if (err) {
