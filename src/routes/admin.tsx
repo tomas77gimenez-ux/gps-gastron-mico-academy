@@ -3,7 +3,8 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { CourseManager } from "@/components/admin/CourseManager";
 import { UserManager } from "@/components/admin/UserManager";
-import { Shield, LogIn, BookOpen, Users } from "lucide-react";
+import { MetricsPanel } from "@/components/admin/MetricsPanel";
+import { Shield, LogIn, BookOpen, Users, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
@@ -30,7 +31,7 @@ function AdminPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
-  const [tab, setTab] = useState<"courses" | "users">("courses");
+  const [tab, setTab] = useState<"metrics" | "courses" | "users">("metrics");
 
   useEffect(() => {
     let cancelled = false;
@@ -164,6 +165,14 @@ function AdminPage() {
         </div>
         <div className="flex gap-1 p-1 rounded-lg bg-secondary/50 w-fit mb-6">
           <button
+            onClick={() => setTab("metrics")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
+              tab === "metrics" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <TrendingUp className="w-4 h-4" /> Métricas
+          </button>
+          <button
             onClick={() => setTab("courses")}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
               tab === "courses" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
@@ -180,7 +189,9 @@ function AdminPage() {
             <Users className="w-4 h-4" /> Usuarios
           </button>
         </div>
-        {tab === "courses" ? <CourseManager /> : <UserManager />}
+        {tab === "metrics" && <MetricsPanel />}
+        {tab === "courses" && <CourseManager />}
+        {tab === "users" && <UserManager />}
       </div>
     </div>
   );
