@@ -58,7 +58,7 @@ function RegistroPage() {
 
   async function handleGoogleSignup() {
     await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin,
     });
   }
 
