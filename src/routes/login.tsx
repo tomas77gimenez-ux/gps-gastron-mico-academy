@@ -67,7 +67,7 @@ function LoginPage() {
 
   async function handleGoogleLogin() {
     await lovable.auth.signInWithOAuth("google", {
-      redirect_uri: window.location.origin + "/dashboard",
+      redirect_uri: window.location.origin,
     });
   }
 
