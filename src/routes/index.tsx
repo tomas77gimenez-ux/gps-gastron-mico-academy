@@ -367,7 +367,7 @@ function HomePage() {
                 <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
                   billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
                 }`}>
-                  −20%
+                  −15%
                 </span>
               </button>
             </div>
