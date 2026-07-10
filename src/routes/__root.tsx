@@ -1,8 +1,11 @@
 import { Outlet, Link, createRootRoute, HeadContent, Scripts } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n";
 import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { supabase } from "@/integrations/supabase/client";
+import { sendWelcomeIfNeeded } from "@/lib/email/send-welcome";
 
 import appCss from "../styles.css?url";
 
@@ -110,6 +113,18 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          // Fire-and-forget; internally idempotent via profiles.welcomed_at.
+          void sendWelcomeIfNeeded(session);
+        }
+      },
+    );
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <I18nProvider>
       <Navbar />
