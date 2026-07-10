@@ -108,6 +108,13 @@ export function Navbar() {
             {/* Language toggle: ES → EN → PT → ES */}
             <button
               onClick={toggleLang}
+              aria-label={
+                lang === "es"
+                  ? "Switch to English"
+                  : lang === "en"
+                    ? "Mudar para Português"
+                    : "Cambiar a Español"
+              }
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors uppercase"
               title={
                 lang === "es"
@@ -123,12 +130,14 @@ export function Navbar() {
 
             <button
               onClick={() => setSearchOpen(!searchOpen)}
+              aria-label={t("nav.buscar")}
               className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               <Search className="w-5 h-5" />
             </button>
             <Link
               to="/asistente"
+              aria-label={t("nav.asistente")}
               className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
@@ -155,6 +164,8 @@ export function Navbar() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
+              aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={mobileOpen}
               className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
