@@ -63,15 +63,12 @@ function HomePage() {
   const { t, lang } = useI18n();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
 
-  const yearlyDiscount = 0.8; // 20% off
-  const basicMonthly = 27;
-  const premiumMonthly = 97;
-  const basicPrice = billing === "monthly"
-    ? `$${basicMonthly}`
-    : `$${Math.round(basicMonthly * 12 * yearlyDiscount)}`;
-  const premiumPrice = billing === "monthly"
-    ? `$${premiumMonthly}`
-    : `$${Math.round(premiumMonthly * 12 * yearlyDiscount)}`;
+  const basicMonthly = 39;
+  const premiumMonthly = 79;
+  const basicYearly = 397;
+  const premiumYearly = 806;
+  const basicPrice = billing === "monthly" ? `$${basicMonthly}` : `$${basicYearly}`;
+  const premiumPrice = billing === "monthly" ? `$${premiumMonthly}` : `$${premiumYearly}`;
   const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
