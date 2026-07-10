@@ -23,7 +23,8 @@ const plans = [
   {
     id: "basico",
     name: { es: "Plan Básico", en: "Basic Plan" },
-    monthlyPrice: 27,
+    monthlyPrice: 39,
+    yearlyPrice: 397,
     priceIdMonthly: "plan_basico_monthly",
     priceIdYearly: "plan_basico_yearly",
     description: { es: "Todo lo que necesitás para empezar a controlar tu restaurante.", en: "Everything you need to start controlling your restaurant." },
@@ -37,7 +38,8 @@ const plans = [
   {
     id: "premium",
     name: { es: "Plan Premium", en: "Premium Plan" },
-    monthlyPrice: 97,
+    monthlyPrice: 79,
+    yearlyPrice: 806,
     priceIdMonthly: "plan_premium_monthly",
     priceIdYearly: "plan_premium_yearly",
     description: { es: "Para dueños que quieren resultados acelerados con acompañamiento.", en: "For owners who want accelerated results with guidance." },
@@ -96,7 +98,7 @@ function PlanesPage() {
   const { t, lang } = useI18n();
   const subscription = useSubscription();
 
-  const yearlyDiscount = 0.8; // 20% off
+  const yearlyDiscount = 0.85; // 15% off (yearlyPrice on each plan is the source of truth)
 
   // Auto-open checkout when arriving from a retry link (?retry_plan=...&retry_period=...)
   useEffect(() => {
@@ -289,7 +291,7 @@ function PlanesPage() {
                   billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
                 }`}
               >
-                −20%
+                −15%
               </span>
             </button>
           </div>
@@ -314,7 +316,7 @@ function PlanesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {plans.map((plan, i) => {
-            const yearlyPrice = Math.round(plan.monthlyPrice * 12 * yearlyDiscount);
+            const yearlyPrice = plan.yearlyPrice ?? Math.round(plan.monthlyPrice * 12 * yearlyDiscount);
             const yearlySavings = plan.monthlyPrice * 12 - yearlyPrice;
             const monthlyEquivalent = (yearlyPrice / 12).toFixed(2);
             const displayPrice = billing === "monthly" ? `$${plan.monthlyPrice}` : `$${yearlyPrice}`;

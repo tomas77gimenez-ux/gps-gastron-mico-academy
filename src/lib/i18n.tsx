@@ -114,7 +114,7 @@ const translations = {
   "planes.faqQ4": { es: "¿Hay garantía de reembolso?", en: "Is there a money-back guarantee?", pt: "Existe garantia de reembolso?" },
   "planes.faqA4": { es: "Ofrecemos 7 días de garantía. Si no estás conforme, te devolvemos el 100% de lo pagado, sin preguntas.", en: "We offer a 7-day guarantee. If you're not satisfied, we refund 100% with no questions asked.", pt: "Oferecemos garantia de 7 dias. Se você não estiver satisfeito, devolvemos 100% do valor pago, sem perguntas." },
   "planes.faqQ5": { es: "¿La factura anual incluye los 12 meses de una vez?", en: "Does the annual invoice cover all 12 months at once?", pt: "A fatura anual cobre os 12 meses de uma vez?" },
-  "planes.faqA5": { es: "Sí. Pagás una sola vez por todo el año y obtenés un 20% de descuento sobre el precio mensual.", en: "Yes. You pay once for the whole year and get a 20% discount over the monthly price.", pt: "Sim. Você paga uma única vez pelo ano todo e ganha 20% de desconto sobre o preço mensal." },
+  "planes.faqA5": { es: "Sí. Pagás una sola vez por todo el año y obtenés un 15% de descuento sobre el precio mensual. Además, todos los planes incluyen 5 días de prueba gratis.", en: "Yes. You pay once for the whole year and get a 15% discount over the monthly price. All plans also include a 5-day free trial.", pt: "Sim. Você paga uma única vez pelo ano todo e ganha 15% de desconto sobre o preço mensal. Todos os planos incluem 5 dias grátis de teste." },
   "planes.garantia": { es: "Garantía de 7 días — devolvemos el 100% si no estás conforme", en: "7-day guarantee — 100% refund if you're not satisfied", pt: "Garantia de 7 dias — devolvemos 100% se você não estiver satisfeito" },
   "planes.pagoSeguro": { es: "Pago seguro vía Stripe", en: "Secure payment via Stripe", pt: "Pagamento seguro via Stripe" },
 
@@ -353,7 +353,7 @@ const translations = {
   "home.plans.perYear": { es: "/año", en: "/yr", pt: "/ano" },
   "home.plans.billingMonthly": { es: "Mensual", en: "Monthly", pt: "Mensal" },
   "home.plans.billingYearly": { es: "Anual", en: "Yearly", pt: "Anual" },
-  "home.plans.save20": { es: "Ahorra 20%", en: "Save 20%", pt: "Economize 20%" },
+  "home.plans.save20": { es: "Ahorra 15%", en: "Save 15%", pt: "Economize 15%" },
   "home.plans.viewAll": { es: "Ver todos los planes", en: "View all plans", pt: "Ver todos os planos" },
   "home.plans.ctaFree": { es: "Empezar gratis", en: "Start free", pt: "Começar grátis" },
   "home.plans.ctaPaid": { es: "Suscribirme", en: "Subscribe", pt: "Assinar" },

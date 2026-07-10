@@ -37,7 +37,12 @@ serve(async (req) => {
       ...(customerEmail && { customer_email: customerEmail }),
       ...(userId && {
         metadata: { userId },
-        ...(isRecurring && { subscription_data: { metadata: { userId } } }),
+        ...(isRecurring && {
+          subscription_data: { metadata: { userId }, trial_period_days: 5 },
+        }),
+      }),
+      ...(isRecurring && !userId && {
+        subscription_data: { trial_period_days: 5 },
       }),
     });
 
