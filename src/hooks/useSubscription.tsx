@@ -8,6 +8,7 @@ interface SubscriptionState {
   loading: boolean;
   isAuthenticated: boolean;
   hasActive: boolean;
+  isAdmin: boolean;
   productId: string | null;
   status: string | null;
   currentPeriodEnd: string | null;
@@ -20,6 +21,7 @@ const initial: SubscriptionState = {
   loading: true,
   isAuthenticated: false,
   hasActive: false,
+  isAdmin: false,
   productId: null,
   status: null,
   currentPeriodEnd: null,
