@@ -14,6 +14,176 @@ export type Database = {
   }
   public: {
     Tables: {
+      breakeven_inputs: {
+        Row: {
+          avg_ticket: number
+          created_at: string
+          current_sales: number | null
+          fixed_costs: number
+          operating_days: number
+          updated_at: string
+          user_id: string
+          variable_cost_pct: number
+        }
+        Insert: {
+          avg_ticket?: number
+          created_at?: string
+          current_sales?: number | null
+          fixed_costs?: number
+          operating_days?: number
+          updated_at?: string
+          user_id: string
+          variable_cost_pct?: number
+        }
+        Update: {
+          avg_ticket?: number
+          created_at?: string
+          current_sales?: number | null
+          fixed_costs?: number
+          operating_days?: number
+          updated_at?: string
+          user_id?: string
+          variable_cost_pct?: number
+        }
+        Relationships: []
+      }
+      cash_movements: {
+        Row: {
+          amount: number
+          created_at: string
+          description: string
+          id: string
+          occurred_at: string
+          session_id: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          occurred_at?: string
+          session_id: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          description?: string
+          id?: string
+          occurred_at?: string
+          session_id?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cash_movements_session_id_fkey"
+            columns: ["session_id"]
+            isOneToOne: false
+            referencedRelation: "cash_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      cash_sessions: {
+        Row: {
+          closed_at: string | null
+          created_at: string
+          id: string
+          opening_fund: number
+          physical_count: number | null
+          responsible: string
+          session_date: string
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          opening_fund?: number
+          physical_count?: number | null
+          responsible?: string
+          session_date?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          closed_at?: string | null
+          created_at?: string
+          id?: string
+          opening_fund?: number
+          physical_count?: number | null
+          responsible?: string
+          session_date?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cmv_settings: {
+        Row: {
+          created_at: string
+          target_pct: number
+          tolerance_pts: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          target_pct?: number
+          tolerance_pts?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          target_pct?: number
+          tolerance_pts?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      cmv_weeks: {
+        Row: {
+          created_at: string
+          id: string
+          month: string
+          purchases: number
+          sales: number
+          updated_at: string
+          user_id: string
+          week: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          month: string
+          purchases?: number
+          sales?: number
+          updated_at?: string
+          user_id: string
+          week: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          month?: string
+          purchases?: number
+          sales?: number
+          updated_at?: string
+          user_id?: string
+          week?: number
+        }
+        Relationships: []
+      }
       course_materials: {
         Row: {
           course_id: string | null
@@ -116,6 +286,146 @@ export type Database = {
           thumbnail_url?: string | null
           title?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      dish_ingredients: {
+        Row: {
+          created_at: string
+          dish_id: string
+          id: string
+          ingredient_id: string
+          quantity: number
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          dish_id: string
+          id?: string
+          ingredient_id: string
+          quantity?: number
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          dish_id?: string
+          id?: string
+          ingredient_id?: string
+          quantity?: number
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dish_ingredients_dish_id_fkey"
+            columns: ["dish_id"]
+            isOneToOne: false
+            referencedRelation: "dishes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "dish_ingredients_ingredient_id_fkey"
+            columns: ["ingredient_id"]
+            isOneToOne: false
+            referencedRelation: "ingredients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dishes: {
+        Row: {
+          created_at: string
+          current_menu_price: number | null
+          id: string
+          name: string
+          target_cmv_pct: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_menu_price?: number | null
+          id?: string
+          name: string
+          target_cmv_pct?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_menu_price?: number | null
+          id?: string
+          name?: string
+          target_cmv_pct?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      dre_expenses: {
+        Row: {
+          amount: number
+          category: string
+          created_at: string
+          description: string
+          dre_month_id: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          category: string
+          created_at?: string
+          description?: string
+          dre_month_id: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          category?: string
+          created_at?: string
+          description?: string
+          dre_month_id?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dre_expenses_dre_month_id_fkey"
+            columns: ["dre_month_id"]
+            isOneToOne: false
+            referencedRelation: "dre_months"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      dre_months: {
+        Row: {
+          cmv_purchases: number
+          created_at: string
+          id: string
+          month: string
+          sales: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cmv_purchases?: number
+          created_at?: string
+          id?: string
+          month: string
+          sales?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cmv_purchases?: number
+          created_at?: string
+          id?: string
+          month?: string
+          sales?: number
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -274,6 +584,39 @@ export type Database = {
         }
         Relationships: []
       }
+      ingredients: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          purchase_price: number
+          unit: string
+          updated_at: string
+          user_id: string
+          yield_factor_pct: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          purchase_price?: number
+          unit?: string
+          updated_at?: string
+          user_id: string
+          yield_factor_pct?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          purchase_price?: number
+          unit?: string
+          updated_at?: string
+          user_id?: string
+          yield_factor_pct?: number
+        }
+        Relationships: []
+      }
       lesson_progress: {
         Row: {
           completed: boolean
@@ -381,6 +724,7 @@ export type Database = {
           created_at: string
           display_name: string | null
           id: string
+          tools_free_access: boolean
           updated_at: string
           user_id: string
           welcomed_at: string | null
@@ -390,6 +734,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          tools_free_access?: boolean
           updated_at?: string
           user_id: string
           welcomed_at?: string | null
@@ -399,6 +744,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          tools_free_access?: boolean
           updated_at?: string
           user_id?: string
           welcomed_at?: string | null
@@ -520,8 +866,13 @@ export type Database = {
           plan_tier: Database["public"]["Enums"]["plan_tier"]
           status: string
           subscription_id: string
+          tools_free_access: boolean
           user_id: string
         }[]
+      }
+      admin_set_tools_access: {
+        Args: { _enabled: boolean; _user_id: string }
+        Returns: boolean
       }
       delete_email: {
         Args: { message_id: number; queue_name: string }
@@ -567,6 +918,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_tools_access: { Args: { _user_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string
