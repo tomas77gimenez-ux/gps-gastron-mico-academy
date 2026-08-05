@@ -38,7 +38,7 @@ function ToolsIndexPage() {
             Todo lo que necesitás para <span className="text-gradient-brand">gestionar con números</span>
           </h1>
           <p className="text-muted-foreground mt-3 max-w-2xl mx-auto">
-            Empezá por el Diagnóstico GPS para saber dónde estás hoy, y después usá cada herramienta
+            Empezá por el DRE para saber dónde estás hoy, y después usá cada herramienta
             para corregir el rumbo con datos reales de tu operación.
           </p>
         </div>
