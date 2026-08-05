@@ -32,6 +32,7 @@ import { Route as HerramientasPuntoEquilibrioRouteImport } from './routes/herram
 import { Route as HerramientasMonitorCmvRouteImport } from './routes/herramientas.monitor-cmv'
 import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herramientas.fichas-tecnicas'
 import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
+import { Route as HerramientasDreRouteImport } from './routes/herramientas.dre'
 import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
@@ -164,6 +165,11 @@ const HerramientasDreMensualRoute = HerramientasDreMensualRouteImport.update({
   path: '/dre-mensual',
   getParentRoute: () => HerramientasRoute,
 } as any)
+const HerramientasDreRoute = HerramientasDreRouteImport.update({
+  id: '/dre',
+  path: '/dre',
+  getParentRoute: () => HerramientasRoute,
+} as any)
 const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
   id: '/control-caja',
   path: '/control-caja',
@@ -267,6 +273,7 @@ export interface FileRoutesByFullPath {
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
   '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
   '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
@@ -305,6 +312,7 @@ export interface FileRoutesByTo {
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
   '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
   '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
@@ -345,6 +353,7 @@ export interface FileRoutesById {
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
   '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
   '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
@@ -386,6 +395,7 @@ export interface FileRouteTypes {
     | '/cursos/$id'
     | '/email/unsubscribe'
     | '/herramientas/control-caja'
+    | '/herramientas/dre'
     | '/herramientas/dre-mensual'
     | '/herramientas/fichas-tecnicas'
     | '/herramientas/monitor-cmv'
@@ -424,6 +434,7 @@ export interface FileRouteTypes {
     | '/cursos/$id'
     | '/email/unsubscribe'
     | '/herramientas/control-caja'
+    | '/herramientas/dre'
     | '/herramientas/dre-mensual'
     | '/herramientas/fichas-tecnicas'
     | '/herramientas/monitor-cmv'
@@ -463,6 +474,7 @@ export interface FileRouteTypes {
     | '/cursos_/$id'
     | '/email/unsubscribe'
     | '/herramientas/control-caja'
+    | '/herramientas/dre'
     | '/herramientas/dre-mensual'
     | '/herramientas/fichas-tecnicas'
     | '/herramientas/monitor-cmv'
@@ -675,6 +687,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasDreMensualRouteImport
       parentRoute: typeof HerramientasRoute
     }
+    '/herramientas/dre': {
+      id: '/herramientas/dre'
+      path: '/dre'
+      fullPath: '/herramientas/dre'
+      preLoaderRoute: typeof HerramientasDreRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
     '/herramientas/control-caja': {
       id: '/herramientas/control-caja'
       path: '/control-caja'
@@ -778,6 +797,7 @@ declare module '@tanstack/react-router' {
 
 interface HerramientasRouteChildren {
   HerramientasControlCajaRoute: typeof HerramientasControlCajaRoute
+  HerramientasDreRoute: typeof HerramientasDreRoute
   HerramientasDreMensualRoute: typeof HerramientasDreMensualRoute
   HerramientasFichasTecnicasRoute: typeof HerramientasFichasTecnicasRoute
   HerramientasMonitorCmvRoute: typeof HerramientasMonitorCmvRoute
@@ -787,6 +807,7 @@ interface HerramientasRouteChildren {
 
 const HerramientasRouteChildren: HerramientasRouteChildren = {
   HerramientasControlCajaRoute: HerramientasControlCajaRoute,
+  HerramientasDreRoute: HerramientasDreRoute,
   HerramientasDreMensualRoute: HerramientasDreMensualRoute,
   HerramientasFichasTecnicasRoute: HerramientasFichasTecnicasRoute,
   HerramientasMonitorCmvRoute: HerramientasMonitorCmvRoute,
