@@ -20,12 +20,14 @@ import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HerramientasRouteImport } from './routes/herramientas'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as AsistenteRouteImport } from './routes/asistente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HerramientasIndexRouteImport } from './routes/herramientas.index'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -95,6 +97,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HerramientasRoute = HerramientasRouteImport.update({
+  id: '/herramientas',
+  path: '/herramientas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
@@ -124,6 +131,11 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HerramientasIndexRoute = HerramientasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HerramientasRoute,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
@@ -205,6 +217,7 @@ export interface FileRoutesByFullPath {
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/herramientas': typeof HerramientasRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/perfil': typeof PerfilRoute
@@ -221,6 +234,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -253,6 +267,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -270,6 +285,7 @@ export interface FileRoutesById {
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/herramientas': typeof HerramientasRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/perfil': typeof PerfilRoute
@@ -286,6 +302,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -304,6 +321,7 @@ export interface FileRouteTypes {
     | '/cursos'
     | '/dashboard'
     | '/forgot-password'
+    | '/herramientas'
     | '/login'
     | '/mcp'
     | '/perfil'
@@ -320,6 +338,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -352,6 +371,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -368,6 +388,7 @@ export interface FileRouteTypes {
     | '/cursos'
     | '/dashboard'
     | '/forgot-password'
+    | '/herramientas'
     | '/login'
     | '/mcp'
     | '/perfil'
@@ -384,6 +405,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos_/$id'
     | '/email/unsubscribe'
+    | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -401,6 +423,7 @@ export interface RootRouteChildren {
   CursosRoute: typeof CursosRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  HerramientasRoute: typeof HerramientasRouteWithChildren
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   PerfilRoute: typeof PerfilRoute
@@ -506,6 +529,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/herramientas': {
+      id: '/herramientas'
+      path: '/herramientas'
+      fullPath: '/herramientas'
+      preLoaderRoute: typeof HerramientasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
@@ -547,6 +577,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/herramientas/': {
+      id: '/herramientas/'
+      path: '/'
+      fullPath: '/herramientas/'
+      preLoaderRoute: typeof HerramientasIndexRouteImport
+      parentRoute: typeof HerramientasRoute
     }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
@@ -642,6 +679,18 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface HerramientasRouteChildren {
+  HerramientasIndexRoute: typeof HerramientasIndexRoute
+}
+
+const HerramientasRouteChildren: HerramientasRouteChildren = {
+  HerramientasIndexRoute: HerramientasIndexRoute,
+}
+
+const HerramientasRouteWithChildren = HerramientasRoute._addFileChildren(
+  HerramientasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -649,6 +698,7 @@ const rootRouteChildren: RootRouteChildren = {
   CursosRoute: CursosRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  HerramientasRoute: HerramientasRouteWithChildren,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   PerfilRoute: PerfilRoute,
