@@ -5,7 +5,8 @@ export type Lang = "es" | "en" | "pt";
 const translations = {
   // Navbar
   "nav.inicio": { es: "Inicio", en: "Home", pt: "Início" },
-  "nav.dre": { es: "DRE", en: "DRE", pt: "DRE" },
+  "nav.dre": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
+  "nav.herramientas": { es: "Herramientas", en: "Tools", pt: "Ferramentas" },
   "nav.mentoria": { es: "Mentoria", en: "Mentorship", pt: "Mentoria" },
   "nav.planes": { es: "Planes", en: "Plans", pt: "Planos" },
   "nav.productos": { es: "Tienda", en: "Store", pt: "Loja" },
