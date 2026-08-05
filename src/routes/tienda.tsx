@@ -16,6 +16,12 @@ const buildWhatsappUrl = (message: string) => {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 };
 
+type Badge = {
+  text: string;
+  textEn?: string;
+  variant: "primary" | "accent" | "success";
+};
+
 type Product = {
   id: string;
   area: string;
@@ -27,6 +33,10 @@ type Product = {
   priceId: string | null; // null = consultar personalizado
   priceLabel?: string;    // ex: "$590"
   whatsappMessage?: string; // mensaje pre-escrito personalizado para Consultar
+  badge?: Badge;
+  featured?: boolean;
+  featuredReason?: string;
+  featuredReasonEn?: string;
 };
 
 const products: Product[] = [
