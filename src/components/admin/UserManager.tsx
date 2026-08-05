@@ -208,6 +208,7 @@ export function UserManager() {
             <tr>
               <th className="text-left px-4 py-3 font-medium">Usuario</th>
               <th className="text-left px-4 py-3 font-medium">Plan</th>
+              <th className="text-left px-4 py-3 font-medium">Herramientas</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -228,6 +229,25 @@ export function UserManager() {
                 </td>
                 <td className="px-4 py-3">
                   {planBadge(u.plan_tier, u.environment, u.status)}
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleToolsAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso total"
+                        : "Acceso gratuito a herramientas (mentoría)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.tools_free_access || u.is_admin
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    }`}
+                  >
+                    <Wrench className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.tools_free_access ? "Gratis activo" : "Sin acceso libre"}
+                  </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">
                   {u.current_period_end ? formatDate(u.current_period_end) : (u.plan_tier ? "Vitalicio" : "—")}
