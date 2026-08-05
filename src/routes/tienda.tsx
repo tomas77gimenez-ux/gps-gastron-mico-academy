@@ -201,51 +201,113 @@ function TiendaPage() {
           <p className="text-muted-foreground mt-3 max-w-2xl">{t("tienda.desc")}</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {products.map((product, i) => (
-            <motion.div
-              key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: i * 0.05 }}
-              className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 hover:shadow-[0_0_30px_oklch(0.70_0.18_45/8%)] transition-all duration-300"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <product.icon className="w-5 h-5 text-primary" />
-                </div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70">
-                  {product.area}
-                </span>
-              </div>
-              <h3 className="font-semibold text-foreground mb-2">{lang === "en" ? product.titleEn : product.title}</h3>
-              <p className="text-sm text-muted-foreground mb-4 flex-1">{lang === "en" ? product.descEn : product.description}</p>
-              <div className="flex items-center justify-between gap-3">
-                {product.priceId ? (
-                  <div className="flex flex-col">
-                    <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{t("tienda.desde")}</span>
-                    <span className="text-xl font-bold text-primary leading-tight">{product.priceLabel}</span>
-                  </div>
-                ) : (
-                  <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground leading-tight">
-                    {t("tienda.personalizado")}
-                  </span>
-                )}
-                <Button
-                  size="sm"
-                  className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                  onClick={() => handleBuy(product)}
+        {(() => {
+          const featured = products.find((p) => p.featured);
+          const gridProducts = products.filter((p) => !p.featured);
+          return (
+            <div className="flex flex-col gap-6">
+              {featured && (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="relative overflow-hidden rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/20 via-card to-card p-1"
                 >
-                  {product.priceId ? (
-                    <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
-                  ) : (
-                    <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
-                  )}
-                </Button>
+                  <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-primary via-accent to-primary" />
+                  <div className="flex flex-col lg:flex-row lg:items-center gap-6 p-6 sm:p-8">
+                    <div className="flex-1">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold mb-4">
+                        <Users className="w-3.5 h-3.5" />
+                        {lang === "en" ? "High-ticket program" : "Programa high-ticket"}
+                      </div>
+                      <h2 className="text-2xl sm:text-3xl font-bold font-display text-foreground mb-2">
+                        {lang === "en" ? featured.titleEn : featured.title}
+                      </h2>
+                      <p className="text-muted-foreground max-w-2xl mb-4">
+                        {lang === "en" ? featured.descEn : featured.description}
+                      </p>
+                      <p className="text-sm font-medium text-primary">
+                        {lang === "en" ? featured.featuredReasonEn : featured.featuredReason}
+                      </p>
+                    </div>
+                    <div className="flex flex-col sm:flex-row lg:flex-col xl:flex-row items-start sm:items-center lg:items-start xl:items-center gap-4 lg:min-w-[16rem]">
+                      <span className="text-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                        {t("tienda.personalizado")}
+                      </span>
+                      <Button
+                        size="lg"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                        onClick={() => handleBuy(featured)}
+                      >
+                        <MessageCircle className="w-4 h-4 mr-2" />
+                        {t("tienda.consultar")}
+                      </Button>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {gridProducts.map((product, i) => (
+                  <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 hover:shadow-[0_0_30px_oklch(0.70_0.18_45/8%)] transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <product.icon className="w-5 h-5 text-primary" />
+                      </div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary/70">
+                        {product.area}
+                      </span>
+                    </div>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <h3 className="font-semibold text-foreground">{lang === "en" ? product.titleEn : product.title}</h3>
+                      {product.badge && (
+                        <span
+                          className={[
+                            "shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider",
+                            product.badge.variant === "accent" && "bg-accent text-accent-foreground",
+                            product.badge.variant === "success" && "bg-success text-success-foreground",
+                            product.badge.variant === "primary" && "bg-primary text-primary-foreground",
+                          ].filter(Boolean).join(" ")}
+                        >
+                          {lang === "en" && product.badge.textEn ? product.badge.textEn : product.badge.text}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-4 flex-1">{lang === "en" ? product.descEn : product.description}</p>
+                    <div className="flex items-center justify-between gap-3">
+                      {product.priceId ? (
+                        <div className="flex flex-col">
+                          <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{t("tienda.desde")}</span>
+                          <span className="text-xl font-bold text-primary leading-tight">{product.priceLabel}</span>
+                        </div>
+                      ) : (
+                        <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground leading-tight">
+                          {t("tienda.personalizado")}
+                        </span>
+                      )}
+                      <Button
+                        size="sm"
+                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                        onClick={() => handleBuy(product)}
+                      >
+                        {product.priceId ? (
+                          <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
+                        ) : (
+                          <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
+                        )}
+                      </Button>
+                    </div>
+                  </motion.div>
+                ))}
               </div>
-            </motion.div>
-          ))}
-        </div>
+            </div>
+          );
+        })()}
       </div>
 
       <Dialog open={!!checkoutPriceId} onOpenChange={(open) => !open && setCheckoutPriceId(null)}>
