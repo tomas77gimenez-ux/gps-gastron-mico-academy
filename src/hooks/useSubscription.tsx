@@ -49,6 +49,29 @@ export function useSubscription() {
     }
     try {
       const preferredEnvironment = getStripeEnvironment();
+      const { data: adminFlag } = await supabase.rpc("has_role", {
+        _user_id: userId,
+        _role: "admin",
+      });
+      const isAdmin = !!adminFlag;
+
+      if (isAdmin) {
+        // Admins têm acesso total a todo o conteúdo.
+        setState({
+          loading: false,
+          isAuthenticated: true,
+          hasActive: true,
+          isAdmin: true,
+          productId: null,
+          status: "active",
+          currentPeriodEnd: null,
+          cancelAtPeriodEnd: false,
+          planTier: "premium",
+          environment: "admin",
+        });
+        return;
+      }
+
       const { data, error } = await supabase
         .from("subscriptions")
         .select("product_id, status, current_period_end, cancel_at_period_end, environment, plan_tier")
@@ -75,6 +98,7 @@ export function useSubscription() {
         loading: false,
         isAuthenticated: true,
         hasActive: isActive(selectedSubscription?.status ?? null, selectedSubscription?.current_period_end ?? null),
+        isAdmin: false,
         productId: selectedSubscription?.product_id ?? null,
         status: selectedSubscription?.status ?? null,
         currentPeriodEnd: selectedSubscription?.current_period_end ?? null,
@@ -87,6 +111,7 @@ export function useSubscription() {
         loading: false,
         isAuthenticated: true,
         hasActive: false,
+        isAdmin: false,
         productId: null,
         status: null,
         currentPeriodEnd: null,
