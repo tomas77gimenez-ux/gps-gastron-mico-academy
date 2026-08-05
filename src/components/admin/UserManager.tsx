@@ -133,6 +133,29 @@ export function UserManager() {
     load();
   }
 
+  async function toggleToolsAccess(u: UserRow) {
+    const next = !u.tools_free_access;
+    setUsers((prev) =>
+      prev.map((row) => (row.user_id === u.user_id ? { ...row, tools_free_access: next } : row)),
+    );
+    const { error: err } = await supabase.rpc("admin_set_tools_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) =>
+        prev.map((row) => (row.user_id === u.user_id ? { ...row, tools_free_access: !next } : row)),
+      );
+      toast.error("No se pudo actualizar el acceso a herramientas", { description: err.message });
+      return;
+    }
+    toast.success(
+      next
+        ? `Acceso gratuito a herramientas activado para ${u.email}`
+        : `Acceso gratuito a herramientas retirado a ${u.email}`,
+    );
+  }
+
   const filtered = users.filter((u) =>
     u.email.toLowerCase().includes(search.toLowerCase()),
   );
