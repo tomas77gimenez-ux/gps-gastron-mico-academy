@@ -74,7 +74,7 @@ const translations = {
   "cursos.sinVideo": { es: "Esta aula aún no tiene video.", en: "This lesson has no video yet.", pt: "Esta aula ainda não tem vídeo." },
 
   // Dashboard
-  "dashboard.badge": { es: "Dashboard Financiero", en: "Financial Dashboard", pt: "Dashboard Financeiro" },
+  "dashboard.badge": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
   "dashboard.titulo1": { es: "Diagnóstico de tu ", en: "Diagnosis of your ", pt: "Diagnóstico do seu " },
   "dashboard.titulo2": { es: "Restaurante", en: "Restaurant", pt: "Restaurante" },
   "dashboard.desc": { es: "Selecciona el período de análisis y completa los datos financieros.", en: "Select the analysis period and fill in the financial data.", pt: "Selecione o período de análise e preencha os dados financeiros." },
