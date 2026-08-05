@@ -3,7 +3,7 @@ import type { LucideIcon } from "lucide-react";
 
 export interface ToolMeta {
   to:
-    | "/dashboard"
+    | "/herramientas/dre"
     | "/herramientas/punto-equilibrio"
     | "/herramientas/fichas-tecnicas"
     | "/herramientas/dre-mensual"
@@ -17,8 +17,8 @@ export interface ToolMeta {
 
 export const TOOLS: ToolMeta[] = [
   {
-    to: "/dashboard",
-    name: "Diagnóstico GPS",
+    to: "/herramientas/dre",
+    name: "DRE",
     description:
       "¿Dónde está tu restaurante hoy? Hacelo al entrar y repetilo cada trimestre.",
     icon: Compass,
@@ -34,7 +34,7 @@ export const TOOLS: ToolMeta[] = [
   },
   {
     to: "/herramientas/fichas-tecnicas",
-    name: "Fichas Técnicas",
+    name: "SUP",
     description:
       "Banco de ingredientes con costo real y precio sugerido por plato según tu CMV objetivo.",
     icon: ClipboardList,

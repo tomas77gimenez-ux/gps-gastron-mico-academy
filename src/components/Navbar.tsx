@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, Compass, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -18,7 +18,6 @@ export function Navbar() {
 
   const allNavItems = [
     { to: "/", label: t("nav.inicio"), icon: Home },
-    { to: "/dashboard", label: t("nav.dre"), icon: Compass },
     { to: "/herramientas", label: t("nav.herramientas"), icon: Wrench },
     { to: "/cursos", label: t("nav.mentoria"), icon: Film },
     { to: "/planes", label: t("nav.planes"), icon: CreditCard },
