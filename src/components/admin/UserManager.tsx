@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck } from "lucide-react";
+import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import type { PlanTier } from "@/lib/admin-types";
 
@@ -23,6 +23,7 @@ interface UserRow {
   environment: string | null;
   subscription_id: string | null;
   is_admin: boolean;
+  tools_free_access: boolean;
 }
 
 const DURATIONS = [
