@@ -1,4 +1,4 @@
-import { Compass, Calculator, ClipboardList, FileSpreadsheet, Wallet, LineChart } from "lucide-react";
+import { Compass, Calculator, ClipboardList, Wallet, LineChart } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 export interface ToolMeta {
@@ -6,7 +6,6 @@ export interface ToolMeta {
     | "/herramientas/dre"
     | "/herramientas/punto-equilibrio"
     | "/herramientas/fichas-tecnicas"
-    | "/herramientas/dre-mensual"
     | "/herramientas/control-caja"
     | "/herramientas/monitor-cmv";
   name: string;
@@ -20,7 +19,7 @@ export const TOOLS: ToolMeta[] = [
     to: "/herramientas/dre",
     name: "DRE",
     description:
-      "¿Dónde está tu restaurante hoy? Hacelo al entrar y repetilo cada trimestre.",
+      "El resultado de tu restaurante en tiempo real, mensual línea por línea o por trimestre/semestre/año.",
     icon: Compass,
     status: "Punto de partida",
   },
@@ -38,14 +37,6 @@ export const TOOLS: ToolMeta[] = [
     description:
       "Banco de ingredientes con costo real y precio sugerido por plato según tu CMV objetivo.",
     icon: ClipboardList,
-    status: "Disponible",
-  },
-  {
-    to: "/herramientas/dre-mensual",
-    name: "DRE Mensual",
-    description:
-      "Armá el resultado del mes línea por línea y mirá tus márgenes reales.",
-    icon: FileSpreadsheet,
     status: "Disponible",
   },
   {

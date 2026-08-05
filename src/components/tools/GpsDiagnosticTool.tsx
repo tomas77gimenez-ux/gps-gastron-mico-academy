@@ -2,6 +2,7 @@ import { useState } from "react";
 import { DREQuestionnaire } from "@/components/DREQuestionnaire";
 import { DashboardResults } from "@/components/DashboardResults";
 import { DRERealtimeTracker } from "@/components/DRERealtimeTracker";
+import { MonthlyDreTool } from "@/components/tools/MonthlyDreTool";
 import { calculateDRE, type DREData, type DREResults } from "@/lib/dre-questions";
 import { Plus, X, Calendar } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
@@ -135,7 +136,13 @@ export function GpsDiagnosticTool() {
             </div>
           </div>
 
-          {selectedPeriod === "realtime" ? <DRERealtimeTracker /> : <DREQuestionnaire onComplete={handleComplete} />}
+          {selectedPeriod === "realtime" ? (
+            <DRERealtimeTracker />
+          ) : selectedPeriod === "1m" ? (
+            <MonthlyDreTool />
+          ) : (
+            <DREQuestionnaire onComplete={handleComplete} />
+          )}
         </>
       ) : activeDiag ? (
         <DashboardResults results={activeDiag.results} onReset={startNew} />
