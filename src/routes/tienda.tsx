@@ -180,7 +180,7 @@ function TiendaPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4">
-            <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 8 ÁREAS
+            <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 6 ÁREAS
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display leading-tight">{t("tienda.titulo")}</h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">{t("tienda.desc")}</p>
