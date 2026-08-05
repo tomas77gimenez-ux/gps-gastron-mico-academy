@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, MessageCircle, Users, FileSearch, Megaphone, Palette, BookOpen, GraduationCap, Calculator, Wallet } from "lucide-react";
+import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, Calculator, LineChart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
