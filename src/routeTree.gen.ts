@@ -28,6 +28,11 @@ import { Route as AsistenteRouteImport } from './routes/asistente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as HerramientasIndexRouteImport } from './routes/herramientas.index'
+import { Route as HerramientasPuntoEquilibrioRouteImport } from './routes/herramientas.punto-equilibrio'
+import { Route as HerramientasMonitorCmvRouteImport } from './routes/herramientas.monitor-cmv'
+import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herramientas.fichas-tecnicas'
+import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
+import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -137,6 +142,33 @@ const HerramientasIndexRoute = HerramientasIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HerramientasRoute,
 } as any)
+const HerramientasPuntoEquilibrioRoute =
+  HerramientasPuntoEquilibrioRouteImport.update({
+    id: '/punto-equilibrio',
+    path: '/punto-equilibrio',
+    getParentRoute: () => HerramientasRoute,
+  } as any)
+const HerramientasMonitorCmvRoute = HerramientasMonitorCmvRouteImport.update({
+  id: '/monitor-cmv',
+  path: '/monitor-cmv',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasFichasTecnicasRoute =
+  HerramientasFichasTecnicasRouteImport.update({
+    id: '/fichas-tecnicas',
+    path: '/fichas-tecnicas',
+    getParentRoute: () => HerramientasRoute,
+  } as any)
+const HerramientasDreMensualRoute = HerramientasDreMensualRouteImport.update({
+  id: '/dre-mensual',
+  path: '/dre-mensual',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
+  id: '/control-caja',
+  path: '/control-caja',
+  getParentRoute: () => HerramientasRoute,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -234,6 +266,11 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
@@ -267,6 +304,11 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
@@ -302,6 +344,11 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
@@ -338,6 +385,11 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
@@ -371,6 +423,11 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
     | '/herramientas'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
@@ -405,6 +462,11 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos_/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
@@ -585,6 +647,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasIndexRouteImport
       parentRoute: typeof HerramientasRoute
     }
+    '/herramientas/punto-equilibrio': {
+      id: '/herramientas/punto-equilibrio'
+      path: '/punto-equilibrio'
+      fullPath: '/herramientas/punto-equilibrio'
+      preLoaderRoute: typeof HerramientasPuntoEquilibrioRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/monitor-cmv': {
+      id: '/herramientas/monitor-cmv'
+      path: '/monitor-cmv'
+      fullPath: '/herramientas/monitor-cmv'
+      preLoaderRoute: typeof HerramientasMonitorCmvRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/fichas-tecnicas': {
+      id: '/herramientas/fichas-tecnicas'
+      path: '/fichas-tecnicas'
+      fullPath: '/herramientas/fichas-tecnicas'
+      preLoaderRoute: typeof HerramientasFichasTecnicasRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/dre-mensual': {
+      id: '/herramientas/dre-mensual'
+      path: '/dre-mensual'
+      fullPath: '/herramientas/dre-mensual'
+      preLoaderRoute: typeof HerramientasDreMensualRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/control-caja': {
+      id: '/herramientas/control-caja'
+      path: '/control-caja'
+      fullPath: '/herramientas/control-caja'
+      preLoaderRoute: typeof HerramientasControlCajaRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -680,10 +777,20 @@ declare module '@tanstack/react-router' {
 }
 
 interface HerramientasRouteChildren {
+  HerramientasControlCajaRoute: typeof HerramientasControlCajaRoute
+  HerramientasDreMensualRoute: typeof HerramientasDreMensualRoute
+  HerramientasFichasTecnicasRoute: typeof HerramientasFichasTecnicasRoute
+  HerramientasMonitorCmvRoute: typeof HerramientasMonitorCmvRoute
+  HerramientasPuntoEquilibrioRoute: typeof HerramientasPuntoEquilibrioRoute
   HerramientasIndexRoute: typeof HerramientasIndexRoute
 }
 
 const HerramientasRouteChildren: HerramientasRouteChildren = {
+  HerramientasControlCajaRoute: HerramientasControlCajaRoute,
+  HerramientasDreMensualRoute: HerramientasDreMensualRoute,
+  HerramientasFichasTecnicasRoute: HerramientasFichasTecnicasRoute,
+  HerramientasMonitorCmvRoute: HerramientasMonitorCmvRoute,
+  HerramientasPuntoEquilibrioRoute: HerramientasPuntoEquilibrioRoute,
   HerramientasIndexRoute: HerramientasIndexRoute,
 }
 
