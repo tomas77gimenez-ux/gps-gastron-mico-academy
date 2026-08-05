@@ -72,6 +72,7 @@ const products: Product[] = [
     icon: Palette,
     priceId: "rebranding_restaurante_base",
     priceLabel: "$1.800",
+    badge: { text: "Más vendido", textEn: "Best seller", variant: "accent" },
   },
   {
     id: "gerente-digital",
@@ -94,6 +95,7 @@ const products: Product[] = [
     icon: BookOpen,
     priceId: "libro_desafio_rentabilidad_base",
     priceLabel: "$28",
+    badge: { text: "Novedad", textEn: "New", variant: "success" },
   },
   {
     id: "club-elite-plus",
@@ -105,6 +107,9 @@ const products: Product[] = [
     icon: Users,
     priceId: null,
     whatsappMessage: "Hola, tengo interés en el Club Elite Plus. Me gustaría conocer más sobre la consultoría con Daniel Giménez y su equipo, duración de 60 a 90 días, valores y disponibilidad. ¡Gracias!",
+    featured: true,
+    featuredReason: "Programa high-ticket de transformación total",
+    featuredReasonEn: "High-ticket total transformation program",
   },
 ];
 
