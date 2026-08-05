@@ -5,7 +5,8 @@ export type Lang = "es" | "en" | "pt";
 const translations = {
   // Navbar
   "nav.inicio": { es: "Inicio", en: "Home", pt: "Início" },
-  "nav.dre": { es: "DRE", en: "DRE", pt: "DRE" },
+  "nav.dre": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
+  "nav.herramientas": { es: "Herramientas", en: "Tools", pt: "Ferramentas" },
   "nav.mentoria": { es: "Mentoria", en: "Mentorship", pt: "Mentoria" },
   "nav.planes": { es: "Planes", en: "Plans", pt: "Planos" },
   "nav.productos": { es: "Tienda", en: "Store", pt: "Loja" },
@@ -73,7 +74,7 @@ const translations = {
   "cursos.sinVideo": { es: "Esta aula aún no tiene video.", en: "This lesson has no video yet.", pt: "Esta aula ainda não tem vídeo." },
 
   // Dashboard
-  "dashboard.badge": { es: "Dashboard Financiero", en: "Financial Dashboard", pt: "Dashboard Financeiro" },
+  "dashboard.badge": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
   "dashboard.titulo1": { es: "Diagnóstico de tu ", en: "Diagnosis of your ", pt: "Diagnóstico do seu " },
   "dashboard.titulo2": { es: "Restaurante", en: "Restaurant", pt: "Restaurante" },
   "dashboard.desc": { es: "Selecciona el período de análisis y completa los datos financieros.", en: "Select the analysis period and fill in the financial data.", pt: "Selecione o período de análise e preencha os dados financeiros." },

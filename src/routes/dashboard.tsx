@@ -4,17 +4,22 @@ import { DREQuestionnaire } from "@/components/DREQuestionnaire";
 import { DashboardResults } from "@/components/DashboardResults";
 import { DRERealtimeTracker } from "@/components/DRERealtimeTracker";
 import { calculateDRE, type DREData, type DREResults } from "@/lib/dre-questions";
-import { LayoutDashboard, Plus, X, Calendar } from "lucide-react";
+import { Compass, Plus, X, Calendar } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { ToolsGrid } from "@/components/tools/ToolsGrid";
+import { ToolsFooterNote } from "@/components/tools/ToolUI";
+import { Wrench } from "lucide-react";
 
 export const Route = createFileRoute("/dashboard")({
   component: DashboardPage,
   head: () => ({
     meta: [
-      { title: "Dashboard — GPS Gastronômico" },
-      { name: "description", content: "Analiza la salud financiera de tu restaurante con el DRE interactivo." },
-      { property: "og:title", content: 'Dashboard — GPS Gastronômico' },
-      { property: "og:description", content: 'Panel financiero (DRE) en tiempo real de tu restaurante.' },
+      { title: "Diagnóstico GPS — GPS Gastronômico" },
+      { name: "description", content: "Analiza la salud financiera de tu restaurante con el Diagnóstico GPS interactivo." },
+      { property: "og:title", content: 'Diagnóstico GPS — GPS Gastronômico' },
+      { property: "og:description", content: 'Diagnóstico financiero en tiempo real de tu restaurante.' },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/dashboard" },
       { name: "robots", content: "noindex,nofollow" }
     ],
@@ -128,7 +133,7 @@ function DashboardPage() {
           <>
             <div className="text-center mb-10">
               <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-                <LayoutDashboard className="w-4 h-4" />
+                <Compass className="w-4 h-4" />
                 {t("dashboard.badge")}
               </div>
               <h1 className="text-3xl sm:text-4xl font-bold font-display">
@@ -168,6 +173,15 @@ function DashboardPage() {
         ) : activeDiag ? (
           <DashboardResults results={activeDiag.results} onReset={startNew} />
         ) : null}
+
+        <div className="mt-16 pt-10 border-t border-border">
+          <div className="flex items-center gap-2 mb-5">
+            <Wrench className="w-5 h-5 text-primary" />
+            <h2 className="font-display font-semibold text-lg">Caja de Herramientas</h2>
+          </div>
+          <ToolsGrid compact />
+          <ToolsFooterNote />
+        </div>
       </div>
     </div>
   );

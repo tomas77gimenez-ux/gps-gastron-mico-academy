@@ -20,12 +20,19 @@ import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as PerfilRouteImport } from './routes/perfil'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as HerramientasRouteImport } from './routes/herramientas'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as CursosRouteImport } from './routes/cursos'
 import { Route as AsistenteRouteImport } from './routes/asistente'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as HerramientasIndexRouteImport } from './routes/herramientas.index'
+import { Route as HerramientasPuntoEquilibrioRouteImport } from './routes/herramientas.punto-equilibrio'
+import { Route as HerramientasMonitorCmvRouteImport } from './routes/herramientas.monitor-cmv'
+import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herramientas.fichas-tecnicas'
+import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
+import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -95,6 +102,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HerramientasRoute = HerramientasRouteImport.update({
+  id: '/herramientas',
+  path: '/herramientas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
   id: '/forgot-password',
   path: '/forgot-password',
@@ -124,6 +136,38 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
+} as any)
+const HerramientasIndexRoute = HerramientasIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasPuntoEquilibrioRoute =
+  HerramientasPuntoEquilibrioRouteImport.update({
+    id: '/punto-equilibrio',
+    path: '/punto-equilibrio',
+    getParentRoute: () => HerramientasRoute,
+  } as any)
+const HerramientasMonitorCmvRoute = HerramientasMonitorCmvRouteImport.update({
+  id: '/monitor-cmv',
+  path: '/monitor-cmv',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasFichasTecnicasRoute =
+  HerramientasFichasTecnicasRouteImport.update({
+    id: '/fichas-tecnicas',
+    path: '/fichas-tecnicas',
+    getParentRoute: () => HerramientasRoute,
+  } as any)
+const HerramientasDreMensualRoute = HerramientasDreMensualRouteImport.update({
+  id: '/dre-mensual',
+  path: '/dre-mensual',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
+  id: '/control-caja',
+  path: '/control-caja',
+  getParentRoute: () => HerramientasRoute,
 } as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
@@ -205,6 +249,7 @@ export interface FileRoutesByFullPath {
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/herramientas': typeof HerramientasRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/perfil': typeof PerfilRoute
@@ -221,6 +266,12 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
+  '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -253,6 +304,12 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
+  '/herramientas': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -270,6 +327,7 @@ export interface FileRoutesById {
   '/cursos': typeof CursosRoute
   '/dashboard': typeof DashboardRoute
   '/forgot-password': typeof ForgotPasswordRoute
+  '/herramientas': typeof HerramientasRouteWithChildren
   '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/perfil': typeof PerfilRoute
@@ -286,6 +344,12 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/herramientas/control-caja': typeof HerramientasControlCajaRoute
+  '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
+  '/herramientas/fichas-tecnicas': typeof HerramientasFichasTecnicasRoute
+  '/herramientas/monitor-cmv': typeof HerramientasMonitorCmvRoute
+  '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
+  '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
@@ -304,6 +368,7 @@ export interface FileRouteTypes {
     | '/cursos'
     | '/dashboard'
     | '/forgot-password'
+    | '/herramientas'
     | '/login'
     | '/mcp'
     | '/perfil'
@@ -320,6 +385,12 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
+    | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -352,6 +423,12 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
+    | '/herramientas'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -368,6 +445,7 @@ export interface FileRouteTypes {
     | '/cursos'
     | '/dashboard'
     | '/forgot-password'
+    | '/herramientas'
     | '/login'
     | '/mcp'
     | '/perfil'
@@ -384,6 +462,12 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos_/$id'
     | '/email/unsubscribe'
+    | '/herramientas/control-caja'
+    | '/herramientas/dre-mensual'
+    | '/herramientas/fichas-tecnicas'
+    | '/herramientas/monitor-cmv'
+    | '/herramientas/punto-equilibrio'
+    | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
@@ -401,6 +485,7 @@ export interface RootRouteChildren {
   CursosRoute: typeof CursosRoute
   DashboardRoute: typeof DashboardRoute
   ForgotPasswordRoute: typeof ForgotPasswordRoute
+  HerramientasRoute: typeof HerramientasRouteWithChildren
   LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   PerfilRoute: typeof PerfilRoute
@@ -506,6 +591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/herramientas': {
+      id: '/herramientas'
+      path: '/herramientas'
+      fullPath: '/herramientas'
+      preLoaderRoute: typeof HerramientasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/forgot-password': {
       id: '/forgot-password'
       path: '/forgot-password'
@@ -547,6 +639,48 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
+    }
+    '/herramientas/': {
+      id: '/herramientas/'
+      path: '/'
+      fullPath: '/herramientas/'
+      preLoaderRoute: typeof HerramientasIndexRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/punto-equilibrio': {
+      id: '/herramientas/punto-equilibrio'
+      path: '/punto-equilibrio'
+      fullPath: '/herramientas/punto-equilibrio'
+      preLoaderRoute: typeof HerramientasPuntoEquilibrioRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/monitor-cmv': {
+      id: '/herramientas/monitor-cmv'
+      path: '/monitor-cmv'
+      fullPath: '/herramientas/monitor-cmv'
+      preLoaderRoute: typeof HerramientasMonitorCmvRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/fichas-tecnicas': {
+      id: '/herramientas/fichas-tecnicas'
+      path: '/fichas-tecnicas'
+      fullPath: '/herramientas/fichas-tecnicas'
+      preLoaderRoute: typeof HerramientasFichasTecnicasRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/dre-mensual': {
+      id: '/herramientas/dre-mensual'
+      path: '/dre-mensual'
+      fullPath: '/herramientas/dre-mensual'
+      preLoaderRoute: typeof HerramientasDreMensualRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/control-caja': {
+      id: '/herramientas/control-caja'
+      path: '/control-caja'
+      fullPath: '/herramientas/control-caja'
+      preLoaderRoute: typeof HerramientasControlCajaRouteImport
+      parentRoute: typeof HerramientasRoute
     }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
@@ -642,6 +776,28 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface HerramientasRouteChildren {
+  HerramientasControlCajaRoute: typeof HerramientasControlCajaRoute
+  HerramientasDreMensualRoute: typeof HerramientasDreMensualRoute
+  HerramientasFichasTecnicasRoute: typeof HerramientasFichasTecnicasRoute
+  HerramientasMonitorCmvRoute: typeof HerramientasMonitorCmvRoute
+  HerramientasPuntoEquilibrioRoute: typeof HerramientasPuntoEquilibrioRoute
+  HerramientasIndexRoute: typeof HerramientasIndexRoute
+}
+
+const HerramientasRouteChildren: HerramientasRouteChildren = {
+  HerramientasControlCajaRoute: HerramientasControlCajaRoute,
+  HerramientasDreMensualRoute: HerramientasDreMensualRoute,
+  HerramientasFichasTecnicasRoute: HerramientasFichasTecnicasRoute,
+  HerramientasMonitorCmvRoute: HerramientasMonitorCmvRoute,
+  HerramientasPuntoEquilibrioRoute: HerramientasPuntoEquilibrioRoute,
+  HerramientasIndexRoute: HerramientasIndexRoute,
+}
+
+const HerramientasRouteWithChildren = HerramientasRoute._addFileChildren(
+  HerramientasRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
@@ -649,6 +805,7 @@ const rootRouteChildren: RootRouteChildren = {
   CursosRoute: CursosRoute,
   DashboardRoute: DashboardRoute,
   ForgotPasswordRoute: ForgotPasswordRoute,
+  HerramientasRoute: HerramientasRouteWithChildren,
   LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   PerfilRoute: PerfilRoute,

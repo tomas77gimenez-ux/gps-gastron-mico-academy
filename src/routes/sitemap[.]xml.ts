@@ -9,6 +9,7 @@ const STATIC_ROUTES = [
   "/planes",
   "/tienda",
   "/asistente",
+  "/herramientas",
   "/login",
   "/registro",
   "/forgot-password",

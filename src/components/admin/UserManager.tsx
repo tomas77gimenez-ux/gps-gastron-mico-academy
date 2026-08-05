@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck } from "lucide-react";
+import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench } from "lucide-react";
 import { toast } from "sonner";
 import type { PlanTier } from "@/lib/admin-types";
 
@@ -23,6 +23,7 @@ interface UserRow {
   environment: string | null;
   subscription_id: string | null;
   is_admin: boolean;
+  tools_free_access: boolean;
 }
 
 const DURATIONS = [
@@ -132,6 +133,29 @@ export function UserManager() {
     load();
   }
 
+  async function toggleToolsAccess(u: UserRow) {
+    const next = !u.tools_free_access;
+    setUsers((prev) =>
+      prev.map((row) => (row.user_id === u.user_id ? { ...row, tools_free_access: next } : row)),
+    );
+    const { error: err } = await supabase.rpc("admin_set_tools_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) =>
+        prev.map((row) => (row.user_id === u.user_id ? { ...row, tools_free_access: !next } : row)),
+      );
+      toast.error("No se pudo actualizar el acceso a herramientas", { description: err.message });
+      return;
+    }
+    toast.success(
+      next
+        ? `Acceso gratuito a herramientas activado para ${u.email}`
+        : `Acceso gratuito a herramientas retirado a ${u.email}`,
+    );
+  }
+
   const filtered = users.filter((u) =>
     u.email.toLowerCase().includes(search.toLowerCase()),
   );
@@ -184,6 +208,7 @@ export function UserManager() {
             <tr>
               <th className="text-left px-4 py-3 font-medium">Usuario</th>
               <th className="text-left px-4 py-3 font-medium">Plan</th>
+              <th className="text-left px-4 py-3 font-medium">Herramientas</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -204,6 +229,25 @@ export function UserManager() {
                 </td>
                 <td className="px-4 py-3">
                   {planBadge(u.plan_tier, u.environment, u.status)}
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleToolsAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso total"
+                        : "Acceso gratuito a herramientas (mentoría)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.tools_free_access || u.is_admin
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    }`}
+                  >
+                    <Wrench className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.tools_free_access ? "Gratis activo" : "Sin acceso libre"}
+                  </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">
                   {u.current_period_end ? formatDate(u.current_period_end) : (u.plan_tier ? "Vitalicio" : "—")}
@@ -242,7 +286,7 @@ export function UserManager() {
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-4 py-8 text-center text-muted-foreground text-sm">
+                <td colSpan={6} className="px-4 py-8 text-center text-muted-foreground text-sm">
                   {search ? "Sin resultados." : "Sin usuarios."}
                 </td>
               </tr>
