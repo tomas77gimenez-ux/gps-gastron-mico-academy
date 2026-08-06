@@ -186,7 +186,7 @@ function CursosPage() {
                 <h2 className="text-2xl font-bold font-display text-foreground">{t("cursos.catalogoAdicional")}</h2>
                 {Object.entries(generalGrouped).map(([category, list]) => (
                   <section key={category}>
-                    <h3 className="text-lg font-bold font-display text-foreground mb-4">{category}</h3>
+                    <h3 className="text-lg font-bold font-display text-foreground mb-4">{locCategory(category, lang)}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       {list.map(course => (
                         <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
