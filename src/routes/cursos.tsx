@@ -118,7 +118,7 @@ function CursosPage() {
         <div className="mb-12 border-l-4 border-primary pl-6">
           <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">Mentoría · Método GPS</span>
           <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mt-2 leading-tight">
-            Mentoría <span className="text-gradient-brand">GPS Gastronómico</span>
+            <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
           <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
             {gpsCourses.length > 0
