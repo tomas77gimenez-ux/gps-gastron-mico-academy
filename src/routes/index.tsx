@@ -368,18 +368,8 @@ function HomePage() {
             </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
             {[
-              {
-                id: "gratis",
-                icon: Gift,
-                name: t("home.plans.freeName"),
-                price: t("home.plans.freePrice"),
-                period: "",
-                desc: t("home.plans.freeDesc"),
-                features: [t("home.plans.freeF1"), t("home.plans.freeF2"), t("home.plans.freeF3")],
-                featured: false,
-              },
               {
                 id: "basico",
                 icon: Star,
@@ -442,7 +432,7 @@ function HomePage() {
                         : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
                     }`}
                   >
-                    {plan.id === "gratis" ? t("home.plans.ctaFree") : t("home.plans.ctaPaid")}
+                    {t("home.plans.ctaPaid")}
                   </Button>
                 </Link>
               </motion.div>
