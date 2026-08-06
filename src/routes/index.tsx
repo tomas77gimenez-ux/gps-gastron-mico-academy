@@ -72,7 +72,7 @@ function HomePage() {
   const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
-    { value: "15+", label: t("home.stat.experiencia"), icon: Award },
+    { value: "35+", label: t("home.stat.experiencia"), icon: Award },
     { value: "200+", label: t("home.stat.restaurantes"), icon: Utensils },
     { value: "50+", label: t("home.stat.cursos"), icon: BookOpen },
     { value: "95%", label: t("home.stat.satisfaccion"), icon: Star },
