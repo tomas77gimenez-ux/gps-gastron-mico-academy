@@ -95,6 +95,22 @@ export const Route = createFileRoute("/api/public/bunny-thumbs")({
           }
 
           if (body.action === "set") {
+            // fallthrough below
+          }
+
+          if (body.action === "upload") {
+            const bytes = Uint8Array.from(atob(body.dataBase64), (c) => c.charCodeAt(0));
+            const { error: upErr } = await supabaseAdmin.storage
+              .from("course-content")
+              .upload(body.path, bytes, { contentType: "image/jpeg", upsert: true });
+            if (upErr) return json({ error: upErr.message }, 500);
+            const { data: pub } = supabaseAdmin.storage
+              .from("course-content")
+              .getPublicUrl(body.path);
+            return json({ ok: true, url: pub.publicUrl });
+          }
+
+          if (body.action === "set") {
             const url = `https://video.bunnycdn.com/library/${encodeURIComponent(libraryId)}/videos/${encodeURIComponent(body.guid)}/thumbnail?thumbnailUrl=${encodeURIComponent(body.thumbnailUrl)}`;
             const res = await fetch(url, {
               method: "POST",
