@@ -52,13 +52,85 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const statIcons = [Award, Utensils, BookOpen, Star];
-
 const testimonials = [
   { name: "María González", role: "Dueña — La Cocina de María", text: "Gracias a GPS Gastronômico, logré reducir mi food cost un 8% en solo 3 meses. El dashboard financiero cambió mi forma de ver el negocio.", textEn: "Thanks to GPS Gastronômico, I managed to reduce my food cost by 8% in just 3 months. The financial dashboard changed the way I see business.", stars: 5 },
   { name: "Carlos Mendoza", role: "Chef Ejecutivo — Bistró Central", text: "La mentoría de Daniel es práctica y directa. No es teoría, es experiencia real de alguien que vivió la cocina.", textEn: "Daniel's mentorship is practical and direct. It's not theory, it's real experience from someone who lived the kitchen.", stars: 5 },
   { name: "Ana Ramírez", role: "Gerente — Grupo Gastro MX", text: "Implementamos los procesos de GPS en 4 restaurantes. La estandarización nos ahorró miles de dólares al mes.", textEn: "We implemented GPS processes in 4 restaurants. Standardization saved us thousands of dollars per month.", stars: 5 },
 ];
+
+/** Horizontal timeline whose gold progress line draws as the section scrolls. */
+function MethodTimeline({ steps }: { steps: { icon: LucideIcon; title: string; desc: string }[] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [progress, setProgress] = useState(0);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const r = el.getBoundingClientRect();
+      const total = r.height + window.innerHeight * 0.55;
+      const p = (window.innerHeight * 0.85 - r.top) / total;
+      setProgress(Math.min(Math.max(p, 0), 1));
+    };
+    const onScroll = () => {
+      if (!raf) raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      {/* Rail */}
+      <div aria-hidden="true" className="absolute left-0 right-0 top-7 hidden h-px bg-border lg:block">
+        <div
+          className="h-px origin-left bg-gradient-to-r from-primary to-primary-soft transition-[transform] duration-150 ease-out"
+          style={{ transform: `scaleX(${progress})` }}
+        />
+      </div>
+
+      <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+        {steps.map((step, i) => {
+          const active = progress >= (i + 0.35) / steps.length;
+          return (
+            <div key={step.title} className="relative pt-0 lg:pt-16">
+              <span
+                aria-hidden="true"
+                className={`absolute left-0 top-[22px] hidden h-2.5 w-2.5 rounded-full transition-colors duration-300 lg:block ${
+                  active ? "bg-primary shadow-[0_0_0_4px_rgba(212,160,23,0.16)]" : "bg-muted"
+                }`}
+              />
+              <div className="flex items-center gap-3">
+                <span
+                  className={`font-display text-4xl font-bold tabular transition-colors duration-300 ${
+                    active ? "text-primary" : "text-transparent"
+                  }`}
+                  style={{ WebkitTextStroke: active ? "0" : "1px rgba(255,255,255,0.14)" }}
+                >
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <step.icon
+                  className={`h-5 w-5 transition-colors duration-300 ${active ? "text-primary" : "text-muted-foreground"}`}
+                  strokeWidth={1.25}
+                />
+              </div>
+              <h3 className="mt-4 font-display text-lg font-semibold">{step.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{step.desc}</p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
 
 function HomePage() {
   const { t, lang } = useI18n();
@@ -68,15 +140,13 @@ function HomePage() {
   const premiumMonthly = 128;
   const basicYearly = 908;
   const premiumYearly = 1306;
-  const basicPrice = billing === "monthly" ? `$${basicMonthly}` : `$${basicYearly}`;
-  const premiumPrice = billing === "monthly" ? `$${premiumMonthly}` : `$${premiumYearly}`;
   const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
-    { value: "35+", label: t("home.stat.experiencia"), icon: Award },
-    { value: "200+", label: t("home.stat.restaurantes"), icon: Utensils },
-    { value: "50+", label: t("home.stat.cursos"), icon: BookOpen },
-    { value: "95%", label: t("home.stat.satisfaccion"), icon: Star },
+    { value: 35, suffix: "+", label: t("home.stat.experiencia") },
+    { value: 200, suffix: "+", label: t("home.stat.restaurantes") },
+    { value: 50, suffix: "+", label: t("home.stat.cursos") },
+    { value: 95, suffix: "%", label: t("home.stat.satisfaccion") },
   ];
 
   const methodSteps = [
@@ -86,442 +156,409 @@ function HomePage() {
     { icon: Award, title: t("home.step.resultados"), desc: t("home.step.resultadosDesc") },
   ];
 
-  return (
-    <div className="min-h-screen">
-      {/* Hero */}
-      <section className="relative pt-24 pb-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent" />
-        <div className="absolute top-20 right-0 w-96 h-96 bg-primary/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 left-0 w-80 h-80 bg-primary/3 rounded-full blur-3xl" />
+  const bento = [
+    { icon: LineChart, title: t("home.howItWorks.b1Title"), desc: t("home.howItWorks.b1Desc"), wide: true },
+    { icon: GraduationCap, title: t("home.howItWorks.b2Title"), desc: t("home.howItWorks.b2Desc"), wide: false },
+    { icon: Target, title: t("home.howItWorks.b3Title"), desc: t("home.howItWorks.b3Desc"), wide: false },
+    { icon: Users, title: t("home.howItWorks.b4Title"), desc: t("home.howItWorks.b4Desc"), wide: true },
+  ];
 
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
-            className="max-w-3xl"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-6">
-              <ChefHat className="w-4 h-4" />
+  const plans = [
+    {
+      id: "basico",
+      icon: Star,
+      name: t("home.plans.basicName"),
+      amount: billing === "monthly" ? basicMonthly : basicYearly,
+      desc: t("home.plans.basicDesc"),
+      features: [t("home.plans.basicF1"), t("home.plans.basicF2"), t("home.plans.basicF3"), t("home.plans.basicF4")],
+      featured: false,
+    },
+    {
+      id: "premium",
+      icon: Crown,
+      name: t("home.plans.premiumName"),
+      amount: billing === "monthly" ? premiumMonthly : premiumYearly,
+      desc: t("home.plans.premiumDesc"),
+      features: [t("home.plans.premiumF1"), t("home.plans.premiumF2"), t("home.plans.premiumF3"), t("home.plans.premiumF4")],
+      featured: true,
+    },
+  ];
+
+  return (
+    <div className="relative min-h-screen">
+      {/* ---------------- HERO ---------------- */}
+      <section className="relative overflow-hidden pt-28 pb-24">
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 grid-lines" />
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-70 blur-[120px]"
+          style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.14), transparent)" }}
+        />
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.05fr_1fr]">
+          <div>
+            <span className="inline-flex items-center gap-2 rounded-full glass px-4 py-1.5 text-xs font-medium tracking-wide text-primary-soft">
+              <ChefHat className="h-3.5 w-3.5" strokeWidth={1.5} />
               {t("home.badge")}
-            </div>
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-display leading-tight">
+            </span>
+            <h1 className="mt-7 font-display text-4xl font-bold leading-[1.05] sm:text-5xl lg:text-[3.9rem]">
               {t("home.heroTitle1")}
               <span className="text-gradient-brand">{t("home.heroTitle2")}</span>
             </h1>
-            <p className="mt-6 text-lg text-muted-foreground max-w-2xl">
+            <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               {t("home.heroDesc")}
             </p>
-            <div className="flex flex-wrap gap-4 mt-8">
+            <div className="mt-9 flex flex-wrap gap-4">
               <Link to="/cursos">
-                <Button size="lg" className="glow-orange gap-2">
-                  <Play className="w-4 h-4" /> {t("home.explorarCursos")}
-                </Button>
+                <GoldButton size="lg">
+                  <Play className="h-4 w-4" strokeWidth={1.75} /> {t("home.explorarCursos")}
+                </GoldButton>
               </Link>
               <Link to="/dashboard">
-                <Button size="lg" variant="outline" className="gap-2">
-                  <BarChart3 className="w-4 h-4" /> {t("home.diagnosticar")}
-                </Button>
+                <GoldButton size="lg" variant="ghost">
+                  <BarChart3 className="h-4 w-4" strokeWidth={1.5} /> {t("home.diagnosticar")}
+                </GoldButton>
               </Link>
             </div>
-          </motion.div>
+          </div>
+
+          {/* Tilted DRE mockup */}
+          <div className="group relative [perspective:1400px]">
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -inset-8 rounded-[2rem] opacity-80 blur-[80px]"
+              style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.20), transparent)" }}
+            />
+            <div className="relative overflow-hidden rounded-2xl glass glow-gold-soft transition-transform duration-700 ease-out [transform:rotateY(-9deg)_rotateX(4deg)_translateZ(0)] group-hover:[transform:rotateY(0deg)_rotateX(0deg)]">
+              <DreMockupPreview />
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.06] to-transparent"
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Stats */}
-      <section className="py-16 border-y border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((s, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="text-center"
-              >
-                <s.icon className="w-8 h-8 text-primary mx-auto mb-3" />
-                <p className="text-3xl font-bold font-display">{s.value}</p>
-                <p className="text-sm text-muted-foreground mt-1">{s.label}</p>
-              </motion.div>
+      {/* ---------------- STATS ---------------- */}
+      <section className="border-y border-border">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <div className="grid grid-cols-2 divide-border sm:divide-x lg:grid-cols-4">
+            {stats.map((s) => (
+              <div key={s.label} className="px-2 py-10 text-center sm:px-6">
+                <p className="font-display text-4xl font-bold sm:text-5xl">
+                  <CountUpNumber value={s.value} suffix={s.suffix} />
+                </p>
+                <p className="mt-3 text-[0.68rem] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+                  {s.label}
+                </p>
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Cómo funciona */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
-                <Sparkles className="w-4 h-4" />
-                {t("home.howItWorks.badge")}
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">
-                {t("home.howItWorks.title1")}
-                <span className="text-gradient-brand">{t("home.howItWorks.title2")}</span>
-              </h2>
-              <p className="text-muted-foreground mb-8">
-                {t("home.howItWorks.desc")}
-              </p>
-              <div className="space-y-5">
-                {[
-                  { icon: LineChart, title: t("home.howItWorks.b1Title"), desc: t("home.howItWorks.b1Desc") },
-                  { icon: GraduationCap, title: t("home.howItWorks.b2Title"), desc: t("home.howItWorks.b2Desc") },
-                  { icon: Target, title: t("home.howItWorks.b3Title"), desc: t("home.howItWorks.b3Desc") },
-                  { icon: Users, title: t("home.howItWorks.b4Title"), desc: t("home.howItWorks.b4Desc") },
-                ].map((b, i) => (
-                  <motion.div
-                    key={i}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: i * 0.08 }}
-                    className="flex gap-4"
-                  >
-                    <div className="w-10 h-10 shrink-0 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <b.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold font-display mb-1">{b.title}</h3>
-                      <p className="text-sm text-muted-foreground">{b.desc}</p>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </motion.div>
+      {/* ---------------- CÓMO FUNCIONA (bento) ---------------- */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnScroll>
+            <SectionHeading
+              align="left"
+              eyebrow={t("home.howItWorks.badge")}
+              title={
+                <>
+                  {t("home.howItWorks.title1")}
+                  <span className="text-gradient-brand">{t("home.howItWorks.title2")}</span>
+                </>
+              }
+              desc={t("home.howItWorks.desc")}
+            />
+          </RevealOnScroll>
 
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="relative"
-            >
-              <div className="absolute -inset-6 bg-primary/10 rounded-3xl blur-3xl" aria-hidden="true" />
-              <div className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-2xl">
-                <DreMockupPreview />
-              </div>
-            </motion.div>
+          <div className="mt-12 grid gap-5 md:grid-cols-3">
+            {bento.map((b, i) => (
+              <RevealOnScroll
+                key={b.title}
+                delay={i * 70}
+                className={b.wide ? "md:col-span-2" : "md:col-span-1"}
+              >
+                <GlassCard glowFollow className="h-full p-7 hover:scale-[1.01]">
+                  <b.icon className="h-6 w-6 text-primary" strokeWidth={1.25} />
+                  <h3 className="mt-5 font-display text-lg font-semibold">{b.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.desc}</p>
+                  {i === 0 && (
+                    <div aria-hidden="true" className="mt-7 flex h-16 items-end gap-1.5">
+                      {[38, 62, 46, 78, 58, 88, 70, 96].map((h, bi) => (
+                        <span
+                          key={bi}
+                          className="flex-1 rounded-sm bg-gradient-to-t from-primary/15 to-primary/60"
+                          style={{ height: `${h}%` }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </GlassCard>
+              </RevealOnScroll>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* About Daniel */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 via-card to-secondary overflow-hidden">
+      {/* ---------------- DANIEL ---------------- */}
+      <section className="py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-2">
+          <RevealOnScroll>
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-70 blur-[70px]"
+                style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.18), transparent)" }}
+              />
+              <div className="relative aspect-[4/5] overflow-hidden rounded-2xl glass p-1.5">
                 <img
                   src={danielAsset.url}
                   alt="Daniel Gimenez — GPS Gastronômico"
-                  className="w-full h-full object-cover"
+                  className="h-full w-full rounded-xl object-cover"
+                  loading="lazy"
                 />
               </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-            >
-              <h2 className="text-3xl sm:text-4xl font-bold font-display mb-6">
-                {t("home.conoce")}<span className="text-gradient-brand">Daniel Gimenez</span>
-              </h2>
-              <div className="space-y-4 text-muted-foreground">
-                <p>{t("home.aboutP1")}</p>
-                <p>{t("home.aboutP2")}</p>
-                <p>{t("home.aboutP3")}</p>
-              </div>
-              <div className="flex flex-wrap gap-3 mt-6">
-                {["Food Cost", "DRE", "KPIs", lang === "es" ? "Liderazgo" : "Leadership", lang === "es" ? "Escalabilidad" : "Scalability"].map(tag => (
-                  <span key={tag} className="px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
+            </div>
+          </RevealOnScroll>
 
-      {/* Method */}
-      <section className="py-20 bg-card/50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              {t("home.metodo")}<span className="text-gradient-brand">{t("home.metodoWord")}</span>
+          <RevealOnScroll delay={80}>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              {t("home.conoce")}<span className="text-gradient-brand">Daniel Gimenez</span>
             </h2>
-            <p className="text-muted-foreground mt-3 max-w-xl mx-auto">
-              {t("home.metodoDesc")}
-            </p>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {methodSteps.map((step, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.12 }}
-                className="relative rounded-xl border border-border bg-card p-6 group hover:border-primary/30 transition-colors"
-              >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <step.icon className="w-6 h-6 text-primary" />
-                </div>
-                <span className="absolute top-4 right-4 text-4xl font-bold font-display text-border">
-                  {String(i + 1).padStart(2, "0")}
+            <div className="mt-6 space-y-4 leading-relaxed text-muted-foreground">
+              <p>{t("home.aboutP1")}</p>
+              <p>{t("home.aboutP2")}</p>
+              <p>{t("home.aboutP3")}</p>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-2.5">
+              {["Food Cost", "DRE", "KPIs", lang === "es" ? "Liderazgo" : "Leadership", lang === "es" ? "Escalabilidad" : "Scalability"].map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded-full glass px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                >
+                  {tag}
                 </span>
-                <h3 className="font-display font-semibold text-lg mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </RevealOnScroll>
         </div>
       </section>
 
-      {/* Testimonials */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              {t("home.testimonios")}<span className="text-gradient-brand">{t("home.testimoniosWord")}</span>
-            </h2>
-          </div>
-          <div className="grid md:grid-cols-3 gap-6">
+      {/* ---------------- MÉTODO ---------------- */}
+      <section className="border-y border-border bg-surface/50 py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnScroll>
+            <SectionHeading
+              eyebrow={t("home.metodo")}
+              title={<span className="text-gradient-brand">{t("home.metodoWord")}</span>}
+              desc={t("home.metodoDesc")}
+              className="mb-16"
+            />
+          </RevealOnScroll>
+          <MethodTimeline steps={methodSteps} />
+        </div>
+      </section>
+
+      {/* ---------------- TESTIMONIALS ---------------- */}
+      <section className="py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnScroll>
+            <SectionHeading
+              title={
+                <>
+                  {t("home.testimonios")}<span className="text-gradient-brand">{t("home.testimoniosWord")}</span>
+                </>
+              }
+              className="mb-14"
+            />
+          </RevealOnScroll>
+          <div className="grid gap-5 md:grid-cols-3">
             {testimonials.map((te, i) => (
-              <motion.div
-                key={te.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="rounded-xl border border-border bg-card p-6"
-              >
-                <Quote className="w-8 h-8 text-primary/30 mb-4" />
-                <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{lang === "en" ? te.textEn : te.text}</p>
-                <div className="flex items-center gap-1 mb-3">
-                  {Array.from({ length: te.stars }).map((_, si) => (
-                    <Star key={si} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="font-semibold text-sm">{te.name}</p>
-                <p className="text-xs text-muted-foreground">{te.role}</p>
-              </motion.div>
+              <RevealOnScroll key={te.name} delay={i * 70}>
+                <GlassCard tilt className="h-full p-7">
+                  <Quote className="h-8 w-8 text-primary/40" strokeWidth={1.25} />
+                  <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                    {lang === "en" ? te.textEn : te.text}
+                  </p>
+                  <div className="mt-6 flex items-center gap-1">
+                    {Array.from({ length: te.stars }).map((_, si) => (
+                      <Star key={si} className="h-3.5 w-3.5 fill-primary text-primary" />
+                    ))}
+                  </div>
+                  <div className="mt-5 flex items-center gap-3">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm font-semibold text-primary ring-1 ring-primary/40">
+                      {te.name.charAt(0)}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold">{te.name}</p>
+                      <p className="truncate text-xs text-muted-foreground">{te.role}</p>
+                    </div>
+                  </div>
+                </GlassCard>
+              </RevealOnScroll>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Plans Preview */}
-      <section className="py-20 bg-card/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="text-center mb-14">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
-              <Sparkles className="w-4 h-4" />
-              {t("home.plans.badge")}
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              {t("home.plans.title1")}<span className="text-gradient-brand">{t("home.plans.title2")}</span>
-            </h2>
-            <p className="text-muted-foreground mt-3 max-w-xl mx-auto">{t("home.plans.desc")}</p>
-
-            <div className="inline-flex items-center gap-1 mt-8 p-1 rounded-full border border-border bg-card">
-              <button
-                type="button"
-                onClick={() => setBilling("monthly")}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors ${
-                  billing === "monthly"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t("home.plans.billingMonthly")}
-              </button>
-              <button
-                type="button"
-                onClick={() => setBilling("yearly")}
-                className={`px-5 py-2 rounded-full text-sm font-medium transition-colors flex items-center gap-2 ${
-                  billing === "yearly"
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {t("home.plans.billingYearly")}
-                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
-                }`}>
-                  −15%
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-            {[
-              {
-                id: "basico",
-                icon: Star,
-                name: t("home.plans.basicName"),
-                price: basicPrice,
-                period: paidPeriod,
-                desc: t("home.plans.basicDesc"),
-                features: [t("home.plans.basicF1"), t("home.plans.basicF2"), t("home.plans.basicF3"), t("home.plans.basicF4")],
-                featured: false,
-              },
-              {
-                id: "premium",
-                icon: Crown,
-                name: t("home.plans.premiumName"),
-                price: premiumPrice,
-                period: paidPeriod,
-                desc: t("home.plans.premiumDesc"),
-                features: [t("home.plans.premiumF1"), t("home.plans.premiumF2"), t("home.plans.premiumF3"), t("home.plans.premiumF4")],
-                featured: true,
-              },
-            ].map((plan, i) => (
-              <motion.div
-                key={plan.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl border p-7 flex flex-col ${
-                  plan.featured
-                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)]"
-                    : "border-border bg-card"
-                }`}
-              >
-                {plan.featured && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-xs font-semibold px-4 py-1 rounded-full">
-                    {t("home.plans.popular")}
-                  </span>
-                )}
-                <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <plan.icon className="w-5 h-5 text-primary" />
-                </div>
-                <h3 className="text-xl font-bold font-display mb-1">{plan.name}</h3>
-                <p className="text-sm text-muted-foreground mb-5">{plan.desc}</p>
-                <div className="mb-5">
-                  <span className="text-3xl font-bold text-foreground">{plan.price}</span>
-                  {plan.period && <span className="text-muted-foreground text-sm">{plan.period}</span>}
-                </div>
-                <ul className="space-y-2.5 mb-6 flex-1">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                      <span className="text-foreground">{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <Link to="/planes">
-                  <Button
-                    className={`w-full rounded-xl ${
-                      plan.featured
-                        ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+      {/* ---------------- PRICING ---------------- */}
+      <section className="border-y border-border bg-surface/50 py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6">
+          <RevealOnScroll>
+            <SectionHeading
+              eyebrow={t("home.plans.badge")}
+              title={
+                <>
+                  {t("home.plans.title1")}<span className="text-gradient-brand">{t("home.plans.title2")}</span>
+                </>
+              }
+              desc={t("home.plans.desc")}
+            />
+            <div className="mt-9 flex justify-center">
+              <div className="inline-flex items-center gap-1 rounded-full glass p-1">
+                <button
+                  type="button"
+                  onClick={() => setBilling("monthly")}
+                  className={`rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 ${
+                    billing === "monthly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t("home.plans.billingMonthly")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBilling("yearly")}
+                  className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-medium transition-colors duration-200 ${
+                    billing === "yearly" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {t("home.plans.billingYearly")}
+                  <span
+                    className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
+                      billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
                     }`}
                   >
-                    {t("home.plans.ctaPaid")}
-                  </Button>
-                </Link>
-              </motion.div>
+                    −15%
+                  </span>
+                </button>
+              </div>
+            </div>
+          </RevealOnScroll>
+
+          <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
+            {plans.map((plan, i) => (
+              <RevealOnScroll key={plan.id} delay={i * 70} className="h-full">
+                <div
+                  className={`relative flex h-full flex-col rounded-2xl p-7 transition-all duration-300 ease-out hover:-translate-y-1 ${
+                    plan.featured
+                      ? "gradient-border-gold glow-gold md:scale-[1.03]"
+                      : "glass hover:border-border-strong"
+                  }`}
+                >
+                  {plan.featured && (
+                    <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-4 py-1 text-xs font-semibold text-primary-foreground">
+                      {t("home.plans.popular")}
+                    </span>
+                  )}
+                  <plan.icon className="h-6 w-6 text-primary" strokeWidth={1.25} />
+                  <h3 className="mt-5 font-display text-xl font-bold">{plan.name}</h3>
+                  <p className="mt-1.5 text-sm text-muted-foreground">{plan.desc}</p>
+                  <div className="mt-6 flex items-baseline gap-1">
+                    <span className="font-display text-4xl font-bold tabular">
+                      $<CountUpNumber key={`${plan.id}-${plan.amount}`} value={plan.amount} duration={500} />
+                    </span>
+                    <span className="text-sm text-muted-foreground">{paidPeriod}</span>
+                  </div>
+                  <ul className="mt-6 mb-7 flex-1 space-y-3">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2.5 text-sm">
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2} />
+                        <span className="text-foreground/90">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Link to="/planes" className="mt-auto">
+                    <GoldButton
+                      variant={plan.featured ? "gold" : "ghost"}
+                      className="w-full"
+                    >
+                      {t("home.plans.ctaPaid")}
+                    </GoldButton>
+                  </Link>
+                </div>
+              </RevealOnScroll>
             ))}
           </div>
 
-          <div className="text-center mt-10">
+          <div className="mt-12 text-center">
             <Link to="/planes">
-              <Button variant="outline" size="lg" className="gap-2">
-                {t("home.plans.viewAll")} <ArrowRight className="w-4 h-4" />
-              </Button>
+              <GoldButton variant="ghost" size="lg">
+                {t("home.plans.viewAll")} <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+              </GoldButton>
             </Link>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-10 sm:p-14"
-          >
-            <h2 className="text-3xl sm:text-4xl font-bold font-display mb-4">
-              {t("home.ctaTitle")}
-            </h2>
-            <p className="text-muted-foreground mb-8 max-w-lg mx-auto">
-              {t("home.ctaDesc")}
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
+      {/* ---------------- CTA FINAL ---------------- */}
+      <section className="relative overflow-hidden py-28">
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[820px] -translate-x-1/2 -translate-y-1/2 blur-[110px]"
+          style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.16), transparent)" }}
+        />
+        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <RevealOnScroll>
+            <h2 className="font-display text-3xl font-bold leading-[1.1] sm:text-5xl">{t("home.ctaTitle")}</h2>
+            <p className="mx-auto mt-5 max-w-lg leading-relaxed text-muted-foreground">{t("home.ctaDesc")}</p>
+            <div className="mt-9 flex flex-wrap justify-center gap-4">
               <Link to="/dashboard">
-                <Button size="lg" className="glow-orange gap-2">
-                  <BarChart3 className="w-4 h-4" /> {t("home.hacerDiag")}
-                </Button>
+                <GoldButton size="lg">
+                  <BarChart3 className="h-4 w-4" strokeWidth={1.5} /> {t("home.hacerDiag")}
+                </GoldButton>
               </Link>
               <Link to="/asistente">
-                <Button size="lg" variant="outline" className="gap-2">
-                  {t("home.hablarAsistente")} <ArrowRight className="w-4 h-4" />
-                </Button>
+                <GoldButton size="lg" variant="ghost">
+                  {t("home.hablarAsistente")} <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
+                </GoldButton>
               </Link>
             </div>
-          </motion.div>
+          </RevealOnScroll>
         </div>
       </section>
 
-      {/* FAQ */}
-      <section className="py-20 bg-card/50">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-12"
-          >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-5">
-              <HelpCircle className="w-4 h-4" />
-              {t("home.faq.badge")}
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-bold font-display">
-              {t("home.faq.title1")}<span className="text-gradient-brand">{t("home.faq.title2")}</span>
-            </h2>
-            <p className="text-muted-foreground mt-3">{t("home.faq.desc")}</p>
-          </motion.div>
+      {/* ---------------- FAQ ---------------- */}
+      <section className="border-t border-border py-24">
+        <div className="mx-auto max-w-3xl px-4 sm:px-6">
+          <RevealOnScroll>
+            <SectionHeading
+              eyebrow={t("home.faq.badge")}
+              title={
+                <>
+                  {t("home.faq.title1")}<span className="text-gradient-brand">{t("home.faq.title2")}</span>
+                </>
+              }
+              desc={t("home.faq.desc")}
+              className="mb-12"
+            />
+          </RevealOnScroll>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.1 }}
-          >
-            <Accordion type="single" collapsible className="space-y-3">
-              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <AccordionItem
-                  key={i}
-                  value={`item-${i}`}
-                  className="rounded-xl border border-border bg-card px-5 data-[state=open]:border-primary/30 transition-colors"
-                >
-                  <AccordionTrigger className="text-left font-display font-semibold hover:no-underline py-5">
-                    {t(`home.faq.q${i}` as never)}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-muted-foreground leading-relaxed pb-5">
-                    {t(`home.faq.a${i}` as never)}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
-          </motion.div>
+          <Accordion type="single" collapsible className="divide-y divide-border border-y border-border">
+            {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+              <AccordionItem key={i} value={`item-${i}`} className="border-0">
+                <AccordionTrigger className="py-5 text-left font-display font-semibold transition-colors hover:text-primary hover:no-underline">
+                  {t(`home.faq.q${i}` as never)}
+                </AccordionTrigger>
+                <AccordionContent className="pb-6 leading-relaxed text-muted-foreground">
+                  {t(`home.faq.a${i}` as never)}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </div>
       </section>
     </div>
