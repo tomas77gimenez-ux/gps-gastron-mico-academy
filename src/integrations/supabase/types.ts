@@ -261,6 +261,8 @@ export type Database = {
           category: string
           created_at: string
           description: string | null
+          description_en: string | null
+          description_pt: string | null
           estimated_duration: string | null
           id: string
           instructor: string
@@ -272,12 +274,16 @@ export type Database = {
           status: string
           thumbnail_url: string | null
           title: string
+          title_en: string | null
+          title_pt: string | null
           updated_at: string
         }
         Insert: {
           category?: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_pt?: string | null
           estimated_duration?: string | null
           id?: string
           instructor?: string
@@ -289,12 +295,16 @@ export type Database = {
           status?: string
           thumbnail_url?: string | null
           title: string
+          title_en?: string | null
+          title_pt?: string | null
           updated_at?: string
         }
         Update: {
           category?: string
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_pt?: string | null
           estimated_duration?: string | null
           id?: string
           instructor?: string
@@ -306,6 +316,8 @@ export type Database = {
           status?: string
           thumbnail_url?: string | null
           title?: string
+          title_en?: string | null
+          title_pt?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -686,6 +698,8 @@ export type Database = {
           cover_url: string | null
           created_at: string
           description: string | null
+          description_en: string | null
+          description_pt: string | null
           duration: string | null
           id: string
           is_free: boolean
@@ -695,6 +709,8 @@ export type Database = {
           required_plan: Database["public"]["Enums"]["plan_tier"]
           sort_order: number
           title: string
+          title_en: string | null
+          title_pt: string | null
           updated_at: string
           video_url: string | null
         }
@@ -706,6 +722,8 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_pt?: string | null
           duration?: string | null
           id?: string
           is_free?: boolean
@@ -715,6 +733,8 @@ export type Database = {
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           sort_order?: number
           title: string
+          title_en?: string | null
+          title_pt?: string | null
           updated_at?: string
           video_url?: string | null
         }
@@ -726,6 +746,8 @@ export type Database = {
           cover_url?: string | null
           created_at?: string
           description?: string | null
+          description_en?: string | null
+          description_pt?: string | null
           duration?: string | null
           id?: string
           is_free?: boolean
@@ -735,6 +757,8 @@ export type Database = {
           required_plan?: Database["public"]["Enums"]["plan_tier"]
           sort_order?: number
           title?: string
+          title_en?: string | null
+          title_pt?: string | null
           updated_at?: string
           video_url?: string | null
         }
