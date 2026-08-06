@@ -976,7 +976,7 @@ export type Database = {
       }
       set_app_secret: {
         Args: { _key: string; _value: string }
-        Returns: undefined
+        Returns: boolean
       }
     }
     Enums: {
