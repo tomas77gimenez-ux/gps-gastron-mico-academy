@@ -22,7 +22,7 @@ const translations = {
   "home.badge": { es: "Gestión · Procesos · Sustentabilidad", en: "Management · Processes · Sustainability", pt: "Gestão · Processos · Sustentabilidade" },
   "home.heroTitle1": { es: "Transforma tu restaurante con ", en: "Transform your restaurant with ", pt: "Transforme seu restaurante com " },
   "home.heroTitle2": { es: "datos y estrategia", en: "data and strategy", pt: "dados e estratégia" },
-  "home.heroDesc": { es: "Soy Daniel Gimenez, y hace más de 15 años ayudo a restaurantes a ser más rentables, organizados y sustentables. Bienvenido a tu plataforma de crecimiento gastronómico.", en: "I'm Daniel Gimenez, and for over 15 years I've been helping restaurants become more profitable, organized, and sustainable. Welcome to your gastronomic growth platform.", pt: "Sou Daniel Gimenez, e há mais de 15 anos ajudo restaurantes a serem mais rentáveis, organizados e sustentáveis. Bem-vindo à sua plataforma de crescimento gastronômico." },
+  "home.heroDesc": { es: "Soy Daniel Gimenez, y hace más de 35 años ayudo a restaurantes a ser más rentables, organizados y sustentables. Bienvenido a tu plataforma de crecimiento gastronómico.", en: "I'm Daniel Gimenez, and for over 35 years I've been helping restaurants become more profitable, organized, and sustainable. Welcome to your gastronomic growth platform.", pt: "Sou Daniel Gimenez, e há mais de 35 anos ajudo restaurantes a serem mais rentáveis, organizados e sustentáveis. Bem-vindo à sua plataforma de crescimento gastronômico." },
   "home.explorarCursos": { es: "Explorar Cursos", en: "Explore Courses", pt: "Explorar Cursos" },
   "home.diagnosticar": { es: "Diagnosticar mi Restaurante", en: "Diagnose my Restaurant", pt: "Diagnosticar meu Restaurante" },
   "home.stat.experiencia": { es: "Años de experiencia", en: "Years of experience", pt: "Anos de experiência" },
@@ -30,7 +30,7 @@ const translations = {
   "home.stat.cursos": { es: "Cursos y talleres", en: "Courses and workshops", pt: "Cursos e workshops" },
   "home.stat.satisfaccion": { es: "Satisfacción de clientes", en: "Client satisfaction", pt: "Satisfação dos clientes" },
   "home.conoce": { es: "Conoce a ", en: "Meet ", pt: "Conheça " },
-  "home.aboutP1": { es: "Con más de 15 años en el sector gastronómico, Daniel ha transformado la operación de cientos de restaurantes en América Latina y España.", en: "With over 15 years in the gastronomic sector, Daniel has transformed the operations of hundreds of restaurants in Latin America and Spain.", pt: "Com mais de 15 anos no setor gastronômico, Daniel transformou a operação de centenas de restaurantes na América Latina e Espanha." },
+  "home.aboutP1": { es: "Con más de 35 años en el sector gastronómico, Daniel ha transformado la operación de cientos de restaurantes en América Latina y España.", en: "With over 35 years in the gastronomic sector, Daniel has transformed the operations of hundreds of restaurants in Latin America and Spain.", pt: "Com mais de 35 anos no setor gastronômico, Daniel transformou a operação de centenas de restaurantes na América Latina e Espanha." },
   "home.aboutP2": { es: "Su enfoque combina análisis financiero riguroso con estrategias prácticas que cualquier operador puede implementar, sin importar el tamaño de su negocio.", en: "His approach combines rigorous financial analysis with practical strategies that any operator can implement, regardless of business size.", pt: "Sua abordagem combina análise financeira rigorosa com estratégias práticas que qualquer operador pode implementar, independentemente do tamanho do negócio." },
   "home.aboutP3": { es: "Fundador de GPS Gastronômico, una metodología que integra Gestión, Procesos y Sustentabilidad para crear restaurantes que prosperan a largo plazo.", en: "Founder of GPS Gastronômico, a methodology that integrates Management, Processes, and Sustainability to create restaurants that thrive long-term.", pt: "Fundador do GPS Gastronômico, uma metodologia que integra Gestão, Processos e Sustentabilidade para criar restaurantes que prosperam no longo prazo." },
   "home.metodo": { es: "Nuestro ", en: "Our ", pt: "Nosso " },
@@ -243,9 +243,9 @@ const translations = {
   },
   "home.howItWorks.b4Title": { es: "Acompañamiento experto", en: "Expert mentorship", pt: "Acompanhamento especializado" },
   "home.howItWorks.b4Desc": {
-    es: "Acceso al método y al equipo de Daniel Gimenez, con +15 años transformando restaurantes.",
-    en: "Access to Daniel Gimenez's method and team, with 15+ years transforming restaurants.",
-  pt: "Acesso ao método e à equipe de Daniel Gimenez, com +15 anos transformando restaurantes."
+    es: "Acceso al método y al equipo de Daniel Gimenez, con +35 años transformando restaurantes.",
+    en: "Access to Daniel Gimenez's method and team, with 35+ years transforming restaurants.",
+  pt: "Acesso ao método e à equipe de Daniel Gimenez, com +35 anos transformando restaurantes."
   },
   "home.howItWorks.imgAlt": {
     es: "Vista del dashboard financiero de GPS Gastronômico",
