@@ -43,6 +43,37 @@ export function useCourseProgress(courseId: string | undefined) {
 }
 
 /**
+ * Manual completion toggle — used for Bunny Stream lessons and
+ * material-only lessons where there is no playback event to track.
+ */
+export function useLessonCompletion(courseId: string | undefined, onUpdate?: () => void) {
+  const { user } = useAuthSession();
+  const [saving, setSaving] = useState(false);
+
+  const setCompleted = useCallback(
+    async (lessonId: string, completed: boolean) => {
+      if (!user || !courseId) return;
+      setSaving(true);
+      await supabase.from("lesson_progress").upsert(
+        {
+          user_id: user.id,
+          lesson_id: lessonId,
+          course_id: courseId,
+          completed,
+          last_watched_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id,lesson_id" },
+      );
+      setSaving(false);
+      onUpdate?.();
+    },
+    [user, courseId, onUpdate],
+  );
+
+  return { setCompleted, saving, canTrack: !!user && !!courseId };
+}
+
+/**
  * Listens to Panda Video player postMessage events and persists progress.
  * Saves at most every 10 seconds while playing, and immediately on pause/end.
  */
