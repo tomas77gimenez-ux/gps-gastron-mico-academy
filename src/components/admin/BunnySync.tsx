@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Key, RefreshCw, Save, Check, AlertTriangle, Video, Loader2 } from "lucide-react";
@@ -38,6 +38,16 @@ export function BunnySync() {
   const [savingPairs, setSavingPairs] = useState(false);
   const [savedPairs, setSavedPairs] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoRan = useRef(false);
+
+  // Carga automática: la sección de revisión manual es permanente y no depende
+  // de que el admin pulse el botón de sincronizar.
+  useEffect(() => {
+    if (autoRan.current) return;
+    autoRan.current = true;
+    void runSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function saveKey() {
     setSavingKey(true);
