@@ -220,7 +220,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           </div>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/55 to-transparent" />
 
         {course.methodology === "gps" && course.module_number && (
           <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary px-2 py-1 rounded">
