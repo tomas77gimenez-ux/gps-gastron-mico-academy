@@ -29,11 +29,18 @@ serve(async (req) => {
       case "customer.subscription.updated":
         await handleSubscriptionUpdated(event.data.object, env);
         break;
+      case "customer.subscription.trial_will_end":
+        console.log("Trial will end:", event.data.object.id);
+        break;
       case "customer.subscription.deleted":
         await handleSubscriptionDeleted(event.data.object, env);
         break;
       case "invoice.payment_failed":
-        console.log("Payment failed:", event.data.object.id);
+        await handlePaymentFailed(event.data.object, env);
+        break;
+      case "invoice.paid":
+      case "invoice.payment_succeeded":
+        console.log("Invoice paid:", event.data.object.id);
         break;
       default:
         console.log("Unhandled event:", event.type);
