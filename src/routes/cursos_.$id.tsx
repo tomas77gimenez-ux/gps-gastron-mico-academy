@@ -362,29 +362,16 @@ function CourseDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           {/* Left: Player + info */}
           <div>
-            <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
-              {activeLesson && canPlay(activeLesson) && pandaStreamUrl ? (
-                <video
-                  key={activeLesson.id}
-                  ref={pandaVideoRef}
-                  poster={activeLesson.poster_url ?? undefined}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-full object-contain bg-black"
-                />
-              ) : activeLesson && canPlay(activeLesson) && activeLesson.video_url ? (
-                <video
-                  key={activeLesson.id}
-                  src={activeLesson.video_url}
-                  poster={activeLesson.poster_url ?? undefined}
-                  controls
-                  className="w-full h-full object-contain bg-black"
-                />
-              ) : activeLesson && !canPlay(activeLesson) ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary">
-                  {course.thumbnail_url && (
-                    <img src={course.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <div className="mb-5 space-y-4">
+              {!activeLesson ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  <BookOpen className="w-10 h-10 text-primary/40" />
+                  <span className="text-sm">{t("cursos.sinAulas")}</span>
+                </div>
+              ) : !canPlay(activeLesson) ? (
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary">
+                  {(activeLesson.cover_url || course.thumbnail_url) && (
+                    <img src={activeLesson.cover_url ?? course.thumbnail_url!} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
@@ -404,37 +391,74 @@ function CourseDetailPage() {
                     </Link>
                   </div>
                 </div>
-              ) : (
-                activeLesson && canPlay(activeLesson) && activeMaterials.length > 0 ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary px-6 text-center">
-                    {course.thumbnail_url && (
-                      <img src={course.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
-                    )}
-                    <div className="relative z-10 flex flex-col items-center gap-3 max-w-md">
-                      <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                        <FileText className="w-7 h-7 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Esta clase está compuesta por un documento editable. Descargá el material a continuación para trabajarlo en tu computadora.
+              ) : bunnyIds.length > 0 ? (
+                bunnyIds.map((videoId, i) => (
+                  <div key={videoId}>
+                    {bunnyIds.length > 1 && (
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                        Parte {i + 1}
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => handleDownload(activeMaterials[0])}
-                        disabled={downloadingId === activeMaterials[0].id}
-                        className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
-                      >
-                        <Download className="w-4 h-4" />
-                        {downloadingId === activeMaterials[0].id ? "Descargando..." : "Descargar material"}
-                      </button>
+                    )}
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-black border border-border">
+                      <iframe
+                        key={`${activeLesson.id}-${videoId}`}
+                        src={bunnyEmbedUrl(libraryId, videoId)}
+                        title={`${activeLesson.title}${bunnyIds.length > 1 ? ` — parte ${i + 1}` : ""}`}
+                        loading="lazy"
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                        allowFullScreen
+                        className="absolute inset-0 w-full h-full border-0"
+                      />
                     </div>
                   </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                    <BookOpen className="w-10 h-10 text-primary/40" />
-                    <span className="text-sm">{t("cursos.sinVideo")}</span>
+                ))
+              ) : pandaStreamUrl ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
+                  <video
+                    key={activeLesson.id}
+                    ref={pandaVideoRef}
+                    poster={activeLesson.cover_url ?? activeLesson.poster_url ?? undefined}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-contain bg-black"
+                  />
+                </div>
+              ) : activeLesson.video_url ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
+                  <video
+                    key={activeLesson.id}
+                    src={activeLesson.video_url}
+                    poster={activeLesson.cover_url ?? activeLesson.poster_url ?? undefined}
+                    controls
+                    className="w-full h-full object-contain bg-black"
+                  />
+                </div>
+              ) : isMaterialOnly ? (
+                <div className="relative rounded-xl overflow-hidden border border-primary/25 bg-gradient-to-br from-card to-secondary px-6 py-10 text-center">
+                  {activeLesson.cover_url && (
+                    <img src={activeLesson.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+                  )}
+                  <div className="relative z-10 flex flex-col items-center gap-3 max-w-md mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+                      <FileText className="w-7 h-7 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Esta clase no tiene video: se trabaja con los materiales de apoyo que están más abajo.
+                    </p>
                   </div>
-                )
+                </div>
+              ) : (
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  {activeLesson.cover_url && (
+                    <img src={activeLesson.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                  )}
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <Clock className="w-10 h-10 text-primary/50" />
+                    <span className="text-sm font-medium">Video próximamente</span>
+                  </div>
+                </div>
               )}
             </div>
 
