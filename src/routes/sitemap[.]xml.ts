@@ -15,6 +15,7 @@ const STATIC_ROUTES = [
   "/forgot-password",
   "/terminos",
   "/privacidad",
+  "/reembolsos",
 ];
 
 export const Route = createFileRoute("/sitemap.xml")({
