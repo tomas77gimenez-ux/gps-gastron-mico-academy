@@ -4,8 +4,9 @@ import Hls from "hls.js";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star } from "lucide-react";
+import { useCourseProgress, usePandaProgressTracker, useLessonCompletion } from "@/hooks/useLessonProgress";
+import { bunnyEmbedUrl, useBunnyLibraryId } from "@/lib/bunny";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star, Clock, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { hasPlanAccess } from "@/lib/plan-access";
 import type { PlanTier } from "@/lib/admin-types";
@@ -21,13 +22,13 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, poster_url, is_free, sort_order, required_plan")
+        .select("id, title, description, duration, poster_url, cover_url, content_type, is_free, sort_order, required_plan")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
     const { data: materials } = await supabase
       .from("course_materials")
-      .select("id, lesson_id, title, file_type, file_size, required_plan")
+      .select("id, lesson_id, title, file_type, file_size, required_plan, has_file")
       .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
