@@ -86,7 +86,7 @@ export const Route = createFileRoute("/api/public/bunny-thumbs")({
               { headers: { AccessKey: apiKey, accept: "application/json" } },
             );
             const text = await res.text();
-            return json({ status: res.status, body: text.slice(0, 3000) });
+            return json({ status: res.status, body: text.slice(0, 9000) });
           }
 
           if (body.action === "set") {
