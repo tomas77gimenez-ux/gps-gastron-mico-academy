@@ -904,6 +904,7 @@ export type Database = {
         Args: { _enabled: boolean; _user_id: string }
         Returns: boolean
       }
+      app_secret_exists: { Args: { _key: string }; Returns: boolean }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -913,6 +914,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_app_secret: { Args: { _key: string }; Returns: string }
       get_lesson_video: {
         Args: { _lesson_id: string }
         Returns: {
@@ -971,6 +973,10 @@ export type Database = {
       revoke_subscription: {
         Args: { _subscription_id: string }
         Returns: boolean
+      }
+      set_app_secret: {
+        Args: { _key: string; _value: string }
+        Returns: undefined
       }
     }
     Enums: {

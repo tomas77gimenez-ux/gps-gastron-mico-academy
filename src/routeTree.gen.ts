@@ -41,6 +41,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
+import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
@@ -213,6 +214,11 @@ const ApiPublicMaterialDownloadRoute =
     path: '/api/public/material-download',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBunnySyncRoute = ApiPublicBunnySyncRouteImport.update({
+  id: '/api/public/bunny-sync',
+  path: '/api/public/bunny-sync',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const Char91DotmcpChar93InvokeToolToolRoute =
   Char91DotmcpChar93InvokeToolToolRouteImport.update({
     id: '/.mcp/invoke-tool/$tool',
@@ -280,6 +286,7 @@ export interface FileRoutesByFullPath {
   '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -319,6 +326,7 @@ export interface FileRoutesByTo {
   '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -360,6 +368,7 @@ export interface FileRoutesById {
   '/herramientas/punto-equilibrio': typeof HerramientasPuntoEquilibrioRoute
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
+  '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -402,6 +411,7 @@ export interface FileRouteTypes {
     | '/herramientas/punto-equilibrio'
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/bunny-sync'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -441,6 +451,7 @@ export interface FileRouteTypes {
     | '/herramientas/punto-equilibrio'
     | '/herramientas'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/bunny-sync'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -481,6 +492,7 @@ export interface FileRouteTypes {
     | '/herramientas/punto-equilibrio'
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
+    | '/api/public/bunny-sync'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -515,6 +527,7 @@ export interface RootRouteChildren {
   CursosIdRoute: typeof CursosIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
+  ApiPublicBunnySyncRoute: typeof ApiPublicBunnySyncRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -750,6 +763,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMaterialDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bunny-sync': {
+      id: '/api/public/bunny-sync'
+      path: '/api/public/bunny-sync'
+      fullPath: '/api/public/bunny-sync'
+      preLoaderRoute: typeof ApiPublicBunnySyncRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/.mcp/invoke-tool/$tool': {
       id: '/.mcp/invoke-tool/$tool'
       path: '/.mcp/invoke-tool/$tool'
@@ -845,6 +865,7 @@ const rootRouteChildren: RootRouteChildren = {
   CursosIdRoute: CursosIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
+  ApiPublicBunnySyncRoute: ApiPublicBunnySyncRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

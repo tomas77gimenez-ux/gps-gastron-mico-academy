@@ -4,6 +4,7 @@ import { type Course, PILLARS } from "@/lib/admin-types";
 import { LessonManager } from "./LessonManager";
 import { MaterialUpload } from "./MaterialUpload";
 import { useBunnyLibraryId, saveBunnyLibraryId } from "@/lib/bunny";
+import { BunnySync } from "./BunnySync";
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, ChevronDown, ChevronUp,
   GripVertical, BookOpen, Save, X, Compass, Radio, Check,
@@ -256,6 +257,7 @@ export function CourseManager() {
       )}
 
       <BunnySettings />
+      <BunnySync />
 
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex gap-2 p-1 rounded-lg bg-secondary/50">
