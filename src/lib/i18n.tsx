@@ -66,10 +66,10 @@ const translations = {
   "cursos.cargando": { es: "Cargando cursos...", en: "Loading courses...", pt: "Carregando cursos..." },
   "cursos.acceso": { es: "Tenés acceso completo a todos los cursos", en: "You have full access to all courses", pt: "Você tem acesso completo a todos os cursos" },
   "cursos.reproducir": { es: "Reproducir", en: "Play", pt: "Reproduzir" },
-  "cursos.aulas": { es: "Aulas", en: "Lessons", pt: "Aulas" },
+  "cursos.aulas": { es: "Clases", en: "Lessons", pt: "Aulas" },
   "cursos.aulaBloqueada": { es: "Esta aula es exclusiva para suscriptores", en: "This lesson is for subscribers only", pt: "Esta aula é exclusiva para assinantes" },
   "cursos.verPlanes": { es: "Ver Planes", en: "View Plans", pt: "Ver Planos" },
-  "cursos.volver": { es: "Volver a cursos", en: "Back to courses", pt: "Voltar aos cursos" },
+  "cursos.volver": { es: "Volver a la mentoría", en: "Back to mentorship", pt: "Voltar à mentoria" },
   "cursos.sinAulas": { es: "Este curso aún no tiene aulas.", en: "This course has no lessons yet.", pt: "Este curso ainda não tem aulas." },
   "cursos.sinVideo": { es: "Esta aula aún no tiene video.", en: "This lesson has no video yet.", pt: "Esta aula ainda não tem vídeo." },
 
