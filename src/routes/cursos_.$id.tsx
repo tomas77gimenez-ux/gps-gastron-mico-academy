@@ -9,6 +9,7 @@ import { bunnyEmbedUrl, useBunnyLibraryId } from "@/lib/bunny";
 import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star, Clock, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { hasPlanAccess } from "@/lib/plan-access";
+import { loc, locLevel, locCategory } from "@/lib/localize";
 import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos_/$id")({
@@ -17,12 +18,12 @@ export const Route = createFileRoute("/cursos_/$id")({
     const [{ data: course }, { data: lessons }] = await Promise.all([
       supabase
         .from("courses")
-        .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor")
+        .select("id, title, description, title_en, title_pt, description_en, description_pt, category, level, thumbnail_url, estimated_duration, instructor")
         .eq("id", id)
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, poster_url, cover_url, content_type, is_free, sort_order, required_plan")
+        .select("id, title, description, title_en, title_pt, description_en, description_pt, duration, poster_url, cover_url, content_type, is_free, sort_order, required_plan")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
@@ -84,6 +85,10 @@ interface Course {
   id: string;
   title: string;
   description: string | null;
+  title_en: string | null;
+  title_pt: string | null;
+  description_en: string | null;
+  description_pt: string | null;
   category: string;
   level: string;
   thumbnail_url: string | null;
@@ -95,6 +100,10 @@ interface Lesson {
   id: string;
   title: string;
   description: string | null;
+  title_en: string | null;
+  title_pt: string | null;
+  description_en: string | null;
+  description_pt: string | null;
   duration: string | null;
   video_url: string | null;
   poster_url: string | null;
