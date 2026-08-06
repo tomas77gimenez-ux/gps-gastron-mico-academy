@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useSubscription } from "@/hooks/useSubscription";
+import logoGps from "@/assets/logo-gps.jpg";
 
 export function Navbar() {
   const location = useLocation();
@@ -75,12 +76,12 @@ export function Navbar() {
         <div className="flex items-center justify-between gap-4 h-16">
           {/* Logo */}
           <Link to="/" className="flex min-w-0 items-center gap-2">
-            <div className="w-8 h-8 shrink-0 rounded-lg bg-primary flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm font-display">G</span>
-            </div>
-            <span className="text-gradient-brand font-display text-[15px] sm:text-lg font-bold tracking-tight whitespace-nowrap">
-              GPS Gastronômico
-            </span>
+            <img
+              src={logoGps}
+              alt="Método GPS · GPS Gastronômico"
+              className="h-9 sm:h-10 w-auto shrink-0 mix-blend-screen"
+            />
+            <span className="sr-only">GPS Gastronômico</span>
           </Link>
 
           {/* Desktop Nav */}
