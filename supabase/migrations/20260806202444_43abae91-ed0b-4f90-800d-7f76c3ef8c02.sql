@@ -1,0 +1,1 @@
+UPDATE public.courses SET module_number = 0, sort_order = 1 WHERE id = 'b0000000-0000-4000-8000-000000000001'; UPDATE public.courses SET sort_order = 0 WHERE id = 'b0000000-0000-4000-8000-000000000000';
