@@ -1,43 +1,43 @@
 import { Activity, FileSpreadsheet } from "lucide-react";
+import { useI18n } from "@/lib/i18n";
 
 const money = (n: number) => `$${n.toLocaleString("en-US")}`;
 
-const EXPENSES: { group: string; items: { label: string; value: number }[] }[] = [
+const EXPENSES = [
   {
-    group: "Personal",
+    groupKey: "dreMock.grupoPersonal",
     items: [
-      { label: "Sueldos cocina", value: 6800 },
-      { label: "Sueldos salón", value: 3900 },
-      { label: "Cargas sociales", value: 2100 },
+      { key: "dreMock.sueldosCocina", value: 6800 },
+      { key: "dreMock.sueldosSalon", value: 3900 },
+      { key: "dreMock.cargasSociales", value: 2100 },
     ],
   },
   {
-    group: "Fijos",
+    groupKey: "dreMock.grupoFijos",
     items: [
-      { label: "Alquiler", value: 4200 },
-      { label: "Servicios (luz, gas, agua)", value: 1450 },
-      { label: "Contabilidad", value: 520 },
+      { key: "dreMock.alquiler", value: 4200 },
+      { key: "dreMock.servicios", value: 1450 },
+      { key: "dreMock.contabilidad", value: 520 },
     ],
   },
   {
-    group: "Variables y otros",
+    groupKey: "dreMock.grupoVariables",
     items: [
-      { label: "Comisiones delivery", value: 1980 },
-      { label: "Marketing", value: 860 },
-      { label: "Mantenimiento", value: 640 },
+      { key: "dreMock.delivery", value: 1980 },
+      { key: "dreMock.marketing", value: 860 },
+      { key: "dreMock.mantenimiento", value: 640 },
     ],
   },
-];
+] as const;
 
 const SALES = 48250;
 const CMV = 15420;
 
-const subtotal = (g: string) =>
-  EXPENSES.find((e) => e.group === g)!.items.reduce((a, b) => a + b.value, 0);
+const groupTotal = (i: number) => EXPENSES[i]!.items.reduce((a, b) => a + b.value, 0);
 
-const personal = subtotal("Personal");
-const fijos = subtotal("Fijos");
-const otros = subtotal("Variables y otros");
+const personal = groupTotal(0);
+const fijos = groupTotal(1);
+const otros = groupTotal(2);
 const contribution = SALES - CMV;
 const operating = contribution - personal - fijos - otros;
 
@@ -94,17 +94,19 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
 }
 
 export function DreMockupPreview() {
+  const { t } = useI18n();
+
   return (
     <div className="p-4 sm:p-5 text-xs sm:text-sm" aria-hidden="true">
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-[10px] uppercase tracking-widest text-primary font-semibold">
-            Herramientas · DRE
+            {t("dreMock.kicker")}
           </p>
-          <h3 className="font-display font-semibold text-base sm:text-lg">Resultado mensual</h3>
+          <h3 className="font-display font-semibold text-base sm:text-lg">{t("dreMock.titulo")}</h3>
         </div>
         <span className="px-2.5 py-1 rounded-full border border-border text-[10px] text-muted-foreground">
-          mayo 2026
+          {t("dreMock.periodo")}
         </span>
       </div>
 
@@ -112,24 +114,24 @@ export function DreMockupPreview() {
         {/* Left: expense entry */}
         <div className="space-y-3">
           <div className="rounded-xl border border-border bg-background/50 p-3 space-y-2">
-            <Row label="Ventas del mes" value={money(SALES)} strong />
-            <Row label="CMV — compras del mes" value={money(CMV)} />
+            <Row label={t("dreMock.ventasMes")} value={money(SALES)} strong />
+            <Row label={t("dreMock.cmvCompras")} value={money(CMV)} />
           </div>
 
-          {EXPENSES.map((g) => (
-            <div key={g.group} className="rounded-xl border border-border bg-background/50 p-3">
-              <p className="font-display font-semibold mb-2">{g.group}</p>
+          {EXPENSES.map((g, gi) => (
+            <div key={g.groupKey} className="rounded-xl border border-border bg-background/50 p-3">
+              <p className="font-display font-semibold mb-2">{t(g.groupKey)}</p>
               <div className="space-y-1.5">
                 {g.items.map((it) => (
-                  <div key={it.label} className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground truncate pr-2">{it.label}</span>
+                  <div key={it.key} className="flex items-center justify-between text-[11px]">
+                    <span className="text-muted-foreground truncate pr-2">{t(it.key)}</span>
                     <span>{money(it.value)}</span>
                   </div>
                 ))}
               </div>
               <div className="flex items-center justify-between mt-2 pt-2 border-t border-border text-[11px]">
-                <span className="text-muted-foreground">Subtotal</span>
-                <span className="font-semibold">{money(subtotal(g.group))}</span>
+                <span className="text-muted-foreground">{t("dreMock.subtotal")}</span>
+                <span className="font-semibold">{money(groupTotal(gi))}</span>
               </div>
             </div>
           ))}
@@ -140,30 +142,30 @@ export function DreMockupPreview() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2 mb-3">
               <FileSpreadsheet className="w-4 h-4 text-primary" />
-              <span className="font-display font-semibold">Resultado del mes</span>
+              <span className="font-display font-semibold">{t("dreMock.resultadoMes")}</span>
             </div>
             <div className="space-y-2 text-[11px] sm:text-xs">
-              <Row label="Ventas" value={money(SALES)} strong />
-              <Row label={`− CMV (${pct(cmvPct)})`} value={`− ${money(CMV)}`} />
+              <Row label={t("dreMock.ventas")} value={money(SALES)} strong />
+              <Row label={`− ${t("dreMock.cmv")} (${pct(cmvPct)})`} value={`− ${money(CMV)}`} />
               <Row
-                label={`= Margen de contribución (${pct((contribution / SALES) * 100)})`}
+                label={`= ${t("dreMock.margenContribucion")} (${pct((contribution / SALES) * 100)})`}
                 value={money(contribution)}
                 strong
               />
-              <Row label="− Personal" value={`− ${money(personal)}`} />
-              <Row label="− Fijos" value={`− ${money(fijos)}`} />
-              <Row label="− Variables y otros" value={`− ${money(otros)}`} />
+              <Row label={`− ${t("dreMock.grupoPersonal")}`} value={`− ${money(personal)}`} />
+              <Row label={`− ${t("dreMock.grupoFijos")}`} value={`− ${money(fijos)}`} />
+              <Row label={`− ${t("dreMock.grupoVariables")}`} value={`− ${money(otros)}`} />
               <div className="pt-2.5 border-t border-border">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold">Resultado operativo</span>
+                  <span className="font-semibold">{t("dreMock.resultadoOperativo")}</span>
                   <span className="font-bold text-base text-success">{money(operating)}</span>
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1">
-                  <span>Margen neto</span>
+                  <span>{t("dreMock.margenNeto")}</span>
                   <span>{pct(netPct)}</span>
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1">
-                  <span>Punto de equilibrio</span>
+                  <span>{t("dreMock.puntoEquilibrio")}</span>
                   <span>{money(Math.round((personal + fijos + otros) / (contribution / SALES)))}</span>
                 </div>
               </div>
@@ -173,17 +175,17 @@ export function DreMockupPreview() {
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2 mb-3">
               <Activity className="w-4 h-4 text-primary" />
-              <span className="font-display font-semibold">Diagnóstico GPS</span>
+              <span className="font-display font-semibold">{t("dreMock.diagnostico")}</span>
             </div>
             <div className="space-y-3">
-              <HealthRow label="CMV" value={cmvPct} reference="ideal 28–35%" tone="success" max={50} />
-              <HealthRow label="Personal" value={personalPct} reference="ideal 25–32%" tone="warning" max={50} />
-              <HealthRow label="Margen neto" value={netPct} reference="ideal ≥ 10%" tone="success" max={25} />
+              <HealthRow label={t("dreMock.cmv")} value={cmvPct} reference={`${t("dreMock.ideal")} 28–35%`} tone="success" max={50} />
+              <HealthRow label={t("dreMock.grupoPersonal")} value={personalPct} reference={`${t("dreMock.ideal")} 25–32%`} tone="warning" max={50} />
+              <HealthRow label={t("dreMock.margenNeto")} value={netPct} reference={`${t("dreMock.ideal")} ≥ 10%`} tone="success" max={25} />
             </div>
           </div>
 
           <p className="text-[10px] text-muted-foreground text-center">
-            Método GPS · Gestión — Procesos — Sostenibilidad
+            {t("dreMock.footer")}
           </p>
         </div>
       </div>

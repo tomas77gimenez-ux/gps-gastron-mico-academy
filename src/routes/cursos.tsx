@@ -5,6 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { hasPlanAccess } from "@/lib/plan-access";
+import { loc, locLevel, locPlan, locCategory } from "@/lib/localize";
 import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
@@ -25,6 +26,10 @@ interface CourseRow {
   id: string;
   title: string;
   description: string | null;
+  title_en: string | null;
+  title_pt: string | null;
+  description_en: string | null;
+  description_pt: string | null;
   category: string;
   level: string;
   thumbnail_url: string | null;
@@ -39,7 +44,7 @@ interface CourseRow {
 }
 
 function CursosPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const sub = useSubscription();
   const [courses, setCourses] = useState<CourseRow[]>([]);
   const [loading, setLoading] = useState(true);
@@ -50,7 +55,7 @@ function CursosPage() {
       try {
         const { data: courseData, error: courseErr } = await supabase
           .from("courses")
-          .select("id, title, description, category, level, thumbnail_url, estimated_duration, instructor, methodology, pillar_order, module_number")
+          .select("id, title, description, title_en, title_pt, description_en, description_pt, category, level, thumbnail_url, estimated_duration, instructor, methodology, pillar_order, module_number")
           .eq("status", "published")
           .order("methodology", { ascending: true })
           .order("pillar_order", { ascending: true, nullsFirst: false })
@@ -116,15 +121,15 @@ function CursosPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Mentoría hero — high-contrast left accent */}
         <div className="mb-12 border-l-4 border-primary pl-6">
-          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">Mentoría · Método GPS</span>
+          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.heroKicker")}</span>
           <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mt-2 leading-tight">
             <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
           <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
             {gpsCourses.length > 0
-              ? `${gpsCourses.length} módulos · ${totalLessons} clases con videos y materiales descargables.`
-              : "Módulos con videos y materiales descargables."}{" "}
-            La metodología profesional para transformar tu restaurante.
+              ? `${gpsCourses.length} ${t("cursos.heroResumen").replace("{n}", String(totalLessons))}`
+              : t("cursos.heroResumenFallback")}{" "}
+            {t("cursos.heroTagline")}
           </p>
         </div>
 
@@ -157,15 +162,15 @@ function CursosPage() {
             <section>
               <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold font-display text-foreground">Módulos del curso</h2>
-                  <p className="text-sm text-muted-foreground">Seguí el orden sugerido, de los fundamentos a la educación financiera.</p>
+                  <h2 className="text-2xl font-bold font-display text-foreground">{t("cursos.modulosTitulo")}</h2>
+                  <p className="text-sm text-muted-foreground">{t("cursos.modulosDesc")}</p>
                 </div>
                 <span className="text-xs text-muted-foreground hidden sm:block">
-                  {gpsCourses.length} {gpsCourses.length === 1 ? "módulo" : "módulos"}
+                  {gpsCourses.length} {gpsCourses.length === 1 ? t("cursos.modulo") : t("cursos.modulos")}
                 </span>
               </div>
               {gpsCourses.length === 0 ? (
-                <p className="text-sm text-muted-foreground italic py-4">Próximamente.</p>
+                <p className="text-sm text-muted-foreground italic py-4">{t("cursos.proximamente")}</p>
               ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {gpsCourses.map(course => (
@@ -178,10 +183,10 @@ function CursosPage() {
             {/* Catálogo general extra */}
             {Object.entries(generalGrouped).length > 0 && (
               <div className="pt-8 border-t border-border space-y-10">
-                <h2 className="text-2xl font-bold font-display text-foreground">Catálogo Adicional</h2>
+                <h2 className="text-2xl font-bold font-display text-foreground">{t("cursos.catalogoAdicional")}</h2>
                 {Object.entries(generalGrouped).map(([category, list]) => (
                   <section key={category}>
-                    <h3 className="text-lg font-bold font-display text-foreground mb-4">{category}</h3>
+                    <h3 className="text-lg font-bold font-display text-foreground mb-4">{locCategory(category, lang)}</h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       {list.map(course => (
                         <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
@@ -199,11 +204,13 @@ function CursosPage() {
 }
 
 function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: PlanTier | null }) {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const requiredPlan: PlanTier = course.minRequiredPlan ?? "basico";
   const hasAccess = hasPlanAccess(userPlan, requiredPlan);
   const needsUpgrade = userPlan === "basico" && requiredPlan === "premium";
   const locked = !hasAccess && !course.hasFreeLesson;
+  const title = loc(course, "title", lang);
+  const description = loc(course, "description", lang);
 
   return (
     <Link
@@ -213,7 +220,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
     >
       <div className="relative aspect-video bg-secondary overflow-hidden">
         {course.thumbnail_url ? (
-          <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" loading="lazy" />
+          <img src={course.thumbnail_url} alt={title} className="w-full h-full object-cover" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary">
             <BookOpen className="w-12 h-12 text-primary/30" />
@@ -224,7 +231,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
 
         {course.methodology === "gps" && course.module_number && (
           <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary px-2 py-1 rounded">
-            MÓDULO {course.module_number}
+            {t("cursos.moduloBadge")} {course.module_number}
           </span>
         )}
 
@@ -232,7 +239,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
             <Lock className="w-8 h-8 text-primary" />
             <span className="text-xs font-medium text-foreground/80">
-              {needsUpgrade ? "Requiere Premium" : t("cursos.bloqueado")}
+              {needsUpgrade ? t("cursos.requierePremium") : t("cursos.bloqueado")}
             </span>
           </div>
         ) : (
@@ -258,21 +265,21 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
       </div>
       <div className="p-5">
         <div className="flex justify-between items-start mb-2">
-          <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{course.level}</span>
+          <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{locLevel(course.level, lang)}</span>
           {locked ? (
             <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{t("cursos.bloqueado")}</span>
           ) : requiredPlan === "premium" ? (
-            <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Premium</span>
+            <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">{locPlan("premium", lang)}</span>
           ) : (
-            <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Básico</span>
+            <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">{locPlan("basico", lang)}</span>
           )}
         </div>
         <h3 className="text-foreground text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
-          {course.title}
+          {title}
         </h3>
-        {course.description && (
+        {description && (
           <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
-            {course.description}
+            {description}
           </p>
         )}
         <div className="flex items-center justify-between text-xs">
