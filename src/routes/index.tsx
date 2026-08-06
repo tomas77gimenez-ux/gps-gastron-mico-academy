@@ -11,6 +11,7 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useI18n } from "@/lib/i18n";
 import { DreMockupPreview } from "@/components/DreMockupPreview";
+import danielAsset from "@/assets/daniel-gimenez.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -222,11 +223,12 @@ function HomePage() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
             >
-              <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 via-card to-secondary overflow-hidden flex items-center justify-center">
-                <div className="text-center p-8">
-                  <ChefHat className="w-20 h-20 text-primary mx-auto mb-4 opacity-50" />
-                  <p className="text-muted-foreground text-sm">{t("home.fotoDesc")}</p>
-                </div>
+              <div className="aspect-[4/5] rounded-2xl bg-gradient-to-br from-primary/20 via-card to-secondary overflow-hidden">
+                <img
+                  src={danielAsset.url}
+                  alt="Daniel Gimenez — GPS Gastronômico"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </motion.div>
             <motion.div
