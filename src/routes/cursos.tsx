@@ -5,7 +5,7 @@ import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { hasPlanAccess } from "@/lib/plan-access";
-import { loc, locLevel, locPlan } from "@/lib/localize";
+import { loc, locLevel, locPlan, locCategory } from "@/lib/localize";
 import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
