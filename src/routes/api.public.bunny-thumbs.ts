@@ -80,6 +80,15 @@ export const Route = createFileRoute("/api/public/bunny-thumbs")({
             return json({ status: res.status, video: await res.json() });
           }
 
+          if (body.action === "play") {
+            const res = await fetch(
+              `https://video.bunnycdn.com/library/${encodeURIComponent(libraryId)}/videos/${encodeURIComponent(body.guid)}/play`,
+              { headers: { AccessKey: apiKey, accept: "application/json" } },
+            );
+            const text = await res.text();
+            return json({ status: res.status, body: text.slice(0, 3000) });
+          }
+
           if (body.action === "set") {
             const url = `https://video.bunnycdn.com/library/${encodeURIComponent(libraryId)}/videos/${encodeURIComponent(body.guid)}/thumbnail?thumbnailUrl=${encodeURIComponent(body.thumbnailUrl)}`;
             const res = await fetch(url, {
