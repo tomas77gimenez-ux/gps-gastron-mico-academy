@@ -99,14 +99,14 @@ function PerfilPage() {
         return;
       }
       const [{ data: courseRows }, { data: lessonRows }] = await Promise.all([
-        supabase.from("courses").select("id, title, thumbnail_url").in("id", courseIds),
+        supabase.from("courses").select("id, title, title_en, title_pt, thumbnail_url").in("id", courseIds),
         supabase.from("lessons").select("course_id").in("course_id", courseIds),
       ]);
       const totals = new Map<string, number>();
       for (const l of lessonRows ?? []) totals.set(l.course_id, (totals.get(l.course_id) ?? 0) + 1);
       const result = (courseRows ?? []).map(c => ({
         id: c.id,
-        title: c.title,
+        title: loc(c, "title", lang),
         thumbnail_url: c.thumbnail_url,
         total: totals.get(c.id) ?? 0,
         completed: byCourse.get(c.id)?.completed.size ?? 0,
@@ -115,7 +115,7 @@ function PerfilPage() {
       if (active) { setCourses(result); setCoursesLoading(false); }
     })();
     return () => { active = false; };
-  }, [isReady, user]);
+  }, [isReady, user, lang]);
 
   async function saveProfile(e: React.FormEvent) {
     e.preventDefault();
