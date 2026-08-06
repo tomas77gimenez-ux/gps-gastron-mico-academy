@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { User, BookOpen, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2, ExternalLink, LogOut, Save, PlayCircle } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
+import { loc } from "@/lib/localize";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { Button } from "@/components/ui/button";
