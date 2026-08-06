@@ -120,7 +120,7 @@ function CursosPage() {
             <Compass className="w-3.5 h-3.5" /> MENTORÍA · MÉTODO GPS
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold font-display leading-tight">
-            Curso <span className="text-gradient-brand">GPS Gastronómico</span>
+            Mentoría <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">
             {gpsCourses.length > 0
