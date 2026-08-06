@@ -7,6 +7,82 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
 );
 
+const APP_URL = "https://plataforma-test1.lovable.app";
+
+function planName(planTier: string | null | undefined) {
+  if (planTier === "premium") return "Plan Premium";
+  if (planTier === "basico") return "Plan Básico";
+  return "tu suscripción";
+}
+
+function formatDate(seconds?: number | null) {
+  if (!seconds) return undefined;
+  return new Date(seconds * 1000).toLocaleDateString("es-AR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+}
+
+function formatAmount(cents?: number | null, currency?: string | null) {
+  if (cents === undefined || cents === null) return undefined;
+  return `${(currency || "usd").toUpperCase()} ${(cents / 100).toFixed(2)}`;
+}
+
+/** Resolves the account email for a Stripe customer via our own subscriptions table. */
+async function emailForCustomer(customerId: string, env: StripeEnv): Promise<string | null> {
+  const { data: row } = await supabase
+    .from("subscriptions")
+    .select("user_id")
+    .eq("stripe_customer_id", customerId)
+    .eq("environment", env)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (!row?.user_id) return null;
+  const { data } = await supabase.auth.admin.getUserById(row.user_id);
+  return data?.user?.email ?? null;
+}
+
+async function planTierForCustomer(customerId: string, env: StripeEnv): Promise<string | null> {
+  const { data } = await supabase
+    .from("subscriptions")
+    .select("plan_tier")
+    .eq("stripe_customer_id", customerId)
+    .eq("environment", env)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  return data?.plan_tier ?? null;
+}
+
+/** Fire-and-forget lifecycle email through the app's transactional email route. */
+async function sendLifecycleEmail(
+  templateName: string,
+  recipientEmail: string,
+  idempotencyKey: string,
+  templateData: Record<string, unknown>
+) {
+  try {
+    const res = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
+      body: JSON.stringify({ templateName, recipientEmail, idempotencyKey, templateData }),
+    });
+    if (!res.ok) {
+      console.error("Lifecycle email failed", templateName, res.status, await res.text());
+    } else {
+      console.log("Lifecycle email queued", templateName);
+    }
+  } catch (e) {
+    console.error("Lifecycle email error", templateName, e);
+  }
+}
+
 serve(async (req) => {
   if (req.method !== "POST") {
     return new Response("Method not allowed", { status: 405 });
@@ -30,13 +106,13 @@ serve(async (req) => {
         await handleSubscriptionUpdated(event.data.object, env);
         break;
       case "customer.subscription.trial_will_end":
-        console.log("Trial will end:", event.data.object.id);
+        await handleTrialWillEnd(event.data.object, env, event.id);
         break;
       case "customer.subscription.deleted":
-        await handleSubscriptionDeleted(event.data.object, env);
+        await handleSubscriptionDeleted(event.data.object, env, event.id);
         break;
       case "invoice.payment_failed":
-        await handlePaymentFailed(event.data.object, env);
+        await handlePaymentFailed(event.data.object, env, event.id);
         break;
       case "invoice.paid":
       case "invoice.payment_succeeded":
