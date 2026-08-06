@@ -32,6 +32,7 @@ export const Route = createFileRoute("/api/public/bunny-sync")({
   server: {
     handlers: {
       POST: async ({ request }) => {
+       try {
         const authHeader = request.headers.get("authorization");
         if (!authHeader || !authHeader.toLowerCase().startsWith("bearer ")) {
           return json({ error: "Unauthorized" }, 401);
@@ -168,6 +169,10 @@ export const Route = createFileRoute("/api/public/bunny-sync")({
           ...result,
           lessons: lessons.map((l) => ({ id: l.id, title: l.title, course_title: l.course_title })),
         });
+       } catch (e) {
+         console.error("bunny-sync failed", e);
+         return json({ error: e instanceof Error ? e.message : "Error inesperado" }, 500);
+       }
       },
     },
   },
