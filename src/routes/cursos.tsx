@@ -112,17 +112,15 @@ function CursosPage() {
   const showCtaBanner = !sub.loading && !sub.hasActive;
 
   return (
-    <div className="min-h-screen pt-20 pb-12">
+    <div className="min-h-screen pt-20 pb-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        {/* Mentoría hero */}
-        <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4">
-            <Compass className="w-3.5 h-3.5" /> MENTORÍA · MÉTODO GPS
-          </div>
-          <h1 className="text-3xl sm:text-5xl font-bold font-display leading-tight">
+        {/* Mentoría hero — high-contrast left accent */}
+        <div className="mb-12 border-l-4 border-primary pl-6">
+          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.titulo")}</span>
+          <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mt-2 leading-tight">
             Mentoría <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
-          <p className="text-muted-foreground mt-3 max-w-2xl">
+          <p className="text-muted-foreground mt-2 text-lg max-w-2xl">
             {gpsCourses.length > 0
               ? `${gpsCourses.length} módulos · ${totalLessons} clases con videos y materiales descargables.`
               : "Módulos con videos y materiales descargables."}{" "}
@@ -159,7 +157,7 @@ function CursosPage() {
             <section>
               <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
                 <div className="flex-1">
-                  <h2 className="text-2xl font-bold font-display">Módulos del curso</h2>
+                  <h2 className="text-2xl font-bold font-display text-foreground">Módulos del curso</h2>
                   <p className="text-sm text-muted-foreground">Seguí el orden sugerido, de los fundamentos a la educación financiera.</p>
                 </div>
                 <span className="text-xs text-muted-foreground hidden sm:block">
@@ -169,7 +167,7 @@ function CursosPage() {
               {gpsCourses.length === 0 ? (
                 <p className="text-sm text-muted-foreground italic py-4">Próximamente.</p>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                   {gpsCourses.map(course => (
                     <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                   ))}
@@ -180,11 +178,11 @@ function CursosPage() {
             {/* Catálogo general extra */}
             {Object.entries(generalGrouped).length > 0 && (
               <div className="pt-8 border-t border-border space-y-10">
-                <h2 className="text-2xl font-bold font-display">Catálogo Adicional</h2>
+                <h2 className="text-2xl font-bold font-display text-foreground">Catálogo Adicional</h2>
                 {Object.entries(generalGrouped).map(([category, list]) => (
                   <section key={category}>
-                    <h3 className="text-lg font-bold font-display mb-4">{category}</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <h3 className="text-lg font-bold font-display text-foreground mb-4">{category}</h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                       {list.map(course => (
                         <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
                       ))}
@@ -211,7 +209,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
     <Link
       to="/cursos/$id"
       params={{ id: course.id }}
-      className="group rounded-xl bg-card overflow-hidden transition-all hover:-translate-y-0.5"
+      className="group rounded-xl bg-card/60 border border-border overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_0_30px_rgba(212,160,23,0.05)]"
     >
       <div className="relative aspect-video bg-secondary overflow-hidden">
         {course.thumbnail_url ? (
@@ -221,6 +219,8 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
             <BookOpen className="w-12 h-12 text-primary/30" />
           </div>
         )}
+
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 to-transparent" />
 
         {course.methodology === "gps" && course.module_number && (
           <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary px-2 py-1 rounded">
@@ -237,9 +237,9 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           </div>
         ) : (
           <>
-            <div className="absolute inset-0 bg-background/70 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center glow-orange">
-                <Play className="w-6 h-6 text-primary-foreground ml-0.5" />
+            <div className="absolute bottom-4 left-4 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground glow-orange">
+                <Play className="w-5 h-5 ml-0.5" />
               </div>
             </div>
             {!hasAccess && course.hasFreeLesson && (
@@ -256,23 +256,31 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           </span>
         )}
       </div>
-      <div className="p-4">
-        <div className="flex items-center gap-2 text-[10px] font-medium uppercase tracking-wide text-muted-foreground mb-2">
-          <span>{course.level}</span>
-          {course.estimated_duration && <><span>·</span><span>{course.estimated_duration}</span></>}
-          {requiredPlan === "basico" && (
-            <span className="ml-auto inline-flex items-center gap-0.5 text-blue-300 normal-case">
-              <Star className="w-3 h-3" /> Básico
-            </span>
+      <div className="p-5">
+        <div className="flex justify-between items-start mb-2">
+          <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{course.level}</span>
+          {locked ? (
+            <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{t("cursos.bloqueado")}</span>
+          ) : requiredPlan === "premium" ? (
+            <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Premium</span>
+          ) : (
+            <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Básico</span>
           )}
         </div>
-        <h3 className="font-semibold text-base mb-1 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-foreground text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
           {course.title}
         </h3>
-        <p className="text-xs text-muted-foreground flex items-center gap-1">
-          {course.lessonCount} {t("cursos.lecciones")} · {course.instructor}
-          <ChevronRight className="w-3 h-3 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
-        </p>
+        {course.description && (
+          <p className="text-muted-foreground text-sm leading-relaxed mb-4 line-clamp-2">
+            {course.description}
+          </p>
+        )}
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-muted-foreground font-medium">
+            {course.lessonCount} {t("cursos.lecciones")}
+          </span>
+          <ChevronRight className="w-4 h-4 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
+        </div>
       </div>
     </Link>
   );
