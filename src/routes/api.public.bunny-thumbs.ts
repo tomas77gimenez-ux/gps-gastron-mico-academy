@@ -94,10 +94,6 @@ export const Route = createFileRoute("/api/public/bunny-thumbs")({
             return json({ status: res.status, body: text.slice(0, 9000) });
           }
 
-          if (body.action === "set") {
-            // fallthrough below
-          }
-
           if (body.action === "upload") {
             const bytes = Uint8Array.from(atob(body.dataBase64), (c) => c.charCodeAt(0));
             const { error: upErr } = await supabaseAdmin.storage
