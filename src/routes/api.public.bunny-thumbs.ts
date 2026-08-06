@@ -5,6 +5,7 @@ import { z } from "zod";
 const BodySchema = z.union([
   z.object({ action: z.literal("list") }),
   z.object({ action: z.literal("probe"), guid: z.string().min(1).max(200) }),
+  z.object({ action: z.literal("play"), guid: z.string().min(1).max(200) }),
   z.object({
     action: z.literal("set"),
     guid: z.string().min(1).max(200),
