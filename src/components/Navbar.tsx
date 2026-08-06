@@ -74,11 +74,11 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between gap-4 h-16">
           {/* Logo */}
-          <Link to="/" className="flex min-w-0 items-center gap-2 shrink-0">
+          <Link to="/" className="flex min-w-0 flex-1 items-center gap-2 min-[1100px]:flex-none">
             <div className="w-8 h-8 shrink-0 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm font-display">G</span>
             </div>
-            <span className="text-gradient-brand font-display text-lg font-bold tracking-tight whitespace-nowrap">
+            <span className="text-gradient-brand font-display text-lg font-bold tracking-tight truncate">
               GPS Gastronômico
             </span>
           </Link>
