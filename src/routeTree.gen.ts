@@ -15,6 +15,7 @@ import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as ReembolsosRouteImport } from './routes/reembolsos'
 import { Route as PrivacidadRouteImport } from './routes/privacidad'
 import { Route as PlanesRouteImport } from './routes/planes'
 import { Route as PerfilRouteImport } from './routes/perfil'
@@ -78,6 +79,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
 const RegistroRoute = RegistroRouteImport.update({
   id: '/registro',
   path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReembolsosRoute = ReembolsosRouteImport.update({
+  id: '/reembolsos',
+  path: '/reembolsos',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacidadRoute = PrivacidadRouteImport.update({
@@ -273,6 +279,7 @@ export interface FileRoutesByFullPath {
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -314,6 +321,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -357,6 +365,7 @@ export interface FileRoutesById {
   '/perfil': typeof PerfilRoute
   '/planes': typeof PlanesRoute
   '/privacidad': typeof PrivacidadRoute
+  '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
@@ -401,6 +410,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/planes'
     | '/privacidad'
+    | '/reembolsos'
     | '/registro'
     | '/reset-password'
     | '/sitemap.xml'
@@ -442,6 +452,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/planes'
     | '/privacidad'
+    | '/reembolsos'
     | '/registro'
     | '/reset-password'
     | '/sitemap.xml'
@@ -484,6 +495,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/planes'
     | '/privacidad'
+    | '/reembolsos'
     | '/registro'
     | '/reset-password'
     | '/sitemap.xml'
@@ -527,6 +539,7 @@ export interface RootRouteChildren {
   PerfilRoute: typeof PerfilRoute
   PlanesRoute: typeof PlanesRoute
   PrivacidadRoute: typeof PrivacidadRoute
+  ReembolsosRoute: typeof ReembolsosRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
@@ -592,6 +605,13 @@ declare module '@tanstack/react-router' {
       path: '/registro'
       fullPath: '/registro'
       preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reembolsos': {
+      id: '/reembolsos'
+      path: '/reembolsos'
+      fullPath: '/reembolsos'
+      preLoaderRoute: typeof ReembolsosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacidad': {
@@ -872,6 +892,7 @@ const rootRouteChildren: RootRouteChildren = {
   PerfilRoute: PerfilRoute,
   PlanesRoute: PlanesRoute,
   PrivacidadRoute: PrivacidadRoute,
+  ReembolsosRoute: ReembolsosRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
