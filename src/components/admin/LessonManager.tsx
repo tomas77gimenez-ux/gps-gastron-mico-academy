@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Lesson, PlanTier } from "@/lib/admin-types";
 import { PLAN_TIERS } from "@/lib/admin-types";
-import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2, Sparkles, Crown, Star } from "lucide-react";
+import { Plus, Pencil, Trash2, Save, X, Video, FileText, Headphones, GripVertical, Upload, Loader2, Link2, Sparkles, Crown, Star, Paperclip, ArrowUp, ArrowDown, Image as ImageIcon, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { MaterialUpload } from "./MaterialUpload";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
 
@@ -46,13 +47,35 @@ function LessonForm({ lesson, onSave, onCancel }: {
     is_free: lesson?.is_free ?? false,
     panda_video_id: lesson?.panda_video_id ?? "",
     panda_library_id: lesson?.panda_library_id ?? "",
+    bunny_video_id: lesson?.bunny_video_id ?? "",
+    bunny_video_id_2: lesson?.bunny_video_id_2 ?? "",
+    cover_url: lesson?.cover_url ?? "",
     required_plan: (lesson?.required_plan ?? "basico") as PlanTier,
   });
   const [uploading, setUploading] = useState(false);
   const [uploadErr, setUploadErr] = useState<string | null>(null);
-  const [mode, setMode] = useState<"panda" | "upload" | "url">(
-    lesson?.panda_video_id ? "panda" : lesson?.video_url?.startsWith("http") ? "url" : "upload"
+  const [mode, setMode] = useState<"bunny" | "panda" | "upload" | "url">(
+    lesson?.panda_video_id ? "panda" : lesson?.video_url?.startsWith("http") ? "url" : "bunny"
   );
+  const coverRef = useRef<HTMLInputElement>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  async function handleCover(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setCoverUploading(true);
+    setUploadErr(null);
+    const path = `covers/${Date.now()}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
+    const { error } = await supabase.storage.from("course-content").upload(path, file);
+    if (error) {
+      setUploadErr(error.message);
+    } else {
+      const { data } = supabase.storage.from("course-content").getPublicUrl(path);
+      setForm(f => ({ ...f, cover_url: data.publicUrl }));
+    }
+    setCoverUploading(false);
+    if (coverRef.current) coverRef.current.value = "";
+  }
   const fileRef = useRef<HTMLInputElement>(null);
   const [progress, setProgress] = useState(0);
   const [uploadStats, setUploadStats] = useState<{ loaded: number; total: number; speed: number; eta: number } | null>(null);
@@ -151,8 +174,37 @@ function LessonForm({ lesson, onSave, onCancel }: {
             placeholder="ej: 15 min" />
         </div>
         <div className="sm:col-span-2">
+          <label className="block text-xs font-medium mb-1">Imagen de portada</label>
+          <div className="flex items-center gap-3">
+            {form.cover_url ? (
+              <img src={form.cover_url} alt="" className="w-24 h-14 rounded-md object-cover border border-border" />
+            ) : (
+              <div className="w-24 h-14 rounded-md border border-border bg-secondary/50 flex items-center justify-center">
+                <ImageIcon className="w-4 h-4 text-muted-foreground" />
+              </div>
+            )}
+            <input ref={coverRef} type="file" accept="image/*" onChange={handleCover} className="hidden" />
+            <Button type="button" variant="outline" size="sm" onClick={() => coverRef.current?.click()} disabled={coverUploading}>
+              {coverUploading ? <Loader2 className="w-3 h-3 mr-1 animate-spin" /> : <Upload className="w-3 h-3 mr-1" />}
+              {coverUploading ? "Subiendo..." : "Subir portada"}
+            </Button>
+            {form.cover_url && (
+              <button type="button" onClick={() => setForm(f => ({ ...f, cover_url: "" }))} className="text-xs text-destructive hover:underline">
+                Quitar
+              </button>
+            )}
+          </div>
+          <input value={form.cover_url} onChange={e => setForm(f => ({ ...f, cover_url: e.target.value }))}
+            className="mt-2 w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-xs focus:outline-none focus:ring-2 focus:ring-primary/50"
+            placeholder="o pegá una URL de portada (https://...)" />
+        </div>
+        <div className="sm:col-span-2">
           <label className="block text-xs font-medium mb-1">Contenido del Video</label>
-          <div className="grid grid-cols-3 gap-2 mb-2">
+          <div className="grid grid-cols-4 gap-2 mb-2">
+            <button type="button" onClick={() => setMode("bunny")}
+              className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "bunny" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
+              <Radio className="w-3 h-3" /> Bunny
+            </button>
             <button type="button" onClick={() => setMode("panda")}
               className={`px-3 py-1.5 rounded-md text-xs font-medium transition-all flex items-center justify-center gap-1 ${mode === "panda" ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"}`}>
               <Sparkles className="w-3 h-3" /> Panda Video
@@ -166,7 +218,26 @@ function LessonForm({ lesson, onSave, onCancel }: {
               <Link2 className="w-3 h-3" /> URL
             </button>
           </div>
-          {mode === "panda" ? (
+          {mode === "bunny" ? (
+            <div className="space-y-2">
+              <input
+                value={form.bunny_video_id}
+                onChange={e => setForm(f => ({ ...f, bunny_video_id: e.target.value }))}
+                className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Bunny Video ID (ej: 8a7b6c5d-1234-...)"
+              />
+              <input
+                value={form.bunny_video_id_2}
+                onChange={e => setForm(f => ({ ...f, bunny_video_id_2: e.target.value }))}
+                className="w-full rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="Segundo Bunny Video ID (opcional — clases con 2 videos)"
+              />
+              <p className="text-[10px] text-muted-foreground leading-relaxed">
+                💡 El Library ID es global y se configura arriba, en “Bunny Library ID”. Si dejás el Video ID vacío, la clase muestra “Video próximamente”.
+                Para clases sin video, elegí el tipo <strong>Material</strong>.
+              </p>
+            </div>
+          ) : mode === "panda" ? (
             <div className="space-y-2">
               <input
                 value={form.panda_library_id}
@@ -267,6 +338,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
+  const [attachOpen, setAttachOpen] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function loadLessons() {
@@ -295,6 +367,9 @@ export function LessonManager({ courseId }: { courseId: string }) {
       sort_order: lessons.length,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      bunny_video_id: form.bunny_video_id || null,
+      bunny_video_id_2: form.bunny_video_id_2 || null,
+      cover_url: form.cover_url || null,
       required_plan: form.required_plan ?? "basico",
     } as any);
     if (err) { setError(err.message); return; }
@@ -312,6 +387,9 @@ export function LessonManager({ courseId }: { courseId: string }) {
       is_free: form.is_free,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      bunny_video_id: form.bunny_video_id || null,
+      bunny_video_id_2: form.bunny_video_id_2 || null,
+      cover_url: form.cover_url || null,
       required_plan: form.required_plan ?? "basico",
     } as any).eq("id", id);
     if (err) { setError(err.message); return; }
@@ -322,6 +400,18 @@ export function LessonManager({ courseId }: { courseId: string }) {
   async function handleDelete(id: string) {
     if (!confirm("¿Eliminar esta lección?")) return;
     await supabase.from("lessons").delete().eq("id", id);
+    loadLessons();
+  }
+
+  async function move(index: number, dir: -1 | 1) {
+    const target = index + dir;
+    if (target < 0 || target >= lessons.length) return;
+    const a = lessons[index];
+    const b = lessons[target];
+    await Promise.all([
+      supabase.from("lessons").update({ sort_order: b.sort_order } as any).eq("id", a.id),
+      supabase.from("lessons").update({ sort_order: a.sort_order } as any).eq("id", b.id),
+    ]);
     loadLessons();
   }
 
@@ -350,9 +440,22 @@ export function LessonManager({ courseId }: { courseId: string }) {
             {editing === lesson.id ? (
               <LessonForm lesson={lesson} onSave={f => handleUpdate(lesson.id, f)} onCancel={() => setEditing(null)} />
             ) : (
-              <div className="flex items-center gap-2 rounded-lg border border-border bg-card/50 p-3">
-                <GripVertical className="w-3 h-3 text-muted-foreground shrink-0" />
+              <div className="rounded-lg border border-border bg-card/50">
+              <div className="flex items-center gap-2 p-3">
+                <div className="flex flex-col shrink-0">
+                  <button onClick={() => move(i, -1)} disabled={i === 0} className="p-0.5 rounded hover:bg-secondary disabled:opacity-30">
+                    <ArrowUp className="w-3 h-3" />
+                  </button>
+                  <button onClick={() => move(i, 1)} disabled={i === lessons.length - 1} className="p-0.5 rounded hover:bg-secondary disabled:opacity-30">
+                    <ArrowDown className="w-3 h-3" />
+                  </button>
+                </div>
                 <span className="text-xs text-muted-foreground w-6">{i + 1}.</span>
+                {lesson.cover_url ? (
+                  <img src={lesson.cover_url} alt="" className="w-14 h-8 rounded object-cover border border-border shrink-0" />
+                ) : (
+                  <div className="w-14 h-8 rounded border border-border bg-secondary/50 shrink-0" />
+                )}
                 {(() => {
                   const CT = CONTENT_TYPES.find(t => t.value === lesson.content_type);
                   const Icon = CT?.icon ?? FileText;
@@ -362,6 +465,11 @@ export function LessonManager({ courseId }: { courseId: string }) {
                   <p className="text-sm font-medium truncate">{lesson.title}</p>
                   <p className="text-xs text-muted-foreground">
                     {lesson.duration ?? "—"} · {lesson.content_type}
+                    {lesson.bunny_video_id ? (
+                      <span className="ml-2 text-green-400">Bunny ✓{lesson.bunny_video_id_2 ? " (2 videos)" : ""}</span>
+                    ) : lesson.content_type !== "material" && !lesson.video_url && !lesson.panda_video_id ? (
+                      <span className="ml-2 text-yellow-400">Sin video</span>
+                    ) : null}
                     {lesson.is_free && <span className="ml-2 text-green-400">Gratis</span>}
                     {!lesson.is_free && lesson.required_plan === "premium" && (
                       <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
@@ -371,8 +479,19 @@ export function LessonManager({ courseId }: { courseId: string }) {
                     )}
                   </p>
                 </div>
+                <button onClick={() => setAttachOpen(attachOpen === lesson.id ? null : lesson.id)}
+                  className={`p-1.5 rounded hover:bg-secondary ${attachOpen === lesson.id ? "text-primary" : ""}`}
+                  title="Materiales de apoyo">
+                  <Paperclip className="w-3 h-3" />
+                </button>
                 <button onClick={() => setEditing(lesson.id)} className="p-1.5 rounded hover:bg-secondary"><Pencil className="w-3 h-3" /></button>
                 <button onClick={() => handleDelete(lesson.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3 h-3" /></button>
+              </div>
+              {attachOpen === lesson.id && (
+                <div className="border-t border-border p-3 bg-secondary/20">
+                  <MaterialUpload courseId={courseId} lessonId={lesson.id} />
+                </div>
+              )}
               </div>
             )}
           </div>

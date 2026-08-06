@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
-import { PILLARS } from "@/lib/admin-types";
 import { hasPlanAccess } from "@/lib/plan-access";
 import type { PlanTier } from "@/lib/admin-types";
 
@@ -107,6 +106,7 @@ function CursosPage() {
     (acc[c.category] ||= []).push(c);
     return acc;
   }, {});
+  const totalLessons = gpsCourses.reduce((sum, c) => sum + c.lessonCount, 0);
 
   const showAccessBanner = sub.isAuthenticated && sub.hasActive;
   const showCtaBanner = !sub.loading && !sub.hasActive;
@@ -120,10 +120,13 @@ function CursosPage() {
             <Compass className="w-3.5 h-3.5" /> MENTORÍA · MÉTODO GPS
           </div>
           <h1 className="text-3xl sm:text-5xl font-bold font-display leading-tight">
-            El sistema completo de <span className="text-gradient-brand">gestión gastronómica</span>
+            Curso <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">
-            3 Pilares · 9 Módulos · más de 50 clases descargables. La metodología profesional para transformar tu restaurante.
+            {gpsCourses.length > 0
+              ? `${gpsCourses.length} módulos · ${totalLessons} clases con videos y materiales descargables.`
+              : "Módulos con videos y materiales descargables."}{" "}
+            La metodología profesional para transformar tu restaurante.
           </p>
         </div>
 
@@ -153,36 +156,26 @@ function CursosPage() {
           <p className="text-muted-foreground text-center py-12">{t("cursos.cargando")}</p>
         ) : (
           <div className="space-y-12">
-            {/* 3 Pilares */}
-            {PILLARS.map(pillar => {
-              const modules = gpsCourses.filter(c => c.pillar_order === pillar.order);
-              return (
-                <section key={pillar.order}>
-                  <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
-                    <div className="shrink-0 w-14 h-14 rounded-xl bg-primary/10 text-primary flex flex-col items-center justify-center">
-                      <span className="text-[9px] font-medium opacity-70">{pillar.order === 0 ? "INICIO" : "PILAR"}</span>
-                      <span className="text-xl font-bold leading-none">{pillar.order === 0 ? "0" : pillar.order}</span>
-                    </div>
-                    <div className="flex-1">
-                      <h2 className="text-2xl font-bold font-display">{pillar.name}</h2>
-                      <p className="text-sm text-muted-foreground">{pillar.subtitle}</p>
-                    </div>
-                    <span className="text-xs text-muted-foreground hidden sm:block">
-                      {modules.length} {modules.length === 1 ? "módulo" : "módulos"}
-                    </span>
-                  </div>
-                  {modules.length === 0 ? (
-                    <p className="text-sm text-muted-foreground italic py-4">Próximamente.</p>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-                      {modules.map(course => (
-                        <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
-                      ))}
-                    </div>
-                  )}
-                </section>
-              );
-            })}
+            <section>
+              <div className="flex items-end gap-4 mb-5 pb-3 border-b border-border">
+                <div className="flex-1">
+                  <h2 className="text-2xl font-bold font-display">Módulos del curso</h2>
+                  <p className="text-sm text-muted-foreground">Seguí el orden sugerido, de los fundamentos a la educación financiera.</p>
+                </div>
+                <span className="text-xs text-muted-foreground hidden sm:block">
+                  {gpsCourses.length} {gpsCourses.length === 1 ? "módulo" : "módulos"}
+                </span>
+              </div>
+              {gpsCourses.length === 0 ? (
+                <p className="text-sm text-muted-foreground italic py-4">Próximamente.</p>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                  {gpsCourses.map(course => (
+                    <CourseGridCard key={course.id} course={course} userPlan={sub.planTier} />
+                  ))}
+                </div>
+              )}
+            </section>
 
             {/* Catálogo general extra */}
             {Object.entries(generalGrouped).length > 0 && (

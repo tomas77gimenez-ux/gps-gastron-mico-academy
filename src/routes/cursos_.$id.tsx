@@ -4,8 +4,9 @@ import Hls from "hls.js";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
-import { useCourseProgress, usePandaProgressTracker } from "@/hooks/useLessonProgress";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star } from "lucide-react";
+import { useCourseProgress, usePandaProgressTracker, useLessonCompletion } from "@/hooks/useLessonProgress";
+import { bunnyEmbedUrl, useBunnyLibraryId } from "@/lib/bunny";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star, Clock, Circle } from "lucide-react";
 import { toast } from "sonner";
 import { hasPlanAccess } from "@/lib/plan-access";
 import type { PlanTier } from "@/lib/admin-types";
@@ -21,13 +22,13 @@ export const Route = createFileRoute("/cursos_/$id")({
         .maybeSingle(),
       supabase
         .from("lessons")
-        .select("id, title, description, duration, poster_url, is_free, sort_order, required_plan")
+        .select("id, title, description, duration, poster_url, cover_url, content_type, is_free, sort_order, required_plan")
         .eq("course_id", id)
         .order("sort_order", { ascending: true }),
     ]);
     const { data: materials } = await supabase
       .from("course_materials")
-      .select("id, lesson_id, title, file_type, file_size, required_plan")
+      .select("id, lesson_id, title, file_type, file_size, required_plan, has_file")
       .or(`course_id.eq.${id},lesson_id.in.(${(lessons ?? []).map(l => l.id).join(",") || "00000000-0000-0000-0000-000000000000"})`);
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
@@ -97,10 +98,14 @@ interface Lesson {
   duration: string | null;
   video_url: string | null;
   poster_url: string | null;
+  cover_url: string | null;
+  content_type: string;
   is_free: boolean;
   sort_order: number;
   panda_video_id: string | null;
   panda_library_id: string | null;
+  bunny_video_id: string | null;
+  bunny_video_id_2: string | null;
   required_plan?: PlanTier;
 }
 
@@ -111,6 +116,7 @@ interface Material {
   file_type: string;
   file_size: number | null;
   required_plan?: PlanTier;
+  has_file?: boolean;
 }
 
 function CourseDetailPage() {
@@ -124,8 +130,11 @@ function CourseDetailPage() {
       video_url: null,
       panda_video_id: null,
       panda_library_id: null,
+      bunny_video_id: null,
+      bunny_video_id_2: null,
     }))
   );
+  const { libraryId } = useBunnyLibraryId();
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -143,16 +152,29 @@ function CourseDetailPage() {
     if (!activeLessonId) return;
     const current = lessons.find((l) => l.id === activeLessonId);
     if (!current) return;
-    if (current.panda_video_id || current.video_url) return; // already loaded
+    if (current.panda_video_id || current.video_url || current.bunny_video_id) return; // already loaded
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase.rpc("get_lesson_video", { _lesson_id: activeLessonId });
       if (cancelled || error || !data || data.length === 0) return;
-      const row = data[0] as { panda_video_id: string | null; panda_library_id: string | null; video_url: string | null };
+      const row = data[0] as {
+        panda_video_id: string | null;
+        panda_library_id: string | null;
+        video_url: string | null;
+        bunny_video_id: string | null;
+        bunny_video_id_2: string | null;
+      };
       setLessons((prev) =>
         prev.map((l) =>
           l.id === activeLessonId
-            ? { ...l, panda_video_id: row.panda_video_id, panda_library_id: row.panda_library_id, video_url: row.video_url }
+            ? {
+                ...l,
+                panda_video_id: row.panda_video_id,
+                panda_library_id: row.panda_library_id,
+                video_url: row.video_url,
+                bunny_video_id: row.bunny_video_id,
+                bunny_video_id_2: row.bunny_video_id_2,
+              }
             : l
         )
       );
@@ -228,7 +250,7 @@ function CourseDetailPage() {
       if (lessonIds.length === 0) return;
       const { data } = await supabase
         .from("course_materials")
-        .select("id, lesson_id, title, file_type, file_size, required_plan")
+        .select("id, lesson_id, title, file_type, file_size, required_plan, has_file")
         .in("lesson_id", lessonIds);
       if (!cancelled && data) setMaterials(data as Material[]);
     })();
@@ -250,6 +272,15 @@ function CourseDetailPage() {
     [progress]
   );
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
+
+  const { setCompleted, saving: savingCompletion, canTrack } = useLessonCompletion(course?.id, reload);
+  const bunnyIds = useMemo(() => {
+    if (!activeLesson || !libraryId) return [] as string[];
+    return [activeLesson.bunny_video_id, activeLesson.bunny_video_id_2].filter(
+      (v): v is string => !!v && v.trim().length > 0,
+    );
+  }, [activeLesson, libraryId]);
+  const isMaterialOnly = activeLesson?.content_type === "material";
 
   const pandaStreamUrl = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
     ? `https://b-${activeLesson.panda_library_id}.tv.pandavideo.com.br/${activeLesson.panda_video_id}/playlist.m3u8`
@@ -331,29 +362,16 @@ function CourseDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
           {/* Left: Player + info */}
           <div>
-            <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border mb-5 relative">
-              {activeLesson && canPlay(activeLesson) && pandaStreamUrl ? (
-                <video
-                  key={activeLesson.id}
-                  ref={pandaVideoRef}
-                  poster={activeLesson.poster_url ?? undefined}
-                  controls
-                  playsInline
-                  preload="metadata"
-                  className="w-full h-full object-contain bg-black"
-                />
-              ) : activeLesson && canPlay(activeLesson) && activeLesson.video_url ? (
-                <video
-                  key={activeLesson.id}
-                  src={activeLesson.video_url}
-                  poster={activeLesson.poster_url ?? undefined}
-                  controls
-                  className="w-full h-full object-contain bg-black"
-                />
-              ) : activeLesson && !canPlay(activeLesson) ? (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary">
-                  {course.thumbnail_url && (
-                    <img src={course.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <div className="mb-5 space-y-4">
+              {!activeLesson ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  <BookOpen className="w-10 h-10 text-primary/40" />
+                  <span className="text-sm">{t("cursos.sinAulas")}</span>
+                </div>
+              ) : !canPlay(activeLesson) ? (
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary">
+                  {(activeLesson.cover_url || course.thumbnail_url) && (
+                    <img src={activeLesson.cover_url ?? course.thumbnail_url!} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
@@ -373,37 +391,74 @@ function CourseDetailPage() {
                     </Link>
                   </div>
                 </div>
-              ) : (
-                activeLesson && canPlay(activeLesson) && activeMaterials.length > 0 ? (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-gradient-to-br from-card to-secondary px-6 text-center">
-                    {course.thumbnail_url && (
-                      <img src={course.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
-                    )}
-                    <div className="relative z-10 flex flex-col items-center gap-3 max-w-md">
-                      <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                        <FileText className="w-7 h-7 text-primary" />
-                      </div>
-                      <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
-                      <p className="text-sm text-muted-foreground">
-                        Esta clase está compuesta por un documento editable. Descargá el material a continuación para trabajarlo en tu computadora.
+              ) : bunnyIds.length > 0 ? (
+                bunnyIds.map((videoId, i) => (
+                  <div key={videoId}>
+                    {bunnyIds.length > 1 && (
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
+                        Parte {i + 1}
                       </p>
-                      <button
-                        type="button"
-                        onClick={() => handleDownload(activeMaterials[0])}
-                        disabled={downloadingId === activeMaterials[0].id}
-                        className="mt-1 inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
-                      >
-                        <Download className="w-4 h-4" />
-                        {downloadingId === activeMaterials[0].id ? "Descargando..." : "Descargar material"}
-                      </button>
+                    )}
+                    <div className="relative aspect-video rounded-xl overflow-hidden bg-black border border-border">
+                      <iframe
+                        key={`${activeLesson.id}-${videoId}`}
+                        src={bunnyEmbedUrl(libraryId, videoId)}
+                        title={`${activeLesson.title}${bunnyIds.length > 1 ? ` — parte ${i + 1}` : ""}`}
+                        loading="lazy"
+                        allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
+                        allowFullScreen
+                        className="absolute inset-0 w-full h-full border-0"
+                      />
                     </div>
                   </div>
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                    <BookOpen className="w-10 h-10 text-primary/40" />
-                    <span className="text-sm">{t("cursos.sinVideo")}</span>
+                ))
+              ) : pandaStreamUrl ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
+                  <video
+                    key={activeLesson.id}
+                    ref={pandaVideoRef}
+                    poster={activeLesson.cover_url ?? activeLesson.poster_url ?? undefined}
+                    controls
+                    playsInline
+                    preload="metadata"
+                    className="w-full h-full object-contain bg-black"
+                  />
+                </div>
+              ) : activeLesson.video_url ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
+                  <video
+                    key={activeLesson.id}
+                    src={activeLesson.video_url}
+                    poster={activeLesson.cover_url ?? activeLesson.poster_url ?? undefined}
+                    controls
+                    className="w-full h-full object-contain bg-black"
+                  />
+                </div>
+              ) : isMaterialOnly ? (
+                <div className="relative rounded-xl overflow-hidden border border-primary/25 bg-gradient-to-br from-card to-secondary px-6 py-10 text-center">
+                  {activeLesson.cover_url && (
+                    <img src={activeLesson.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-10" />
+                  )}
+                  <div className="relative z-10 flex flex-col items-center gap-3 max-w-md mx-auto">
+                    <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
+                      <FileText className="w-7 h-7 text-primary" />
+                    </div>
+                    <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
+                    <p className="text-sm text-muted-foreground">
+                      Esta clase no tiene video: se trabaja con los materiales de apoyo que están más abajo.
+                    </p>
                   </div>
-                )
+                </div>
+              ) : (
+                <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-2 text-muted-foreground">
+                  {activeLesson.cover_url && (
+                    <img src={activeLesson.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+                  )}
+                  <div className="relative z-10 flex flex-col items-center gap-2">
+                    <Clock className="w-10 h-10 text-primary/50" />
+                    <span className="text-sm font-medium">Video próximamente</span>
+                  </div>
+                </div>
               )}
             </div>
 
@@ -419,18 +474,52 @@ function CourseDetailPage() {
 
             {activeLesson && (
               <div className="mt-6 pt-6 border-t border-border">
-                <h2 className="text-lg font-semibold mb-2">{activeLesson.title}</h2>
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <h2 className="text-lg font-semibold">{activeLesson.title}</h2>
+                  {canTrack && canPlay(activeLesson) && (
+                    <button
+                      type="button"
+                      disabled={savingCompletion}
+                      onClick={() => setCompleted(activeLesson.id, !progress[activeLesson.id]?.completed)}
+                      className={`shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 ${
+                        progress[activeLesson.id]?.completed
+                          ? "border border-green-500/40 bg-green-500/10 text-green-300"
+                          : "border border-border bg-secondary/50 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {progress[activeLesson.id]?.completed ? <Check className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                      {progress[activeLesson.id]?.completed ? "Completada" : "Marcar como completada"}
+                    </button>
+                  )}
+                </div>
                 {activeLesson.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">{activeLesson.description}</p>
                 )}
                 {activeMaterials.length > 0 && (
                   <div className="mt-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Material complementario
+                      Materiales de apoyo
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
-                      canDownload(m) ? (
+                      m.has_file === false ? (
+                        <div
+                          key={m.id}
+                          className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-secondary/30 px-4 py-3 text-left"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center">
+                              <Clock className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate">{m.title}</p>
+                              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
+                                {m.file_type} · Disponible próximamente
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : canDownload(m) ? (
                       <button
                         key={m.id}
                         type="button"
@@ -543,9 +632,9 @@ function CourseDetailPage() {
                           }`}
                         >
                           <div className="relative shrink-0 w-20 h-12 rounded-md overflow-hidden bg-secondary border border-border">
-                            {lesson.poster_url ? (
+                            {(lesson.cover_url ?? lesson.poster_url) ? (
                               <img
-                                src={lesson.poster_url}
+                                src={(lesson.cover_url ?? lesson.poster_url)!}
                                 alt=""
                                 loading="lazy"
                                 className="w-full h-full object-cover"
