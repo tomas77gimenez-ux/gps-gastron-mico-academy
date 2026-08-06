@@ -69,19 +69,19 @@
   /* Vibrant amber high-contrast: near-black foundation + luminous gold */
   --background: #050505;
   --foreground: #F5F5F5;
-  --surface: #0E1016;
-  --card: #11131A;
+  --surface: #0F1118;
+  --card: #151821;
   --card-foreground: #F5F5F5;
-  --popover: #161923;
+  --popover: #181B24;
   --popover-foreground: #F5F5F5;
   --primary: #D4A017;
   --primary-hover: #E8B83A;
   --primary-soft: #F0D080;
   --primary-foreground: #050505;
-  --secondary: #1A1E28;
+  --secondary: #1E222D;
   --secondary-foreground: #E8EAEF;
-  --muted: #252A38;
-  --muted-foreground: #A0A7B6;
+  --muted: #2A2F3D;
+  --muted-foreground: #B0B8C8;
   --accent: #D4A017;
   --accent-foreground: #050505;
   --destructive: oklch(0.577 0.245 27.325);
