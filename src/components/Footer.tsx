@@ -85,6 +85,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm">
               <li><Link to="/terminos" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.terminos")}</Link></li>
               <li><Link to="/privacidad" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.privacidad")}</Link></li>
+              <li><Link to="/reembolsos" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.reembolsos")}</Link></li>
             </ul>
           </div>
 
