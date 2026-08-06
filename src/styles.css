@@ -69,26 +69,26 @@
   /* Deep charcoal + premium gold */
   --background: #0A0B0F;
   --foreground: #F2F3F5;
-  --surface: #101218;
-  --card: #14161E;
+  --surface: #151821;
+  --card: #1B1F2A;
   --card-foreground: #F2F3F5;
-  --popover: #161923;
+  --popover: #1F2330;
   --popover-foreground: #F2F3F5;
   --primary: #D4A017;
   --primary-hover: #E8B83A;
   --primary-soft: #E5C766;
   --primary-foreground: #0A0B0F;
-  --secondary: #191C25;
+  --secondary: #242835;
   --secondary-foreground: #D8DAE0;
-  --muted: #1E212B;
-  --muted-foreground: #8B8F9C;
+  --muted: #2A2F3D;
+  --muted-foreground: #9AA0AD;
   --accent: #D4A017;
   --accent-foreground: #0A0B0F;
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.97 0 0);
-  --border: rgba(255, 255, 255, 0.08);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --input: rgba(255, 255, 255, 0.10);
+  --border: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --input: rgba(255, 255, 255, 0.14);
   --ring: #D4A017;
   --chart-1: #D4A017;
   --chart-2: oklch(0.6 0.118 184.704);
@@ -99,9 +99,9 @@
   --sidebar-foreground: #D8DAE0;
   --sidebar-primary: #D4A017;
   --sidebar-primary-foreground: #0A0B0F;
-  --sidebar-accent: #191C25;
+  --sidebar-accent: #242835;
   --sidebar-accent-foreground: #D8DAE0;
-  --sidebar-border: rgba(255, 255, 255, 0.06);
+  --sidebar-border: rgba(255, 255, 255, 0.10);
   --sidebar-ring: #D4A017;
 
   /* Brand gradient + glow */
