@@ -10,7 +10,7 @@ import {
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useI18n } from "@/lib/i18n";
-import platformMockup from "@/assets/platform-mockup.jpg";
+import { DreMockupPreview } from "@/components/DreMockupPreview";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -206,14 +206,7 @@ function HomePage() {
             >
               <div className="absolute -inset-6 bg-primary/10 rounded-3xl blur-3xl" aria-hidden="true" />
               <div className="relative rounded-2xl overflow-hidden border border-border bg-card shadow-2xl">
-                <img
-                  src={platformMockup}
-                  alt={t("home.howItWorks.imgAlt")}
-                  width={1024}
-                  height={768}
-                  loading="lazy"
-                  className="w-full h-auto"
-                />
+                <DreMockupPreview />
               </div>
             </motion.div>
           </div>
