@@ -1,0 +1,2 @@
+UPDATE public.lessons SET bunny_video_id = 'd111813a-2846-4cc9-b77e-22b4457657d2', updated_at = now() WHERE id = 'c0000000-0000-4000-8000-000000000012';
+UPDATE public.lessons SET bunny_video_id = '91988f36-3ed1-49e5-84cb-27214df2cb0f', updated_at = now() WHERE id = 'c0000000-0000-4000-8000-000000000018';

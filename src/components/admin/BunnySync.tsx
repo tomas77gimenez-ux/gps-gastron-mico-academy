@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Key, RefreshCw, Save, Check, AlertTriangle, Video, Loader2 } from "lucide-react";
@@ -38,6 +38,16 @@ export function BunnySync() {
   const [savingPairs, setSavingPairs] = useState(false);
   const [savedPairs, setSavedPairs] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const autoRan = useRef(false);
+
+  // Carga automática: la sección de revisión manual es permanente y no depende
+  // de que el admin pulse el botón de sincronizar.
+  useEffect(() => {
+    if (autoRan.current) return;
+    autoRan.current = true;
+    void runSync();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function saveKey() {
     setSavingKey(true);
@@ -155,12 +165,17 @@ export function BunnySync() {
             </div>
           )}
 
-          {pendingVideos.length > 0 && (
-            <div className="space-y-2">
-              <h4 className="text-xs font-semibold flex items-center gap-1.5">
-                <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" /> Revisión manual
-              </h4>
-              {pendingVideos.map((v) => (
+          <div className="space-y-2">
+            <h4 className="text-xs font-semibold flex items-center gap-1.5">
+              <AlertTriangle className="w-3.5 h-3.5 text-yellow-400" /> Revisión manual
+            </h4>
+            {pendingVideos.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                No hay videos pendientes de asociar.
+              </p>
+            ) : (
+              <>
+                {pendingVideos.map((v) => (
                 <div key={v.guid} className="flex flex-col sm:flex-row sm:items-center gap-2">
                   <span className="text-xs flex-1 truncate">{v.title || v.guid}</span>
                   <select
@@ -181,24 +196,27 @@ export function BunnySync() {
                     ))}
                   </select>
                 </div>
-              ))}
-              <Button size="sm" onClick={savePairs} disabled={savingPairs}>
-                {savedPairs ? <Check className="w-4 h-4 mr-1" /> : <Save className="w-4 h-4 mr-1" />}
-                {savingPairs ? "Guardando..." : "Guardar asociaciones"}
-              </Button>
-            </div>
-          )}
+                ))}
+                <Button size="sm" onClick={savePairs} disabled={savingPairs}>
+                  {savedPairs ? <Check className="w-4 h-4 mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+                  {savingPairs ? "Guardando..." : "Guardar asociaciones"}
+                </Button>
+              </>
+            )}
+          </div>
 
-          {result.lessonsWithoutVideo.length > 0 && (
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold">Lecciones sin video</h4>
-              {result.lessonsWithoutVideo.map((l) => (
+          <div className="space-y-1">
+            <h4 className="text-xs font-semibold">Lecciones sin video</h4>
+            {result.lessonsWithoutVideo.length === 0 ? (
+              <p className="text-xs text-muted-foreground">Todas las lecciones tienen video.</p>
+            ) : (
+              result.lessonsWithoutVideo.map((l) => (
                 <p key={l.id} className="text-xs text-muted-foreground">
                   {l.course_title} · {l.title}
                 </p>
-              ))}
-            </div>
-          )}
+              ))
+            )}
+          </div>
         </div>
       )}
     </div>
