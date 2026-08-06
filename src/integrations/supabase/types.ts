@@ -209,6 +209,7 @@ export type Database = {
           file_size: number | null
           file_type: string
           file_url: string
+          has_file: boolean | null
           id: string
           lesson_id: string | null
           required_plan: Database["public"]["Enums"]["plan_tier"]
@@ -220,6 +221,7 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string
+          has_file?: boolean | null
           id?: string
           lesson_id?: string | null
           required_plan?: Database["public"]["Enums"]["plan_tier"]
@@ -231,6 +233,7 @@ export type Database = {
           file_size?: number | null
           file_type?: string
           file_url?: string
+          has_file?: boolean | null
           id?: string
           lesson_id?: string | null
           required_plan?: Database["public"]["Enums"]["plan_tier"]
