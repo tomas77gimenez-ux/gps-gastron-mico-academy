@@ -102,8 +102,30 @@ export function matchVideos(videos: BunnyVideo[], lessons: LessonRef[]): MatchRe
   const ambiguous: BunnyVideo[] = [];
   const taken = new Set<string>(); // `${lessonId}:${slot}`
 
+  // Videos ya persistidos en una lección cuentan como asociados (y no vuelven
+  // a revisión manual, incluso si su nombre es ambiguo).
+  const assigned = new Map<string, { lesson: LessonRef; slot: 1 | 2 }>();
+  for (const l of lessons) {
+    if (l.bunny_video_id) assigned.set(l.bunny_video_id, { lesson: l, slot: 1 });
+    if (l.bunny_video_id_2) assigned.set(l.bunny_video_id_2, { lesson: l, slot: 2 });
+  }
+
   for (const video of videos) {
     const n = normalizeTitle(video.title);
+
+    const already = assigned.get(video.guid);
+    if (already) {
+      taken.add(`${already.lesson.id}:${already.slot}`);
+      matched.push({
+        lessonId: already.lesson.id,
+        lessonTitle: already.lesson.title,
+        courseTitle: already.lesson.course_title,
+        slot: already.slot,
+        guid: video.guid,
+        videoTitle: video.title,
+      });
+      continue;
+    }
 
     // Ambiguity guard: several videos share the exact same normalized name.
     if ((normCount.get(n) ?? 0) > 1) {
