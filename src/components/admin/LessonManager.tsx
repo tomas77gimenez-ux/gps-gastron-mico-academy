@@ -366,6 +366,9 @@ export function LessonManager({ courseId }: { courseId: string }) {
       sort_order: lessons.length,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      bunny_video_id: form.bunny_video_id || null,
+      bunny_video_id_2: form.bunny_video_id_2 || null,
+      cover_url: form.cover_url || null,
       required_plan: form.required_plan ?? "basico",
     } as any);
     if (err) { setError(err.message); return; }
@@ -383,6 +386,9 @@ export function LessonManager({ courseId }: { courseId: string }) {
       is_free: form.is_free,
       panda_video_id: form.panda_video_id || null,
       panda_library_id: form.panda_library_id || null,
+      bunny_video_id: form.bunny_video_id || null,
+      bunny_video_id_2: form.bunny_video_id_2 || null,
+      cover_url: form.cover_url || null,
       required_plan: form.required_plan ?? "basico",
     } as any).eq("id", id);
     if (err) { setError(err.message); return; }
@@ -393,6 +399,18 @@ export function LessonManager({ courseId }: { courseId: string }) {
   async function handleDelete(id: string) {
     if (!confirm("¿Eliminar esta lección?")) return;
     await supabase.from("lessons").delete().eq("id", id);
+    loadLessons();
+  }
+
+  async function move(index: number, dir: -1 | 1) {
+    const target = index + dir;
+    if (target < 0 || target >= lessons.length) return;
+    const a = lessons[index];
+    const b = lessons[target];
+    await Promise.all([
+      supabase.from("lessons").update({ sort_order: b.sort_order } as any).eq("id", a.id),
+      supabase.from("lessons").update({ sort_order: a.sort_order } as any).eq("id", b.id),
+    ]);
     loadLessons();
   }
 
