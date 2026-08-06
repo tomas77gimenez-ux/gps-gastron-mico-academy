@@ -632,9 +632,9 @@ function CourseDetailPage() {
                           }`}
                         >
                           <div className="relative shrink-0 w-20 h-12 rounded-md overflow-hidden bg-secondary border border-border">
-                            {lesson.poster_url ? (
+                            {(lesson.cover_url ?? lesson.poster_url) ? (
                               <img
-                                src={lesson.poster_url}
+                                src={(lesson.cover_url ?? lesson.poster_url)!}
                                 alt=""
                                 loading="lazy"
                                 className="w-full h-full object-cover"
