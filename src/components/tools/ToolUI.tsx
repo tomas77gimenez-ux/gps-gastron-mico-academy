@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Loader2, Lock, LogIn, Sparkles } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { useToolsAccess } from "@/hooks/useToolsAccess";
+import { useSubscription } from "@/hooks/useSubscription";
 import { METODO_GPS_NOTE } from "@/lib/tools-catalog";
 
 export function ToolCard({ children, className = "" }: { children: ReactNode; className?: string }) {
@@ -215,19 +216,44 @@ export function ToolsLoginWall() {
   );
 }
 
+export function PremiumPaywall() {
+  return (
+    <ToolCard className="max-w-xl mx-auto text-center">
+      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center mx-auto mb-4">
+        <Lock className="w-6 h-6" />
+      </div>
+      <h2 className="font-display text-xl font-bold mb-2">Exclusivo del Plan Premium</h2>
+      <p className="text-sm text-muted-foreground mb-6">
+        La planilla SUP (fichas técnicas) está incluida solo en el Plan Premium. Hacé el upgrade para
+        costear cada plato con rendimiento real y definir tu precio de venta.
+      </p>
+      <Link
+        to="/planes"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+      >
+        <Sparkles className="w-4 h-4" /> Pasar a Premium
+      </Link>
+    </ToolCard>
+  );
+}
+
 /** Envoltorio de página: encabezado, control de acceso y nota del método. */
 export function ToolPage({
   title,
   subtitle,
   icon: Icon,
+  requiresPremium = false,
   children,
 }: {
   title: string;
   subtitle: string;
   icon: LucideIcon;
+  requiresPremium?: boolean;
   children: ReactNode;
 }) {
   const access = useToolsAccess();
+  const subscription = useSubscription();
+  const premiumBlocked = requiresPremium && !subscription.loading && subscription.planTier !== "premium";
 
   return (
     <div className="min-h-screen pt-20 pb-12">
@@ -245,7 +271,7 @@ export function ToolPage({
           <p className="text-muted-foreground text-sm mt-2 max-w-2xl">{subtitle}</p>
         </div>
 
-        {access.loading ? (
+        {access.loading || (requiresPremium && subscription.loading) ? (
           <div className="text-center py-16 text-muted-foreground text-sm">
             <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando...
           </div>
@@ -253,6 +279,8 @@ export function ToolPage({
           <ToolsLoginWall />
         ) : !access.hasAccess ? (
           <ToolsPaywall />
+        ) : premiumBlocked ? (
+          <PremiumPaywall />
         ) : (
           children
         )}
