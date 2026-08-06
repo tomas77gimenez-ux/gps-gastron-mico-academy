@@ -3,13 +3,59 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Course, PILLARS } from "@/lib/admin-types";
 import { LessonManager } from "./LessonManager";
 import { MaterialUpload } from "./MaterialUpload";
+import { useBunnyLibraryId, saveBunnyLibraryId } from "@/lib/bunny";
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, ChevronDown, ChevronUp,
-  GripVertical, BookOpen, Save, X, Compass,
+  GripVertical, BookOpen, Save, X, Compass, Radio, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const LEVELS = ["Principiante", "Intermedio", "Avanzado"];
+
+function BunnySettings() {
+  const { libraryId, loading, setLibraryId } = useBunnyLibraryId();
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  async function save() {
+    setSaving(true);
+    setErr(null);
+    try {
+      await saveBunnyLibraryId(libraryId);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (e: any) {
+      setErr(e?.message ?? "No se pudo guardar");
+    }
+    setSaving(false);
+  }
+
+  return (
+    <div className="rounded-xl border border-border bg-card p-4">
+      <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-1">
+        <Radio className="w-4 h-4 text-primary" /> Bunny Library ID
+      </h3>
+      <p className="text-xs text-muted-foreground mb-3">
+        Configuración global del reproductor. Todas las clases usan este Library ID junto al Video ID de cada lección.
+      </p>
+      <div className="flex items-center gap-2">
+        <input
+          value={libraryId}
+          onChange={e => setLibraryId(e.target.value)}
+          disabled={loading}
+          className="flex-1 rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          placeholder="ej: 412345"
+        />
+        <Button size="sm" onClick={save} disabled={saving || loading}>
+          {saved ? <Check className="w-4 h-4 mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+          {saved ? "Guardado" : saving ? "Guardando..." : "Guardar"}
+        </Button>
+      </div>
+      {err && <p className="text-xs text-destructive mt-2">{err}</p>}
+    </div>
+  );
+}
 
 function CourseForm({ course, onSave, onCancel }: {
   course?: Course; onSave: (data: Partial<Course>) => void; onCancel: () => void;
@@ -208,6 +254,8 @@ export function CourseManager() {
           {error}
         </div>
       )}
+
+      <BunnySettings />
 
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex gap-2 p-1 rounded-lg bg-secondary/50">
