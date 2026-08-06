@@ -338,6 +338,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
+  const [attachOpen, setAttachOpen] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   async function loadLessons() {
@@ -439,9 +440,22 @@ export function LessonManager({ courseId }: { courseId: string }) {
             {editing === lesson.id ? (
               <LessonForm lesson={lesson} onSave={f => handleUpdate(lesson.id, f)} onCancel={() => setEditing(null)} />
             ) : (
-              <div className="flex items-center gap-2 rounded-lg border border-border bg-card/50 p-3">
-                <GripVertical className="w-3 h-3 text-muted-foreground shrink-0" />
+              <div className="rounded-lg border border-border bg-card/50">
+              <div className="flex items-center gap-2 p-3">
+                <div className="flex flex-col shrink-0">
+                  <button onClick={() => move(i, -1)} disabled={i === 0} className="p-0.5 rounded hover:bg-secondary disabled:opacity-30">
+                    <ArrowUp className="w-3 h-3" />
+                  </button>
+                  <button onClick={() => move(i, 1)} disabled={i === lessons.length - 1} className="p-0.5 rounded hover:bg-secondary disabled:opacity-30">
+                    <ArrowDown className="w-3 h-3" />
+                  </button>
+                </div>
                 <span className="text-xs text-muted-foreground w-6">{i + 1}.</span>
+                {lesson.cover_url ? (
+                  <img src={lesson.cover_url} alt="" className="w-14 h-8 rounded object-cover border border-border shrink-0" />
+                ) : (
+                  <div className="w-14 h-8 rounded border border-border bg-secondary/50 shrink-0" />
+                )}
                 {(() => {
                   const CT = CONTENT_TYPES.find(t => t.value === lesson.content_type);
                   const Icon = CT?.icon ?? FileText;
@@ -451,6 +465,11 @@ export function LessonManager({ courseId }: { courseId: string }) {
                   <p className="text-sm font-medium truncate">{lesson.title}</p>
                   <p className="text-xs text-muted-foreground">
                     {lesson.duration ?? "—"} · {lesson.content_type}
+                    {lesson.bunny_video_id ? (
+                      <span className="ml-2 text-green-400">Bunny ✓{lesson.bunny_video_id_2 ? " (2 videos)" : ""}</span>
+                    ) : lesson.content_type !== "material" && !lesson.video_url && !lesson.panda_video_id ? (
+                      <span className="ml-2 text-yellow-400">Sin video</span>
+                    ) : null}
                     {lesson.is_free && <span className="ml-2 text-green-400">Gratis</span>}
                     {!lesson.is_free && lesson.required_plan === "premium" && (
                       <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
@@ -460,8 +479,19 @@ export function LessonManager({ courseId }: { courseId: string }) {
                     )}
                   </p>
                 </div>
+                <button onClick={() => setAttachOpen(attachOpen === lesson.id ? null : lesson.id)}
+                  className={`p-1.5 rounded hover:bg-secondary ${attachOpen === lesson.id ? "text-primary" : ""}`}
+                  title="Materiales de apoyo">
+                  <Paperclip className="w-3 h-3" />
+                </button>
                 <button onClick={() => setEditing(lesson.id)} className="p-1.5 rounded hover:bg-secondary"><Pencil className="w-3 h-3" /></button>
                 <button onClick={() => handleDelete(lesson.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive"><Trash2 className="w-3 h-3" /></button>
+              </div>
+              {attachOpen === lesson.id && (
+                <div className="border-t border-border p-3 bg-secondary/20">
+                  <MaterialUpload courseId={courseId} lessonId={lesson.id} />
+                </div>
+              )}
               </div>
             )}
           </div>
