@@ -41,6 +41,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
+import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
 import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
 import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
@@ -214,6 +215,11 @@ const ApiPublicMaterialDownloadRoute =
     path: '/api/public/material-download',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicBunnyThumbsRoute = ApiPublicBunnyThumbsRouteImport.update({
+  id: '/api/public/bunny-thumbs',
+  path: '/api/public/bunny-thumbs',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBunnySyncRoute = ApiPublicBunnySyncRouteImport.update({
   id: '/api/public/bunny-sync',
   path: '/api/public/bunny-sync',
@@ -287,6 +293,7 @@ export interface FileRoutesByFullPath {
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
+  '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/herramientas': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
+  '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -369,6 +377,7 @@ export interface FileRoutesById {
   '/herramientas/': typeof HerramientasIndexRoute
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
+  '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -412,6 +421,7 @@ export interface FileRouteTypes {
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
+    | '/api/public/bunny-thumbs'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -452,6 +462,7 @@ export interface FileRouteTypes {
     | '/herramientas'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
+    | '/api/public/bunny-thumbs'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -493,6 +504,7 @@ export interface FileRouteTypes {
     | '/herramientas/'
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
+    | '/api/public/bunny-thumbs'
     | '/api/public/material-download'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -528,6 +540,7 @@ export interface RootRouteChildren {
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBunnySyncRoute: typeof ApiPublicBunnySyncRoute
+  ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -763,6 +776,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicMaterialDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bunny-thumbs': {
+      id: '/api/public/bunny-thumbs'
+      path: '/api/public/bunny-thumbs'
+      fullPath: '/api/public/bunny-thumbs'
+      preLoaderRoute: typeof ApiPublicBunnyThumbsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bunny-sync': {
       id: '/api/public/bunny-sync'
       path: '/api/public/bunny-sync'
@@ -866,6 +886,7 @@ const rootRouteChildren: RootRouteChildren = {
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBunnySyncRoute: ApiPublicBunnySyncRoute,
+  ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
