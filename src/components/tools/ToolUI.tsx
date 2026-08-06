@@ -216,6 +216,27 @@ export function ToolsLoginWall() {
   );
 }
 
+export function PremiumPaywall() {
+  return (
+    <ToolCard className="max-w-xl mx-auto text-center">
+      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center mx-auto mb-4">
+        <Lock className="w-6 h-6" />
+      </div>
+      <h2 className="font-display text-xl font-bold mb-2">Exclusivo del Plan Premium</h2>
+      <p className="text-sm text-muted-foreground mb-6">
+        La planilla SUP (fichas técnicas) está incluida solo en el Plan Premium. Hacé el upgrade para
+        costear cada plato con rendimiento real y definir tu precio de venta.
+      </p>
+      <Link
+        to="/planes"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
+      >
+        <Sparkles className="w-4 h-4" /> Pasar a Premium
+      </Link>
+    </ToolCard>
+  );
+}
+
 /** Envoltorio de página: encabezado, control de acceso y nota del método. */
 export function ToolPage({
   title,
