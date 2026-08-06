@@ -129,7 +129,7 @@ interface Material {
 }
 
 function CourseDetailPage() {
-  const { t } = useI18n();
+  const { t, lang } = useI18n();
   const sub = useSubscription();
   const loaderData = Route.useLoaderData() as { course: Course | null; lessons: Lesson[]; materials?: Material[] };
   const { course } = loaderData;
@@ -212,7 +212,7 @@ function CourseDetailPage() {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData.session?.access_token;
       if (!token) {
-        toast.error("Iniciá sesión para descargar");
+        toast.error(t("cursos.iniciaSesionDescargar"));
         return;
       }
       const res = await fetch(
@@ -220,17 +220,17 @@ function CourseDetailPage() {
         { headers: { Authorization: `Bearer ${token}` } },
       );
       if (res.status === 401) {
-        toast.error("Sesión expirada", { description: "Volvé a iniciar sesión." });
+        toast.error(t("cursos.sesionExpirada"), { description: t("cursos.volverIniciarSesion") });
         return;
       }
       if (res.status === 403) {
-        toast.error("Sin acceso a este material", {
-          description: "Actualizá tu plan para descargarlo.",
+        toast.error(t("cursos.sinAccesoMaterial"), {
+          description: t("cursos.actualizaPlan"),
         });
         return;
       }
       if (!res.ok) {
-        toast.error("No se pudo descargar", { description: `Error ${res.status}` });
+        toast.error(t("cursos.noSePudoDescargar"), { description: `Error ${res.status}` });
         return;
       }
       const blob = await res.blob();
@@ -242,9 +242,9 @@ function CourseDetailPage() {
       link.click();
       link.remove();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
-      toast.success("Descarga iniciada", { description: getMaterialFilename(material) });
+      toast.success(t("cursos.descargaIniciada"), { description: getMaterialFilename(material) });
     } catch (err: any) {
-      toast.error("Error al descargar", { description: err?.message ?? "Intentá nuevamente" });
+      toast.error(t("cursos.errorDescarga"), { description: err?.message ?? t("cursos.intentaNuevamente") });
     } finally {
       setDownloadingId(null);
     }
@@ -388,7 +388,7 @@ function CourseDetailPage() {
                     </div>
                     <p className="text-sm text-foreground/80 max-w-sm">
                       {activeNeedsUpgrade
-                        ? "Esta lección requiere el Plan Premium."
+                        ? t("cursos.leccionPremium")
                         : t("cursos.aulaBloqueada")}
                     </p>
                     <Link
@@ -396,7 +396,7 @@ function CourseDetailPage() {
                       className="px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2"
                     >
                       {activeNeedsUpgrade ? <Crown className="w-4 h-4" /> : <Sparkles className="w-4 h-4" />}
-                      {activeNeedsUpgrade ? "Actualizar a Premium" : t("cursos.verPlanes")}
+                      {activeNeedsUpgrade ? t("cursos.actualizarPremium") : t("cursos.verPlanes")}
                     </Link>
                   </div>
                 </div>
@@ -405,14 +405,14 @@ function CourseDetailPage() {
                   <div key={videoId}>
                     {bunnyIds.length > 1 && (
                       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
-                        Parte {i + 1}
+                        {t("cursos.parte")} {i + 1}
                       </p>
                     )}
                     <div className="relative aspect-video rounded-xl overflow-hidden bg-black border border-border">
                       <iframe
                         key={`${activeLesson.id}-${videoId}`}
                         src={bunnyEmbedUrl(libraryId, videoId)}
-                        title={`${activeLesson.title}${bunnyIds.length > 1 ? ` — parte ${i + 1}` : ""}`}
+                        title={`${loc(activeLesson, "title", lang)}${bunnyIds.length > 1 ? ` — ${t("cursos.parte")} ${i + 1}` : ""}`}
                         loading="lazy"
                         allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
                         allowFullScreen
@@ -452,9 +452,9 @@ function CourseDetailPage() {
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
                       <FileText className="w-7 h-7 text-primary" />
                     </div>
-                    <h3 className="text-lg font-semibold">Clase práctica · Material descargable</h3>
+                    <h3 className="text-lg font-semibold">{t("cursos.clasePractica")}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Esta clase no tiene video: se trabaja con los materiales de apoyo que están más abajo.
+                      {t("cursos.clasePracticaDesc")}
                     </p>
                   </div>
                 </div>
@@ -465,26 +465,26 @@ function CourseDetailPage() {
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-2">
                     <Clock className="w-10 h-10 text-primary/50" />
-                    <span className="text-sm font-medium">Video próximamente</span>
+                    <span className="text-sm font-medium">{t("cursos.videoProximamente")}</span>
                   </div>
                 </div>
               )}
             </div>
 
             <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-              <span className="text-primary">{course.category}</span>
+              <span className="text-primary">{locCategory(course.category, lang)}</span>
               <span>·</span>
-              <span>{course.level}</span>
+              <span>{locLevel(course.level, lang)}</span>
               {course.estimated_duration && <><span>·</span><span>{course.estimated_duration}</span></>}
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold font-display mb-2">{course.title}</h1>
+            <h1 className="text-2xl sm:text-3xl font-bold font-display mb-2">{loc(course, "title", lang)}</h1>
             <p className="text-sm text-muted-foreground mb-4">{course.instructor}</p>
-            {course.description && <p className="text-sm leading-relaxed">{course.description}</p>}
+            {loc(course, "description", lang) && <p className="text-sm leading-relaxed">{loc(course, "description", lang)}</p>}
 
             {activeLesson && (
               <div className="mt-6 pt-6 border-t border-border">
                 <div className="flex items-start justify-between gap-4 mb-2">
-                  <h2 className="text-lg font-semibold">{activeLesson.title}</h2>
+                  <h2 className="text-lg font-semibold">{loc(activeLesson, "title", lang)}</h2>
                   {canTrack && canPlay(activeLesson) && (
                     <button
                       type="button"
@@ -497,17 +497,17 @@ function CourseDetailPage() {
                       }`}
                     >
                       {progress[activeLesson.id]?.completed ? <Check className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
-                      {progress[activeLesson.id]?.completed ? "Completada" : "Marcar como completada"}
+                      {progress[activeLesson.id]?.completed ? t("cursos.completada") : t("cursos.marcarCompletada")}
                     </button>
                   )}
                 </div>
-                {activeLesson.description && (
-                  <p className="text-sm text-muted-foreground leading-relaxed">{activeLesson.description}</p>
+                {loc(activeLesson, "description", lang) && (
+                  <p className="text-sm text-muted-foreground leading-relaxed">{loc(activeLesson, "description", lang)}</p>
                 )}
                 {activeMaterials.length > 0 && (
                   <div className="mt-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Materiales de apoyo
+                      {t("cursos.materiales")}
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
@@ -523,7 +523,7 @@ function CourseDetailPage() {
                             <div className="min-w-0">
                               <p className="text-sm font-semibold truncate">{m.title}</p>
                               <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
-                                {m.file_type} · Disponible próximamente
+                                {m.file_type} · {t("cursos.disponibleProximamente")}
                               </p>
                             </div>
                           </div>
@@ -550,7 +550,7 @@ function CourseDetailPage() {
                         <div className="flex items-center gap-2 shrink-0 text-primary">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
                           <span className="text-[11px] underline underline-offset-2 hover:text-primary/80">
-                            {downloadingId === m.id ? "..." : "Descargar"}
+                            {downloadingId === m.id ? "..." : t("cursos.descargar")}
                           </span>
                         </div>
                       </button>
@@ -572,7 +572,7 @@ function CourseDetailPage() {
                                 </span>
                               </p>
                               <p className="text-[11px] text-muted-foreground">
-                                Actualizá a Premium para descargar
+                                {t("cursos.actualizarParaDescargar")}
                               </p>
                             </div>
                           </div>
@@ -609,7 +609,7 @@ function CourseDetailPage() {
               {sub.hasActive && lessons.length > 0 && (
                 <div className="px-4 py-3 border-b border-border bg-secondary/20">
                   <div className="flex items-center justify-between text-xs mb-1.5">
-                    <span className="text-muted-foreground">Progreso</span>
+                    <span className="text-muted-foreground">{t("cursos.progreso")}</span>
                     <span className="font-semibold text-primary">{completedCount}/{lessons.length} · {overallPct}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
@@ -670,7 +670,7 @@ function CourseDetailPage() {
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start gap-2 mb-1">
                               <span className={`text-sm font-medium line-clamp-2 ${isActive ? "text-primary" : ""}`}>
-                                {lesson.title}
+                                {loc(lesson, "title", lang)}
                               </span>
                               {lesson.is_free && !sub.hasActive && (
                                 <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded">
