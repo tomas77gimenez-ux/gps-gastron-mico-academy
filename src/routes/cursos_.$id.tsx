@@ -273,6 +273,15 @@ function CourseDetailPage() {
   );
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
+  const { setCompleted, saving: savingCompletion, canTrack } = useLessonCompletion(course?.id, reload);
+  const bunnyIds = useMemo(() => {
+    if (!activeLesson || !libraryId) return [] as string[];
+    return [activeLesson.bunny_video_id, activeLesson.bunny_video_id_2].filter(
+      (v): v is string => !!v && v.trim().length > 0,
+    );
+  }, [activeLesson, libraryId]);
+  const isMaterialOnly = activeLesson?.content_type === "material";
+
   const pandaStreamUrl = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
     ? `https://b-${activeLesson.panda_library_id}.tv.pandavideo.com.br/${activeLesson.panda_video_id}/playlist.m3u8`
     : null;
