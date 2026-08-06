@@ -53,10 +53,18 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
 
         const token = authHeader.slice('Bearer '.length).trim()
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
-        const { data: { user }, error: authError } = await supabase.auth.getUser(token)
 
-        if (authError || !user) {
-          return Response.json({ error: 'Unauthorized' }, { status: 401 })
+        // Server-to-server callers (e.g. the Stripe webhook sending lifecycle
+        // emails) present the service-role key instead of a user JWT.
+        const isServiceCaller =
+          token.length === supabaseServiceKey.length && token === supabaseServiceKey
+
+        if (!isServiceCaller) {
+          const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+
+          if (authError || !user) {
+            return Response.json({ error: 'Unauthorized' }, { status: 401 })
+          }
         }
 
         // Parse request body

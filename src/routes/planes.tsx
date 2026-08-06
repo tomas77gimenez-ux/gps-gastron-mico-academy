@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Check, X, Star, Crown, Shield, CreditCard, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
@@ -452,6 +452,25 @@ function PlanesPage() {
             <span className="px-2 py-0.5 rounded bg-foreground/5 border border-border">AMEX</span>
           </span>
         </div>
+
+        {/* Aviso legal */}
+        <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
+          {lang === "es"
+            ? "5 días de prueba gratis. Se renueva automáticamente; cancelás en un clic desde tu cuenta. Al suscribirte aceptás los "
+            : "5-day free trial. Renews automatically; cancel in one click from your account. By subscribing you accept the "}
+          <Link to="/terminos" className="underline hover:text-primary">
+            {t("footer.terminos")}
+          </Link>
+          {", "}
+          <Link to="/privacidad" className="underline hover:text-primary">
+            {t("footer.privacidad")}
+          </Link>
+          {lang === "es" ? " y la " : " and the "}
+          <Link to="/reembolsos" className="underline hover:text-primary">
+            {t("footer.reembolsos")}
+          </Link>
+          .
+        </p>
 
         {/* Comparison table */}
         <motion.div

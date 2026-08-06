@@ -270,6 +270,7 @@ const translations = {
   "footer.contacto": { es: "Contacto", en: "Contact", pt: "Contato" },
   "footer.terminos": { es: "Términos y Condiciones", en: "Terms & Conditions", pt: "Termos e Condições" },
   "footer.privacidad": { es: "Política de Privacidad", en: "Privacy Policy", pt: "Política de Privacidade" },
+  "footer.reembolsos": { es: "Reembolsos y Cancelación", en: "Refunds & Cancellation", pt: "Reembolsos e Cancelamento" },
   "footer.cookies": { es: "Política de Cookies", en: "Cookie Policy", pt: "Política de Cookies" },
   "footer.dashboard": { es: "Diagnóstico DRE", en: "DRE Diagnosis", pt: "Diagnóstico DRE" },
   "footer.asistente": { es: "Asistente IA", en: "AI Assistant", pt: "Assistente IA" },
@@ -285,6 +286,7 @@ const translations = {
   // Legal pages
   "legal.terminos.title": { es: "Términos y Condiciones", en: "Terms & Conditions", pt: "Termos e Condições" },
   "legal.privacidad.title": { es: "Política de Privacidad", en: "Privacy Policy", pt: "Política de Privacidade" },
+  "legal.reembolsos.title": { es: "Política de Reembolsos y Cancelación", en: "Refunds & Cancellation Policy", pt: "Política de Reembolsos e Cancelamento" },
   "legal.actualizado": { es: "Última actualización", en: "Last updated", pt: "Última atualização" },
 
   // FAQ
