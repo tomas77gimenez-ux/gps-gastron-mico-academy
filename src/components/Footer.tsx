@@ -93,9 +93,9 @@ export function Footer() {
             <h4 className="font-display font-semibold text-sm mb-4">{t("footer.contacto")}</h4>
             <a
               href="mailto:hola@gpsgastronomico.com"
-              className="link-underline text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-2 mb-4"
+              className="link-underline mb-4 inline-flex max-w-full items-center gap-2 break-all text-sm text-muted-foreground transition-colors hover:text-primary"
             >
-              <Mail className="w-4 h-4" />
+              <Mail className="h-4 w-4 shrink-0" />
               hola@gpsgastronomico.com
             </a>
             <div className="flex gap-3">
