@@ -6,8 +6,10 @@ export function getConnectionApiKey(env: StripeEnv): string {
   const key = env === 'sandbox'
     ? Deno.env.get('STRIPE_SANDBOX_API_KEY')
     : Deno.env.get('STRIPE_LIVE_API_KEY');
-  if (!key) throw new Error(`STRIPE_${env.toUpperCase()}_API_KEY is not configured`);
-  return key;
+  const direct = Deno.env.get('STRIPE_SECRET_KEY');
+  const resolved = key || direct;
+  if (!resolved) throw new Error(`No Stripe API key configured for ${env}`);
+  return resolved;
 }
 
 import Stripe from "https://esm.sh/stripe@18.5.0";
@@ -17,6 +19,15 @@ const GATEWAY_STRIPE_BASE = 'https://connector-gateway.lovable.dev/stripe';
 export function createStripeClient(env: StripeEnv): Stripe {
   const connectionApiKey = getConnectionApiKey(env);
   const lovableApiKey = Deno.env.get('LOVABLE_API_KEY');
+  const usesGateway = Boolean(
+    env === 'sandbox' ? Deno.env.get('STRIPE_SANDBOX_API_KEY') : Deno.env.get('STRIPE_LIVE_API_KEY'),
+  );
+
+  // Chave própria (BYOK): fala direto com a API do Stripe.
+  if (!usesGateway) {
+    return new Stripe(connectionApiKey, { apiVersion: '2025-08-27.basil' });
+  }
+
   if (!lovableApiKey) throw new Error('LOVABLE_API_KEY is not configured');
 
   return new Stripe(connectionApiKey, {
@@ -37,9 +48,9 @@ export function createStripeClient(env: StripeEnv): Stripe {
 export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ type: string; data: { object: any } }> {
   const signature = req.headers.get("stripe-signature");
   const body = await req.text();
-  const secret = env === 'sandbox'
+  const secret = (env === 'sandbox'
     ? Deno.env.get('PAYMENTS_SANDBOX_WEBHOOK_SECRET')
-    : Deno.env.get('PAYMENTS_LIVE_WEBHOOK_SECRET');
+    : Deno.env.get('PAYMENTS_LIVE_WEBHOOK_SECRET')) || Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
   if (!secret) {
     throw new Error('Webhook secret environment variable is not configured');
