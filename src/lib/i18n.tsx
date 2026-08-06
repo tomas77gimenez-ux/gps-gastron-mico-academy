@@ -59,7 +59,7 @@ const translations = {
   "cursos.lecciones": { es: "lecciones", en: "lessons", pt: "aulas" },
   "cursos.bloqueado": { es: "Solo para suscriptores", en: "Subscribers only", pt: "Apenas para assinantes" },
   "cursos.suscribete": { es: "Suscribite para acceder a todo el contenido", en: "Subscribe to access all content", pt: "Assine para acessar todo o conteúdo" },
-  "cursos.verCurso": { es: "Ver Curso", en: "View Course", pt: "Ver Curso" },
+  "cursos.verCurso": { es: "Ver Clases", en: "View Lessons", pt: "Ver Aulas" },
   "cursos.continuar": { es: "Continuar", en: "Continue", pt: "Continuar" },
   "cursos.gratis": { es: "Vista previa", en: "Free preview", pt: "Pré-visualização" },
   "cursos.vacio": { es: "Aún no hay cursos disponibles.", en: "No courses available yet.", pt: "Ainda não há cursos disponíveis." },
