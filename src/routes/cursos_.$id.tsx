@@ -36,16 +36,16 @@ export const Route = createFileRoute("/cursos_/$id")({
     const course = (loaderData as { course?: { title?: string; description?: string | null; thumbnail_url?: string | null; instructor?: string } } | undefined)?.course;
     const title = course?.title
       ? `${course.title} — GPS Gastronômico`
-      : "Curso — GPS Gastronômico";
+      : "Mentoría — GPS Gastronômico";
     const description =
       (course?.description?.slice(0, 160)) ||
-      "Curso del Método GPS Gastronômico con clases en video y materiales complementarios.";
+      "Mentoría del Método GPS Gastronômico con clases en video y materiales complementarios.";
     const canonical = `https://plataforma-test1.lovable.app/cursos/${params?.id ?? ""}`;
     return {
       meta: [
         { title },
         { name: "description", content: description },
-        { property: "og:title", content: course?.title ?? "Curso" },
+        { property: "og:title", content: course?.title ?? "Mentoría" },
         { property: "og:description", content: description },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "article" },
@@ -359,7 +359,7 @@ function CourseDetailPage() {
           <ArrowLeft className="w-4 h-4" /> {t("cursos.volver")}
         </Link>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,1fr)] gap-8">
           {/* Left: Player + info */}
           <div>
             <div className="mb-5 space-y-4">
@@ -614,7 +614,7 @@ function CourseDetailPage() {
               {lessons.length === 0 ? (
                 <p className="p-4 text-sm text-muted-foreground">{t("cursos.sinAulas")}</p>
               ) : (
-                <ul className="divide-y divide-border max-h-[60vh] overflow-y-auto">
+                <ul className="divide-y divide-border max-h-[72vh] overflow-y-auto">
                   {lessons.map((lesson, i) => {
                     const playable = canPlay(lesson);
                     const isActive = lesson.id === activeLessonId;
@@ -627,11 +627,11 @@ function CourseDetailPage() {
                       <li key={lesson.id}>
                         <button
                           onClick={() => setActiveLessonId(lesson.id)}
-                          className={`w-full text-left px-4 py-3 flex items-start gap-3 transition-colors ${
+                          className={`w-full text-left px-4 py-3.5 flex items-start gap-3.5 transition-colors ${
                             isActive ? "bg-primary/10" : "hover:bg-secondary/50"
                           }`}
                         >
-                          <div className="relative shrink-0 w-20 h-12 rounded-md overflow-hidden bg-secondary border border-border">
+                          <div className="relative shrink-0 w-32 sm:w-36 aspect-video rounded-lg overflow-hidden bg-secondary border border-border">
                             {(lesson.cover_url ?? lesson.poster_url) ? (
                               <img
                                 src={(lesson.cover_url ?? lesson.poster_url)!}
@@ -640,12 +640,12 @@ function CourseDetailPage() {
                                 className="w-full h-full object-cover"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-xs font-semibold text-muted-foreground">
+                              <div className="w-full h-full flex items-center justify-center text-sm font-semibold text-muted-foreground">
                                 {i + 1}
                               </div>
                             )}
                             <div className={`absolute inset-0 flex items-center justify-center ${
-                              isActive || isCompleted || !playable ? "bg-black/45" : "bg-black/20"
+                              isActive || isCompleted || !playable ? "bg-black/40" : "bg-black/10"
                             }`}>
                               {!playable ? (
                                 <Lock className="w-4 h-4 text-white" />
@@ -659,8 +659,8 @@ function CourseDetailPage() {
                             </div>
                           </div>
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-0.5">
-                              <span className={`text-sm font-medium truncate ${isActive ? "text-primary" : ""}`}>
+                            <div className="flex items-start gap-2 mb-1">
+                              <span className={`text-sm font-medium line-clamp-2 ${isActive ? "text-primary" : ""}`}>
                                 {lesson.title}
                               </span>
                               {lesson.is_free && !sub.hasActive && (
