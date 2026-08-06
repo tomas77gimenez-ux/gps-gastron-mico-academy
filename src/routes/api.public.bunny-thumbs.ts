@@ -7,6 +7,11 @@ const BodySchema = z.union([
   z.object({ action: z.literal("probe"), guid: z.string().min(1).max(200) }),
   z.object({ action: z.literal("play"), guid: z.string().min(1).max(200) }),
   z.object({
+    action: z.literal("upload"),
+    path: z.string().min(1).max(300),
+    dataBase64: z.string().min(10).max(8_000_000),
+  }),
+  z.object({
     action: z.literal("set"),
     guid: z.string().min(1).max(200),
     thumbnailUrl: z.string().url().max(2000),
