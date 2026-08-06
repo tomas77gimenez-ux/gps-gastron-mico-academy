@@ -7,7 +7,7 @@ const translations = {
   "nav.inicio": { es: "Inicio", en: "Home", pt: "Início" },
   "nav.dre": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
   "nav.herramientas": { es: "Herramientas", en: "Tools", pt: "Ferramentas" },
-  "nav.mentoria": { es: "Mentoria", en: "Mentorship", pt: "Mentoria" },
+  "nav.mentoria": { es: "Contenido", en: "Content", pt: "Conteúdo" },
   "nav.planes": { es: "Planes", en: "Plans", pt: "Planos" },
   "nav.productos": { es: "Tienda", en: "Store", pt: "Loja" },
   "nav.perfil": { es: "Mi Perfil", en: "My Profile", pt: "Meu Perfil" },
