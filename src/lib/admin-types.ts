@@ -44,6 +44,9 @@ export interface Lesson {
   updated_at: string;
   panda_video_id?: string | null;
   panda_library_id?: string | null;
+  bunny_video_id?: string | null;
+  bunny_video_id_2?: string | null;
+  cover_url?: string | null;
   required_plan?: PlanTier;
 }
 
