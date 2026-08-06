@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          value: string | null
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          value?: string | null
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          value?: string | null
+        }
+        Relationships: []
+      }
       breakeven_inputs: {
         Row: {
           avg_ticket: number
@@ -201,7 +219,7 @@ export type Database = {
           created_at?: string
           file_size?: number | null
           file_type?: string
-          file_url: string
+          file_url?: string
           id?: string
           lesson_id?: string | null
           required_plan?: Database["public"]["Enums"]["plan_tier"]
@@ -658,8 +676,11 @@ export type Database = {
       }
       lessons: {
         Row: {
+          bunny_video_id: string | null
+          bunny_video_id_2: string | null
           content_type: string
           course_id: string
+          cover_url: string | null
           created_at: string
           description: string | null
           duration: string | null
@@ -675,8 +696,11 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          bunny_video_id?: string | null
+          bunny_video_id_2?: string | null
           content_type?: string
           course_id: string
+          cover_url?: string | null
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -692,8 +716,11 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          bunny_video_id?: string | null
+          bunny_video_id_2?: string | null
           content_type?: string
           course_id?: string
+          cover_url?: string | null
           created_at?: string
           description?: string | null
           duration?: string | null
@@ -886,6 +913,8 @@ export type Database = {
       get_lesson_video: {
         Args: { _lesson_id: string }
         Returns: {
+          bunny_video_id: string
+          bunny_video_id_2: string
           panda_library_id: string
           panda_video_id: string
           video_url: string
