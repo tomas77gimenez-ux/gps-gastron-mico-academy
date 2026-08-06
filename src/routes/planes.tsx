@@ -12,7 +12,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackFunnelStep } from "@/lib/analytics";
 
 // Helper: pick a translation from an object keyed by language, falling back to es
 function pickLang<T>(obj: Partial<Record<Lang, T>> & { es: T }, lang: Lang): T {
@@ -176,6 +176,11 @@ function PlanesPage() {
         setUserId(data.user.id);
       }
     });
+  }, []);
+
+  // Funnel step 1: reached the pricing page.
+  useEffect(() => {
+    trackFunnelStep("view_plans");
   }, []);
 
   // Track subscription state transitions (e.g. user canceled/reactivated from Stripe portal)

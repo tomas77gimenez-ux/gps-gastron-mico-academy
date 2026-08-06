@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { UserPlus, Mail, Lock, Eye, EyeOff, User, CheckCircle } from "lucide-react";
+import { trackEvent } from "@/lib/analytics";
 
 export const Route = createFileRoute("/registro")({
   component: RegistroPage,
@@ -54,9 +55,11 @@ function RegistroPage() {
 
     setSuccess(true);
     setLoading(false);
+    trackEvent("sign_up", { method: "email" });
   }
 
   async function handleGoogleSignup() {
+    trackEvent("sign_up", { method: "google" });
     await lovable.auth.signInWithOAuth("google", {
       redirect_uri: window.location.origin,
     });

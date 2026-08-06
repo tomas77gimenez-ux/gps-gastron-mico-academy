@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n";
-import { GA_MEASUREMENT_ID } from "@/lib/analytics";
+import { GA_MEASUREMENT_ID, identifyUser, trackEvent, trackPageView } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { sendWelcomeIfNeeded } from "@/lib/email/send-welcome";
 
@@ -119,12 +119,28 @@ function RootShell({ children }: { children: React.ReactNode }) {
 function RootComponent() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
+  // SPA page_view: gtag only auto-reports the first load.
   useEffect(() => {
+    trackPageView(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    void supabase.auth.getSession().then(({ data }) => {
+      identifyUser(data.session?.user?.id ?? null);
+    });
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
         if (event === "SIGNED_IN" && session) {
+          identifyUser(session.user.id);
+          trackEvent("login", {
+            method: session.user.app_metadata?.provider ?? "email",
+          });
           // Fire-and-forget; internally idempotent via profiles.welcomed_at.
           void sendWelcomeIfNeeded(session);
+        }
+        if (event === "SIGNED_OUT") {
+          identifyUser(null);
         }
       },
     );

@@ -134,6 +134,13 @@
     font-family: var(--font-display);
     letter-spacing: -0.02em;
   }
+
+  /* Decorative blurred glows can extend past the viewport on small screens;
+     clip horizontally so mobile never scrolls sideways. */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
 }
 
 /* Custom scrollbar */

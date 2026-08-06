@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { CheckCircle, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { trackEvent } from "@/lib/analytics";
+import { trackEvent, trackFunnelStep } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
 
@@ -64,6 +64,7 @@ function CheckoutReturnPage() {
         if (cancelled) return;
         if (error || !data) {
           trackEvent("purchase", { transaction_id: sessionId });
+          trackFunnelStep("subscribed", { transaction_id: sessionId });
           setResult({ state: "success" });
         } else if (data.payment_status === "paid" || data.status === "complete") {
           trackEvent("purchase", {
@@ -72,6 +73,16 @@ function CheckoutReturnPage() {
             currency: data.currency ?? "USD",
             items: data.items ?? [],
           });
+          trackFunnelStep(
+            (data.amount_total ?? 0) === 0 ? "trial_started" : "subscribed",
+            {
+              transaction_id: sessionId,
+              plan: pendingContext.plan ?? "unknown",
+              period: pendingContext.period ?? "unknown",
+              value: data.amount_total ?? 0,
+              currency: data.currency ?? "USD",
+            },
+          );
           setResult({ state: "success" });
         } else {
           // Stripe redirected here but payment is not paid → failure
@@ -90,6 +101,7 @@ function CheckoutReturnPage() {
         if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
       } catch {
         trackEvent("purchase", { transaction_id: sessionId });
+        trackFunnelStep("subscribed", { transaction_id: sessionId });
         if (typeof window !== "undefined") window.sessionStorage.setItem(key, "1");
         setResult({ state: "success" });
       }
