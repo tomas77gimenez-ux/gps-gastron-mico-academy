@@ -19,22 +19,12 @@ export function ToolsGrid({ compact = false }: { compact?: boolean }) {
             <span className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
               <tool.icon className="w-5 h-5" />
             </span>
-            <Pill
-              tone={
-                tool.requiresPremium
-                  ? "primary"
-                  : tool.to === "/herramientas/dre"
-                    ? "primary"
-                    : access.hasAccess
-                      ? "success"
-                      : "neutral"
-              }
-            >
+            <Pill tone={tool.requiresPremium ? "primary" : access.hasAccess ? "success" : "neutral"}>
               {tool.requiresPremium
                 ? "Solo Premium"
                 : access.loading
                   ? "…"
-                  : access.hasAccess || tool.to === "/herramientas/dre"
+                  : access.hasAccess
                     ? tool.status
                     : "Requiere plan"}
             </Pill>
