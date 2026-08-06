@@ -116,7 +116,7 @@ function CursosPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Mentoría hero — high-contrast left accent */}
         <div className="mb-12 border-l-4 border-primary pl-6">
-          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.titulo")}</span>
+          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">Mentoría · Método GPS</span>
           <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mt-2 leading-tight">
             Mentoría <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
