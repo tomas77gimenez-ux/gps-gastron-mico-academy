@@ -98,10 +98,14 @@ interface Lesson {
   duration: string | null;
   video_url: string | null;
   poster_url: string | null;
+  cover_url: string | null;
+  content_type: string;
   is_free: boolean;
   sort_order: number;
   panda_video_id: string | null;
   panda_library_id: string | null;
+  bunny_video_id: string | null;
+  bunny_video_id_2: string | null;
   required_plan?: PlanTier;
 }
 
@@ -112,6 +116,7 @@ interface Material {
   file_type: string;
   file_size: number | null;
   required_plan?: PlanTier;
+  has_file?: boolean;
 }
 
 function CourseDetailPage() {
@@ -125,8 +130,11 @@ function CourseDetailPage() {
       video_url: null,
       panda_video_id: null,
       panda_library_id: null,
+      bunny_video_id: null,
+      bunny_video_id_2: null,
     }))
   );
+  const { libraryId } = useBunnyLibraryId();
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -144,16 +152,29 @@ function CourseDetailPage() {
     if (!activeLessonId) return;
     const current = lessons.find((l) => l.id === activeLessonId);
     if (!current) return;
-    if (current.panda_video_id || current.video_url) return; // already loaded
+    if (current.panda_video_id || current.video_url || current.bunny_video_id) return; // already loaded
     let cancelled = false;
     (async () => {
       const { data, error } = await supabase.rpc("get_lesson_video", { _lesson_id: activeLessonId });
       if (cancelled || error || !data || data.length === 0) return;
-      const row = data[0] as { panda_video_id: string | null; panda_library_id: string | null; video_url: string | null };
+      const row = data[0] as {
+        panda_video_id: string | null;
+        panda_library_id: string | null;
+        video_url: string | null;
+        bunny_video_id: string | null;
+        bunny_video_id_2: string | null;
+      };
       setLessons((prev) =>
         prev.map((l) =>
           l.id === activeLessonId
-            ? { ...l, panda_video_id: row.panda_video_id, panda_library_id: row.panda_library_id, video_url: row.video_url }
+            ? {
+                ...l,
+                panda_video_id: row.panda_video_id,
+                panda_library_id: row.panda_library_id,
+                video_url: row.video_url,
+                bunny_video_id: row.bunny_video_id,
+                bunny_video_id_2: row.bunny_video_id_2,
+              }
             : l
         )
       );
@@ -229,7 +250,7 @@ function CourseDetailPage() {
       if (lessonIds.length === 0) return;
       const { data } = await supabase
         .from("course_materials")
-        .select("id, lesson_id, title, file_type, file_size, required_plan")
+        .select("id, lesson_id, title, file_type, file_size, required_plan, has_file")
         .in("lesson_id", lessonIds);
       if (!cancelled && data) setMaterials(data as Material[]);
     })();
