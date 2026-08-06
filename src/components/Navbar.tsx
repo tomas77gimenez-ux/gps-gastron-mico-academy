@@ -68,8 +68,8 @@ export function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-2xl border-border"
-          : "bg-background/50 backdrop-blur-xl border-transparent"
+          ? "bg-background/95 backdrop-blur-2xl border-border-strong"
+          : "bg-background/70 backdrop-blur-xl border-border"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
