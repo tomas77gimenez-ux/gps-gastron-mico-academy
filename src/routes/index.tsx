@@ -211,18 +211,6 @@ function HomePage() {
             <p className="mt-6 max-w-xl text-lg leading-relaxed text-muted-foreground">
               {t("home.heroDesc")}
             </p>
-            <div className="mt-9 flex flex-wrap gap-4">
-              <Link to="/cursos">
-                <GoldButton size="lg">
-                  <Play className="h-4 w-4" strokeWidth={1.75} /> {t("home.explorarCursos")}
-                </GoldButton>
-              </Link>
-              <Link to="/dashboard">
-                <GoldButton size="lg" variant="ghost">
-                  <BarChart3 className="h-4 w-4" strokeWidth={1.5} /> {t("home.diagnosticar")}
-                </GoldButton>
-              </Link>
-            </div>
           </div>
 
           {/* Tilted DRE mockup */}
