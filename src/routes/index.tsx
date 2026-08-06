@@ -290,11 +290,11 @@ function HomePage() {
                   <h3 className="mt-5 font-display text-lg font-semibold">{b.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.desc}</p>
                   {i === 0 && (
-                    <div aria-hidden="true" className="mt-7 flex h-16 items-end gap-1.5">
+                    <div aria-hidden="true" className="mt-8 flex h-20 items-end gap-2">
                       {[38, 62, 46, 78, 58, 88, 70, 96].map((h, bi) => (
                         <span
                           key={bi}
-                          className="flex-1 rounded-sm bg-gradient-to-t from-primary/15 to-primary/60"
+                          className="flex-1 rounded-t-[3px] bg-gradient-to-t from-primary/10 via-primary/30 to-primary/70 transition-[height] duration-500 ease-out"
                           style={{ height: `${h}%` }}
                         />
                       ))}
