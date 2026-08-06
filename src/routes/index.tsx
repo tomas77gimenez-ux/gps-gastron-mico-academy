@@ -1,16 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { useEffect, useRef, useState } from "react";
 import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
-  Star, Quote, Utensils, BarChart3, BookOpen, Lightbulb,
-  LineChart, GraduationCap, Target, Sparkles, HelpCircle,
-  Check, Crown,
+  Star, Quote, BarChart3, Lightbulb,
+  LineChart, GraduationCap, Target,
+  Check, Crown, type LucideIcon,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useI18n } from "@/lib/i18n";
 import { DreMockupPreview } from "@/components/DreMockupPreview";
+import { GlassCard } from "@/components/visual/GlassCard";
+import { GoldButton } from "@/components/visual/GoldButton";
+import { SectionHeading } from "@/components/visual/SectionHeading";
+import { CountUpNumber } from "@/components/visual/CountUpNumber";
+import { RevealOnScroll } from "@/components/visual/RevealOnScroll";
 import danielAsset from "@/assets/daniel-gimenez.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
