@@ -474,18 +474,52 @@ function CourseDetailPage() {
 
             {activeLesson && (
               <div className="mt-6 pt-6 border-t border-border">
-                <h2 className="text-lg font-semibold mb-2">{activeLesson.title}</h2>
+                <div className="flex items-start justify-between gap-4 mb-2">
+                  <h2 className="text-lg font-semibold">{activeLesson.title}</h2>
+                  {canTrack && canPlay(activeLesson) && (
+                    <button
+                      type="button"
+                      disabled={savingCompletion}
+                      onClick={() => setCompleted(activeLesson.id, !progress[activeLesson.id]?.completed)}
+                      className={`shrink-0 inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-60 ${
+                        progress[activeLesson.id]?.completed
+                          ? "border border-green-500/40 bg-green-500/10 text-green-300"
+                          : "border border-border bg-secondary/50 text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {progress[activeLesson.id]?.completed ? <Check className="w-3.5 h-3.5" /> : <Circle className="w-3.5 h-3.5" />}
+                      {progress[activeLesson.id]?.completed ? "Completada" : "Marcar como completada"}
+                    </button>
+                  )}
+                </div>
                 {activeLesson.description && (
                   <p className="text-sm text-muted-foreground leading-relaxed">{activeLesson.description}</p>
                 )}
                 {activeMaterials.length > 0 && (
                   <div className="mt-4">
                     <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-                      Material complementario
+                      Materiales de apoyo
                     </p>
                     <div className="flex flex-col gap-2">
                       {activeMaterials.map(m => (
-                      canDownload(m) ? (
+                      m.has_file === false ? (
+                        <div
+                          key={m.id}
+                          className="inline-flex w-full items-center justify-between gap-3 rounded-lg border border-border bg-secondary/30 px-4 py-3 text-left"
+                        >
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="shrink-0 w-9 h-9 rounded-lg bg-secondary border border-border flex items-center justify-center">
+                              <Clock className="w-4 h-4 text-muted-foreground" />
+                            </div>
+                            <div className="min-w-0">
+                              <p className="text-sm font-semibold truncate">{m.title}</p>
+                              <p className="text-[11px] text-muted-foreground uppercase tracking-wide">
+                                {m.file_type} · Disponible próximamente
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      ) : canDownload(m) ? (
                       <button
                         key={m.id}
                         type="button"
