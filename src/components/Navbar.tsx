@@ -1,5 +1,5 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, LineChart } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
@@ -14,11 +14,13 @@ export function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { t, lang, toggleLang } = useI18n();
 
   const allNavItems = [
     { to: "/", label: t("nav.inicio"), icon: Home },
     { to: "/herramientas", label: t("nav.herramientas"), icon: Wrench },
+    { to: "/herramientas/dre", label: "DRE", icon: LineChart },
     { to: "/cursos", label: t("nav.mentoria"), icon: Film },
     { to: "/planes", label: t("nav.planes"), icon: CreditCard },
     { to: "/tienda", label: t("nav.productos"), icon: ShoppingCart },
@@ -28,6 +30,13 @@ export function Navbar() {
   const navItems = sub.hasActive
     ? allNavItems.filter((item) => item.to !== "/planes")
     : allNavItems;
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   useEffect(() => {
     let active = true;
@@ -55,35 +64,41 @@ export function Navbar() {
   }
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-2xl border-b border-border">
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${
+        scrolled
+          ? "bg-background/95 backdrop-blur-2xl border-border"
+          : "bg-background/50 backdrop-blur-xl border-transparent"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between gap-4 h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+          <Link to="/" className="flex min-w-0 items-center gap-2 shrink-0">
+            <div className="w-8 h-8 shrink-0 rounded-lg bg-primary flex items-center justify-center">
               <span className="text-primary-foreground font-bold text-sm font-display">G</span>
             </div>
-            <span className="text-gradient-brand font-display text-lg font-bold tracking-tight">
+            <span className="text-gradient-brand font-display text-lg font-bold tracking-tight whitespace-nowrap">
               GPS Gastronômico
             </span>
           </Link>
 
           {/* Desktop Nav */}
-          <div className="hidden md:flex items-center gap-1">
+          <div className="hidden min-[1100px]:flex items-center gap-0.5">
             {navItems.map((item) => {
-              const isActive = location.pathname === item.to || 
+              const isActive = location.pathname === item.to ||
                 (item.to !== "/" && location.pathname.startsWith(item.to));
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-primary/15 text-primary"
+                      ? "bg-primary/12 text-primary"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
-                  <item.icon className="w-4 h-4" />
+                  <item.icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
                   {item.label}
                 </Link>
               );
@@ -91,20 +106,20 @@ export function Navbar() {
             {isAdmin && (
               <Link
                 to="/admin"
-                className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${
+                className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   location.pathname.startsWith("/admin")
-                    ? "bg-primary/15 text-primary"
+                    ? "bg-primary/12 text-primary"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
-                <Shield className="w-4 h-4" />
+                <Shield className="w-4 h-4" strokeWidth={1.5} />
                 Admin
               </Link>
             )}
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 shrink-0">
             {/* Language toggle: ES → EN → PT → ES */}
             <button
               onClick={toggleLang}
@@ -147,7 +162,7 @@ export function Navbar() {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                className="hidden min-[1100px]:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
                 title={t("nav.cerrarSesion")}
               >
                 <LogOut className="w-4 h-4" />
@@ -155,7 +170,7 @@ export function Navbar() {
             ) : (
               <Link
                 to="/login"
-                className="hidden md:flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+                className="shine hidden min-[1100px]:flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-primary-foreground text-sm font-semibold glow-gold hover:bg-primary-hover transition-colors"
               >
                 <LogIn className="w-4 h-4" />
                 {t("nav.entrar")}
@@ -166,7 +181,7 @@ export function Navbar() {
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={mobileOpen}
-              className="md:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="min-[1100px]:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
@@ -188,7 +203,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {mobileOpen && (
-        <div className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl">
+        <div className="min-[1100px]:hidden border-t border-border bg-background/95 backdrop-blur-xl">
           <div className="px-4 py-3 space-y-1">
             {navItems.map((item) => {
               const isActive = location.pathname === item.to ||
