@@ -1,0 +1,1 @@
+UPDATE public.courses SET category = replace(category, 'Curso', 'Mentoría') WHERE category ILIKE '%curso%';
