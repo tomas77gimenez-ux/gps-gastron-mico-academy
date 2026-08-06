@@ -235,7 +235,24 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
   }
 }
 
-async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
+async function handleTrialWillEnd(subscription: any, env: StripeEnv, eventId: string) {
+  const { planTier } = priceInfo(subscription);
+  const email = await emailForCustomer(subscription.customer, env);
+  if (!email) {
+    console.log("trial_will_end: no email for customer", subscription.customer);
+    return;
+  }
+  const item = subscription.items?.data?.[0];
+  await sendLifecycleEmail("trial-ending", email, `trial-ending-${eventId}`, {
+    planName: planName(planTier ?? (await planTierForCustomer(subscription.customer, env))),
+    amount: formatAmount(item?.price?.unit_amount, item?.price?.currency),
+    trialEndDate: formatDate(subscription.trial_end),
+    ctaUrl: `${APP_URL}/perfil`,
+  });
+}
+
+async function handleSubscriptionDeleted(subscription: any, env: StripeEnv, eventId: string) {
+  const tier = await planTierForCustomer(subscription.customer, env);
   await supabase
     .from("subscriptions")
     .update({
@@ -246,13 +263,29 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv) {
     })
     .eq("stripe_subscription_id", subscription.id)
     .eq("environment", env);
+
+  const email = await emailForCustomer(subscription.customer, env);
+  if (!email) return;
+  await sendLifecycleEmail("subscription-canceled", email, `sub-canceled-${eventId}`, {
+    planName: planName(tier),
+    accessUntil: formatDate(subscription.current_period_end),
+    ctaUrl: `${APP_URL}/planes`,
+  });
 }
 
-async function handlePaymentFailed(invoice: any, env: StripeEnv) {
+async function handlePaymentFailed(invoice: any, env: StripeEnv, eventId: string) {
   if (!invoice.subscription) return;
   await supabase
     .from("subscriptions")
     .update({ status: "past_due", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", invoice.subscription)
     .eq("environment", env);
+
+  const email = invoice.customer_email || (await emailForCustomer(invoice.customer, env));
+  if (!email) return;
+  await sendLifecycleEmail("payment-failed", email, `payment-failed-${eventId}`, {
+    planName: planName(await planTierForCustomer(invoice.customer, env)),
+    amount: formatAmount(invoice.amount_due, invoice.currency),
+    ctaUrl: `${APP_URL}/perfil`,
+  });
 }
