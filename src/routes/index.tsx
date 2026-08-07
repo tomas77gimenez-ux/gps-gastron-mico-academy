@@ -495,32 +495,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- CTA FINAL ---------------- */}
-      <section className="relative overflow-hidden py-28">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-1/2 h-[420px] w-[820px] -translate-x-1/2 -translate-y-1/2 blur-[110px]"
-          style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.16), transparent)" }}
-        />
-        <div className="relative mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <RevealOnScroll>
-            <h2 className="font-display text-3xl font-bold leading-[1.1] sm:text-5xl">{t("home.ctaTitle")}</h2>
-            <p className="mx-auto mt-5 max-w-lg leading-relaxed text-muted-foreground">{t("home.ctaDesc")}</p>
-            <div className="mt-9 flex flex-wrap justify-center gap-4">
-              <Link to="/dashboard">
-                <GoldButton size="lg">
-                  <BarChart3 className="h-4 w-4" strokeWidth={1.5} /> {t("home.hacerDiag")}
-                </GoldButton>
-              </Link>
-              <Link to="/asistente">
-                <GoldButton size="lg" variant="ghost">
-                  {t("home.hablarAsistente")} <ArrowRight className="h-4 w-4" strokeWidth={1.5} />
-                </GoldButton>
-              </Link>
-            </div>
-          </RevealOnScroll>
-        </div>
-      </section>
 
       {/* ---------------- FAQ ---------------- */}
       <section className="border-t border-border py-24">
