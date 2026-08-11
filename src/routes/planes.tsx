@@ -370,7 +370,7 @@ function PlanesPage() {
           </motion.div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-start">
           {plans.map((plan, i) => {
             const yearlyPrice = plan.yearlyPrice ?? Math.round(plan.monthlyPrice * 12 * yearlyDiscount);
             const yearlySavings = plan.monthlyPrice * 12 - yearlyPrice;
@@ -386,9 +386,9 @@ function PlanesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl border p-8 flex flex-col ${
+                className={`relative rounded-2xl border p-7 flex flex-col ${
                   plan.featured
-                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)]"
+                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)] md:scale-[1.04] md:z-10"
                     : "border-border bg-card"
                 } ${isCurrent ? "ring-2 ring-primary" : ""}`}
               >
@@ -519,15 +519,16 @@ function PlanesPage() {
             {t("planes.compararTitulo")}
           </h2>
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
-            <div className="grid grid-cols-3 bg-secondary/40 border-b border-border">
+            <div className="grid grid-cols-4 bg-secondary/40 border-b border-border">
               <div className="px-4 py-4 text-sm font-semibold">{t("planes.feature")}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[0].name, lang)}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(plans[1].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[2].name, lang)}</div>
             </div>
             {compareFeatures.map((row, idx) => (
               <div
                 key={row.key}
-                className={`grid grid-cols-3 items-center ${idx !== compareFeatures.length - 1 ? "border-b border-border" : ""}`}
+                className={`grid grid-cols-4 items-center ${idx !== compareFeatures.length - 1 ? "border-b border-border" : ""}`}
               >
                 <div className="px-4 py-3 text-sm">{t(row.key)}</div>
                 <div className="px-4 py-3 flex justify-center">
@@ -539,6 +540,13 @@ function PlanesPage() {
                 </div>
                 <div className="px-4 py-3 flex justify-center">
                   {row.premium ? (
+                    <Check className="w-5 h-5 text-primary" />
+                  ) : (
+                    <X className="w-5 h-5 text-muted-foreground/40" />
+                  )}
+                </div>
+                <div className="px-4 py-3 flex justify-center">
+                  {row.elite ? (
                     <Check className="w-5 h-5 text-primary" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40" />
