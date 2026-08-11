@@ -187,17 +187,24 @@ async function handleOneTimePurchase(session: any, env: StripeEnv) {
     session.customer_details?.email ?? session.customer_email ?? null;
 
   for (const product of products) {
-    const { error } = await supabase.from("gd_entitlements").upsert(
-      {
+    let existing = supabase
+      .from("gd_entitlements")
+      .select("id")
+      .eq("gd_id", product.id)
+      .limit(1);
+    existing = userId ? existing.eq("user_id", userId) : existing.ilike("email", email ?? "");
+    const { data: already } = await existing.maybeSingle();
+
+    if (!already) {
+      const { error } = await supabase.from("gd_entitlements").insert({
         gd_id: product.id,
         user_id: userId,
         email: email,
         granted_via: "purchase",
         stripe_session_id: session.id,
-      },
-      { onConflict: userId ? "gd_id,user_id" : undefined, ignoreDuplicates: true },
-    );
-    if (error) console.error("Entitlement insert failed", product.slug, error.message);
+      });
+      if (error) console.error("Entitlement insert failed", product.slug, error.message);
+    }
 
     if (email) {
       await sendLifecycleEmail("gd-access", email, `gd-access-${session.id}-${product.id}`, {
