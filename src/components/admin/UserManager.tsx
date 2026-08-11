@@ -184,7 +184,6 @@ export function UserManager() {
   }
 
   async function toggleProAccess(u: UserRow) {
-    // eslint-disable-next-line no-empty-function
     const next = !u.pro_access;
     setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: next } : row)));
     const { error: err } = await supabase.rpc("admin_set_pro_access", {
@@ -199,6 +198,24 @@ export function UserManager() {
     toast.success(
       next ? `Acceso Pro activado para ${u.email}` : `Acceso Pro retirado a ${u.email}`,
     );
+  }
+
+  async function toggleEliteAccess(u: UserRow) {
+    const next = !u.elite_access;
+    setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, elite_access: next } : row)));
+    const { error: err } = await (supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ error: { message: string } | null }>)("admin_set_elite_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, elite_access: !next } : row)));
+      toast.error("No se pudo actualizar el Acceso Élite", { description: err.message });
+      return;
+    }
+    toast.success(next ? `Acceso Élite activado para ${u.email}` : `Acceso Élite retirado a ${u.email}`);
   }
 
   const filtered = users.filter((u) =>
@@ -256,6 +273,7 @@ export function UserManager() {
               <th className="text-left px-4 py-3 font-medium">Plan</th>
               <th className="text-left px-4 py-3 font-medium">Herramientas</th>
               <th className="text-left px-4 py-3 font-medium">Acceso Pro</th>
+              <th className="text-left px-4 py-3 font-medium">Acceso Élite</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -313,6 +331,25 @@ export function UserManager() {
                   >
                     <Crown className="w-3 h-3" />
                     {u.is_admin ? "admin" : u.pro_access ? "Pro activo" : "Sin Pro"}
+                  </button>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleEliteAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso Élite"
+                        : "Acceso Élite manual (incluye todos los Gerentes Digitales)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.elite_access || u.is_admin
+                        ? "border-accent/50 bg-accent/10 text-accent"
+                        : "border-border text-muted-foreground hover:border-accent/50 hover:text-accent"
+                    }`}
+                  >
+                    <Gem className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.elite_access ? "Élite activo" : "Sin Élite"}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">
