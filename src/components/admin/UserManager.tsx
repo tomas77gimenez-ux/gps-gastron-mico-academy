@@ -237,6 +237,7 @@ export function UserManager() {
               <th className="text-left px-4 py-3 font-medium">Usuario</th>
               <th className="text-left px-4 py-3 font-medium">Plan</th>
               <th className="text-left px-4 py-3 font-medium">Herramientas</th>
+              <th className="text-left px-4 py-3 font-medium">Acceso Pro</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -275,6 +276,25 @@ export function UserManager() {
                   >
                     <Wrench className="w-3 h-3" />
                     {u.is_admin ? "admin" : u.tools_free_access ? "Gratis activo" : "Sin acceso libre"}
+                  </button>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleProAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso a la Sala Pro"
+                        : "Acceso manual a la Sala Pro (fundadores / alumnos de mentoría)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.pro_access || u.is_admin
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    }`}
+                  >
+                    <Crown className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.pro_access ? "Pro activo" : "Sin Pro"}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">

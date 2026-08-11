@@ -99,7 +99,7 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
             </Button>
             {!isAuthenticated && (
               <Button variant="outline" asChild>
-                <Link to="/auth">Iniciar sesión</Link>
+                <Link to="/login">Iniciar sesión</Link>
               </Button>
             )}
           </div>
