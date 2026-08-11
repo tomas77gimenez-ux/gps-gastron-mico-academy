@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { CourseManager } from "@/components/admin/CourseManager";
 import { UserManager } from "@/components/admin/UserManager";
 import { MetricsPanel } from "@/components/admin/MetricsPanel";
-import { Shield, LogIn, BookOpen, Users, TrendingUp } from "lucide-react";
+import { LiveEventManager } from "@/components/admin/LiveEventManager";
+import { Shield, LogIn, BookOpen, Users, TrendingUp, Radio } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
@@ -31,7 +32,7 @@ function AdminPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
-  const [tab, setTab] = useState<"metrics" | "courses" | "users">("metrics");
+  const [tab, setTab] = useState<"metrics" | "courses" | "users" | "live">("metrics");
 
   useEffect(() => {
     let cancelled = false;
@@ -188,10 +189,19 @@ function AdminPage() {
           >
             <Users className="w-4 h-4" /> Usuarios
           </button>
+          <button
+            onClick={() => setTab("live")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
+              tab === "live" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Radio className="w-4 h-4" /> En vivo
+          </button>
         </div>
         {tab === "metrics" && <MetricsPanel />}
         {tab === "courses" && <CourseManager />}
         {tab === "users" && <UserManager />}
+        {tab === "live" && <LiveEventManager />}
       </div>
     </div>
   );
