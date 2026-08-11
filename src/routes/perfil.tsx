@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { User, BookOpen, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2, ExternalLink, LogOut, Save, PlayCircle } from "lucide-react";
+import { User, BookOpen, CreditCard, Calendar, AlertCircle, CheckCircle2, Loader2, ExternalLink, LogOut, Save, PlayCircle, ClipboardCheck, ArrowRight } from "lucide-react";
 import { useI18n } from "@/lib/i18n";
 import { loc } from "@/lib/localize";
 import { useSubscription } from "@/hooks/useSubscription";
@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { toast } from "sonner";
+import { listGerentesDigitales, listOwnedGdIds, type GerenteDigital } from "@/lib/gerentes-digitales";
 
 export const Route = createFileRoute("/perfil")({
   component: PerfilPage,
@@ -52,6 +53,8 @@ function PerfilPage() {
   const [memberSince, setMemberSince] = useState<string | null>(null);
   const [emailNovedades, setEmailNovedades] = useState(true);
   const [savingPref, setSavingPref] = useState(false);
+  const [myGds, setMyGds] = useState<GerenteDigital[]>([]);
+  const [gdsLoading, setGdsLoading] = useState(true);
   const [courses, setCourses] = useState<Array<{
     id: string;
     title: string;
