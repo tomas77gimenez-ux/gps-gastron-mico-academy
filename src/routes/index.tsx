@@ -141,10 +141,10 @@ function HomePage() {
   const { t, lang } = useI18n();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
 
-  const basicMonthly = 89;
-  const premiumMonthly = 128;
-  const basicYearly = 908;
-  const premiumYearly = 1306;
+  const basicMonthly = 39;
+  const premiumMonthly = 97;
+  const basicYearly = 398;
+  const premiumYearly = 989;
   const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
