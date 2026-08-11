@@ -189,7 +189,7 @@ export const Route = createFileRoute('/api/public/novedades')({
 
         // ---- 4. Mark items as announced ----------------------------------
         const nowIso = new Date().toISOString()
-        const marks: Array<Promise<unknown>> = []
+        const marks: Array<PromiseLike<unknown>> = []
         if (collected.ids.lessons.length)
           marks.push(admin.from('lessons').update({ announced_at: nowIso }).in('id', collected.ids.lessons))
         if (collected.ids.materials.length)
