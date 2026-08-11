@@ -977,6 +977,7 @@ export type Database = {
         Returns: boolean
       }
       has_tools_access: { Args: { _user_id: string }; Returns: boolean }
+      in_payment_grace: { Args: { _user_id: string }; Returns: boolean }
       move_to_dlq: {
         Args: {
           dlq_name: string

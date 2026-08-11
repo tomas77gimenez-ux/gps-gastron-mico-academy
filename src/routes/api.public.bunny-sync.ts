@@ -6,6 +6,7 @@ import { matchVideos, type BunnyVideo, type LessonRef } from "@/lib/bunny-match"
 const BodySchema = z.union([
   z.object({ action: z.literal("status") }),
   z.object({ action: z.literal("set_key"), apiKey: z.string().min(8).max(500) }),
+  z.object({ action: z.literal("set_token_key"), tokenKey: z.string().min(8).max(500) }),
   z.object({ action: z.literal("sync") }),
   z.object({
     action: z.literal("save"),
@@ -78,11 +79,26 @@ export const Route = createFileRoute("/api/public/bunny-sync")({
           return json({ ok: true, hasKey: true });
         }
 
+        if (body.action === "set_token_key") {
+          const { error } = await supabaseAdmin.rpc("set_app_secret", {
+            _key: "bunny_token_auth_key",
+            _value: body.tokenKey.trim(),
+          } as never);
+          if (error) return json({ error: error.message }, 500);
+          return json({ ok: true, hasTokenKey: true });
+        }
+
         if (body.action === "status") {
           const { data } = await supabaseAdmin.rpc("get_app_secret", {
             _key: "bunny_api_key",
           } as never);
-          return json({ hasKey: !!(data as string | null) });
+          const { data: tokenData } = await supabaseAdmin.rpc("get_app_secret", {
+            _key: "bunny_token_auth_key",
+          } as never);
+          return json({
+            hasKey: !!(data as string | null),
+            hasTokenKey: !!(tokenData as string | null),
+          });
         }
 
         if (body.action === "save") {

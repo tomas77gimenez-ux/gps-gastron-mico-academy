@@ -5,8 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker, useLessonCompletion } from "@/hooks/useLessonProgress";
-import { bunnyEmbedUrl, useBunnyLibraryId } from "@/lib/bunny";
-import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star, Clock, Circle } from "lucide-react";
+import { useLessonEmbedUrls } from "@/lib/bunny";
+import { ArrowLeft, Lock, Play, Sparkles, BookOpen, CheckCircle2, Check, Download, FileText, Crown, Star, Clock, Circle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { hasPlanAccess } from "@/lib/plan-access";
 import { loc, locLevel, locCategory } from "@/lib/localize";
@@ -143,7 +143,6 @@ function CourseDetailPage() {
       bunny_video_id_2: null,
     }))
   );
-  const { libraryId } = useBunnyLibraryId();
   const [materials, setMaterials] = useState<Material[]>(loaderData.materials ?? []);
   const [activeLessonId, setActiveLessonId] = useState<string | null>(lessons[0]?.id ?? null);
   const pandaVideoRef = useRef<HTMLVideoElement | null>(null);
@@ -283,12 +282,12 @@ function CourseDetailPage() {
   const overallPct = lessons.length > 0 ? Math.round((completedCount / lessons.length) * 100) : 0;
 
   const { setCompleted, saving: savingCompletion, canTrack } = useLessonCompletion(course?.id, reload);
-  const bunnyIds = useMemo(() => {
-    if (!activeLesson || !libraryId) return [] as string[];
-    return [activeLesson.bunny_video_id, activeLesson.bunny_video_id_2].filter(
-      (v): v is string => !!v && v.trim().length > 0,
-    );
-  }, [activeLesson, libraryId]);
+  const hasBunnyVideo = !!(activeLesson?.bunny_video_id || activeLesson?.bunny_video_id_2);
+  // URLs firmadas resueltas en el servidor (nunca se construye el iframe en el cliente).
+  const { urls: bunnyUrls, loading: bunnyLoading } = useLessonEmbedUrls(
+    hasBunnyVideo && activeLesson && canPlay(activeLesson) ? activeLesson.id : null,
+    true,
+  );
   const isMaterialOnly = activeLesson?.content_type === "material";
 
   const pandaStreamUrl = activeLesson && activeLesson.panda_library_id && activeLesson.panda_video_id
@@ -400,19 +399,19 @@ function CourseDetailPage() {
                     </Link>
                   </div>
                 </div>
-              ) : bunnyIds.length > 0 ? (
-                bunnyIds.map((videoId, i) => (
-                  <div key={videoId}>
-                    {bunnyIds.length > 1 && (
+              ) : bunnyUrls.length > 0 ? (
+                bunnyUrls.map((embedUrl, i) => (
+                  <div key={i}>
+                    {bunnyUrls.length > 1 && (
                       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-1.5">
                         {t("cursos.parte")} {i + 1}
                       </p>
                     )}
                     <div className="relative aspect-video rounded-xl overflow-hidden bg-black border border-border">
                       <iframe
-                        key={`${activeLesson.id}-${videoId}`}
-                        src={bunnyEmbedUrl(libraryId, videoId)}
-                        title={`${loc(activeLesson, "title", lang)}${bunnyIds.length > 1 ? ` — ${t("cursos.parte")} ${i + 1}` : ""}`}
+                        key={`${activeLesson.id}-${i}`}
+                        src={embedUrl}
+                        title={`${loc(activeLesson, "title", lang)}${bunnyUrls.length > 1 ? ` — ${t("cursos.parte")} ${i + 1}` : ""}`}
                         loading="lazy"
                         allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
                         allowFullScreen
@@ -421,6 +420,10 @@ function CourseDetailPage() {
                     </div>
                   </div>
                 ))
+              ) : hasBunnyVideo && bunnyLoading ? (
+                <div className="aspect-video rounded-xl overflow-hidden bg-black border border-border flex items-center justify-center">
+                  <Loader2 className="w-8 h-8 animate-spin text-primary/70" />
+                </div>
               ) : pandaStreamUrl ? (
                 <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
                   <video

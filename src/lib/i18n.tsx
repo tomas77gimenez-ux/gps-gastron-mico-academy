@@ -221,7 +221,7 @@ const translations = {
   "perfil.sinSuscripcionDesc": { es: "Suscribite para acceder a todos los cursos y contenido exclusivo.", en: "Subscribe to access all courses and exclusive content.", pt: "Assine para acessar todos os cursos e conteúdo exclusivo." },
   "perfil.verPlanes": { es: "Ver Planes", en: "View Plans", pt: "Ver Planos" },
   "perfil.cargandoSub": { es: "Cargando suscripción...", en: "Loading subscription...", pt: "Carregando assinatura..." },
-  "perfil.gestionar": { es: "Gestionar suscripción", en: "Manage subscription", pt: "Gerenciar assinatura" },
+  "perfil.gestionar": { es: "Gestionar mi suscripción", en: "Manage my subscription", pt: "Gerenciar minha assinatura" },
   "perfil.gestionarDesc": { es: "Cancelar, actualizar método de pago o ver facturas.", en: "Cancel, update payment method or view invoices.", pt: "Cancelar, atualizar método de pagamento ou ver faturas." },
   "perfil.abriendoPortal": { es: "Abriendo portal...", en: "Opening portal...", pt: "Abrindo portal..." },
   "perfil.errorPortal": { es: "No se pudo abrir el portal. Intentá de nuevo.", en: "Could not open the portal. Please try again.", pt: "Não foi possível abrir o portal. Tente novamente." },

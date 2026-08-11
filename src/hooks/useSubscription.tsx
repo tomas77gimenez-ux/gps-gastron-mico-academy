@@ -15,6 +15,10 @@ interface SubscriptionState {
   cancelAtPeriodEnd: boolean;
   planTier: PlanTier | null;
   environment: string | null;
+  /** Pago fallido dentro del período de gracia de 5 días. */
+  inGrace: boolean;
+  /** Acceso concedido manualmente (alumnos de mentoría). */
+  freeGrant: boolean;
 }
 
 const initial: SubscriptionState = {
@@ -28,6 +32,8 @@ const initial: SubscriptionState = {
   cancelAtPeriodEnd: false,
   planTier: null,
   environment: null,
+  inGrace: false,
+  freeGrant: false,
 };
 
 function isActive(status: string | null, periodEnd: string | null): boolean {
@@ -36,6 +42,11 @@ function isActive(status: string | null, periodEnd: string | null): boolean {
   if ((status === "active" || status === "trialing") && notExpired) return true;
   if (status === "canceled" && periodEnd && new Date(periodEnd).getTime() > Date.now()) return true;
   return false;
+}
+
+function inGraceWindow(status: string | null, updatedAt: string | null): boolean {
+  if (status !== "past_due" || !updatedAt) return false;
+  return Date.now() - new Date(updatedAt).getTime() < 5 * 24 * 60 * 60 * 1000;
 }
 
 export function useSubscription() {
@@ -68,13 +79,22 @@ export function useSubscription() {
           cancelAtPeriodEnd: false,
           planTier: "premium",
           environment: "admin",
+          inGrace: false,
+          freeGrant: false,
         });
         return;
       }
 
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("tools_free_access")
+        .eq("user_id", userId)
+        .maybeSingle();
+      const freeGrant = !!profile?.tools_free_access;
+
       const { data, error } = await supabase
         .from("subscriptions")
-        .select("product_id, status, current_period_end, cancel_at_period_end, environment, plan_tier")
+        .select("product_id, status, current_period_end, cancel_at_period_end, environment, plan_tier, updated_at")
         .eq("user_id", userId)
         .order("updated_at", { ascending: false })
         .limit(10);
@@ -82,9 +102,12 @@ export function useSubscription() {
       if (error) throw error;
 
       // Prefer any ACTIVE subscription first (manual grant, live, or sandbox);
-      // Premium wins over Básico when both are active.
-      const actives = (data ?? []).filter((item) =>
-        isActive(item.status ?? null, item.current_period_end ?? null),
+      // Premium wins over Básico when both are active. past_due dentro de la
+      // ventana de gracia cuenta como acceso (igual que en el servidor).
+      const actives = (data ?? []).filter(
+        (item) =>
+          isActive(item.status ?? null, item.current_period_end ?? null) ||
+          inGraceWindow(item.status ?? null, (item as { updated_at?: string }).updated_at ?? null),
       );
       const preferredActive =
         actives.find((i) => i.plan_tier === "premium") ??
@@ -93,18 +116,29 @@ export function useSubscription() {
         actives[0];
 
       const selectedSubscription = preferredActive ?? data?.[0] ?? null;
+      const grace = inGraceWindow(
+        selectedSubscription?.status ?? null,
+        (selectedSubscription as { updated_at?: string } | null)?.updated_at ?? null,
+      );
 
       setState({
         loading: false,
         isAuthenticated: true,
-        hasActive: isActive(selectedSubscription?.status ?? null, selectedSubscription?.current_period_end ?? null),
+        hasActive:
+          freeGrant ||
+          grace ||
+          isActive(selectedSubscription?.status ?? null, selectedSubscription?.current_period_end ?? null),
         isAdmin: false,
         productId: selectedSubscription?.product_id ?? null,
         status: selectedSubscription?.status ?? null,
         currentPeriodEnd: selectedSubscription?.current_period_end ?? null,
         cancelAtPeriodEnd: !!selectedSubscription?.cancel_at_period_end,
-        planTier: (selectedSubscription?.plan_tier as PlanTier | null | undefined) ?? null,
-        environment: selectedSubscription?.environment ?? null,
+        planTier: freeGrant
+          ? "premium"
+          : (selectedSubscription?.plan_tier as PlanTier | null | undefined) ?? null,
+        environment: selectedSubscription?.environment ?? (freeGrant ? "grant" : null),
+        inGrace: grace,
+        freeGrant,
       });
     } catch {
       setState({
@@ -118,6 +152,8 @@ export function useSubscription() {
         cancelAtPeriodEnd: false,
         planTier: null,
         environment: null,
+        inGrace: false,
+        freeGrant: false,
       });
     }
   }

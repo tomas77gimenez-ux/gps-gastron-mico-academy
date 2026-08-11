@@ -32,6 +32,10 @@ export function BunnySync() {
   const [apiKey, setApiKey] = useState("");
   const [savingKey, setSavingKey] = useState(false);
   const [keySaved, setKeySaved] = useState(false);
+  const [tokenKey, setTokenKey] = useState("");
+  const [savingTokenKey, setSavingTokenKey] = useState(false);
+  const [tokenKeySaved, setTokenKeySaved] = useState(false);
+  const [hasTokenKey, setHasTokenKey] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [result, setResult] = useState<SyncResult | null>(null);
   const [manual, setManual] = useState<Record<string, string>>({});
@@ -49,6 +53,17 @@ export function BunnySync() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    void (async () => {
+      try {
+        const status = (await callSync({ action: "status" })) as { hasTokenKey?: boolean };
+        setHasTokenKey(!!status.hasTokenKey);
+      } catch {
+        /* ignora: el estado se muestra como no configurado */
+      }
+    })();
+  }, []);
+
   async function saveKey() {
     setSavingKey(true);
     setError(null);
@@ -61,6 +76,21 @@ export function BunnySync() {
       setError(e instanceof Error ? e.message : "No se pudo guardar la clave");
     }
     setSavingKey(false);
+  }
+
+  async function saveTokenKey() {
+    setSavingTokenKey(true);
+    setError(null);
+    try {
+      await callSync({ action: "set_token_key", tokenKey });
+      setTokenKey("");
+      setHasTokenKey(true);
+      setTokenKeySaved(true);
+      setTimeout(() => setTokenKeySaved(false), 2500);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "No se pudo guardar la clave de token");
+    }
+    setSavingTokenKey(false);
   }
 
   async function runSync() {
@@ -131,6 +161,35 @@ export function BunnySync() {
         </div>
         <p className="text-[11px] text-muted-foreground mt-1.5">
           Bunny.net → Account → API Key. Se guarda solo en el servidor y nunca se muestra de nuevo.
+        </p>
+      </div>
+
+      <div>
+        <label className="block text-xs font-medium mb-1 flex items-center gap-1.5">
+          <Key className="w-3.5 h-3.5 text-primary" /> Bunny Token Auth Key
+          {hasTokenKey && (
+            <span className="text-[10px] font-semibold text-green-400 border border-green-400/40 rounded px-1.5 py-0.5">
+              Activa · videos firmados
+            </span>
+          )}
+        </label>
+        <div className="flex items-center gap-2">
+          <input
+            type="password"
+            value={tokenKey}
+            onChange={(e) => setTokenKey(e.target.value)}
+            placeholder="••••••••••••"
+            autoComplete="off"
+            className="flex-1 rounded-lg border border-input bg-secondary/50 py-2 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+          />
+          <Button size="sm" onClick={saveTokenKey} disabled={savingTokenKey || tokenKey.trim().length < 8}>
+            {tokenKeySaved ? <Check className="w-4 h-4 mr-1" /> : <Save className="w-4 h-4 mr-1" />}
+            {tokenKeySaved ? "Guardada" : savingTokenKey ? "Guardando..." : "Guardar"}
+          </Button>
+        </div>
+        <p className="text-[11px] text-muted-foreground mt-1.5">
+          Bunny → Stream Library → Security → Embed View Token Authentication → activá la opción y copiá la
+          clave. Mientras no esté guardada, los videos siguen reproduciéndose sin firma.
         </p>
       </div>
 
