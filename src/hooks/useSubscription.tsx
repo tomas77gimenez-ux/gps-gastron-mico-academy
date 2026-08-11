@@ -133,9 +133,9 @@ export function useSubscription() {
         status: selectedSubscription?.status ?? null,
         currentPeriodEnd: selectedSubscription?.current_period_end ?? null,
         cancelAtPeriodEnd: !!selectedSubscription?.cancel_at_period_end,
-        planTier:
-          (selectedSubscription?.plan_tier as PlanTier | null | undefined) ??
-          (freeGrant ? "premium" : null),
+        planTier: freeGrant
+          ? "premium"
+          : (selectedSubscription?.plan_tier as PlanTier | null | undefined) ?? null,
         environment: selectedSubscription?.environment ?? (freeGrant ? "grant" : null),
         inGrace: grace,
         freeGrant,
