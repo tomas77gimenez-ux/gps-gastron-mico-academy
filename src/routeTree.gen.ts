@@ -46,6 +46,7 @@ import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-e
 import { Route as ApiPublicNovedadesRouteImport } from './routes/api.public.novedades'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
 import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
+import { Route as ApiPublicGdDownloadRouteImport } from './routes/api.public.gd-download'
 import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
 import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -245,6 +246,11 @@ const ApiPublicLessonEmbedRoute = ApiPublicLessonEmbedRouteImport.update({
   path: '/api/public/lesson-embed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicGdDownloadRoute = ApiPublicGdDownloadRouteImport.update({
+  id: '/api/public/gd-download',
+  path: '/api/public/gd-download',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicBunnyThumbsRoute = ApiPublicBunnyThumbsRouteImport.update({
   id: '/api/public/bunny-thumbs',
   path: '/api/public/bunny-thumbs',
@@ -326,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -372,6 +379,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -420,6 +428,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -469,6 +478,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -515,6 +525,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -562,6 +573,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -603,6 +615,7 @@ export interface RootRouteChildren {
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBunnySyncRoute: typeof ApiPublicBunnySyncRoute
   ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
+  ApiPublicGdDownloadRoute: typeof ApiPublicGdDownloadRoute
   ApiPublicLessonEmbedRoute: typeof ApiPublicLessonEmbedRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
   ApiPublicNovedadesRoute: typeof ApiPublicNovedadesRoute
@@ -876,6 +889,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicLessonEmbedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/gd-download': {
+      id: '/api/public/gd-download'
+      path: '/api/public/gd-download'
+      fullPath: '/api/public/gd-download'
+      preLoaderRoute: typeof ApiPublicGdDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/bunny-thumbs': {
       id: '/api/public/bunny-thumbs'
       path: '/api/public/bunny-thumbs'
@@ -989,6 +1009,7 @@ const rootRouteChildren: RootRouteChildren = {
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBunnySyncRoute: ApiPublicBunnySyncRoute,
   ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
+  ApiPublicGdDownloadRoute: ApiPublicGdDownloadRoute,
   ApiPublicLessonEmbedRoute: ApiPublicLessonEmbedRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
   ApiPublicNovedadesRoute: ApiPublicNovedadesRoute,
