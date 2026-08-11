@@ -6,6 +6,7 @@ import { UserManager } from "@/components/admin/UserManager";
 import { MetricsPanel } from "@/components/admin/MetricsPanel";
 import { LiveEventManager } from "@/components/admin/LiveEventManager";
 import { SalaProManager } from "@/components/admin/SalaProManager";
+import { NovedadesSender } from "@/components/admin/NovedadesSender";
 import { Shield, LogIn, BookOpen, Users, TrendingUp, Radio, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/useAuthSession";
@@ -208,7 +209,12 @@ function AdminPage() {
           </button>
         </div>
         {tab === "metrics" && <MetricsPanel />}
-        {tab === "courses" && <CourseManager />}
+        {tab === "courses" && (
+          <>
+            <NovedadesSender />
+            <CourseManager />
+          </>
+        )}
         {tab === "users" && <UserManager />}
         {tab === "live" && <LiveEventManager />}
         {tab === "pro" && <SalaProManager />}
