@@ -14,6 +14,8 @@ import { GoldButton } from "@/components/visual/GoldButton";
 import { SectionHeading } from "@/components/visual/SectionHeading";
 import { CountUpNumber } from "@/components/visual/CountUpNumber";
 import { RevealOnScroll } from "@/components/visual/RevealOnScroll";
+import { NovedadesSection } from "@/components/dashboard/NovedadesSection";
+import { ProximoEnVivoCard } from "@/components/dashboard/ProximoEnVivoCard";
 import danielAsset from "@/assets/daniel-gimenez.jpg.asset.json";
 
 export const Route = createFileRoute("/")({
@@ -233,6 +235,7 @@ function HomePage() {
 
       {/* ---------------- STATS ---------------- */}
       <section className="border-y border-border">
+      {/* placeholder */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid grid-cols-2 divide-border sm:divide-x lg:grid-cols-4">
             {stats.map((s) => (
