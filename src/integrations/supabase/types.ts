@@ -805,12 +805,124 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_cases: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          bunny_video_id: string | null
+          created_at: string
+          description: string | null
+          id: string
+          metrics: Json
+          month: number
+          title: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          bunny_video_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metrics?: Json
+          month: number
+          title: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          bunny_video_id?: string | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          metrics?: Json
+          month?: number
+          title?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
+      pro_recordings: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          bunny_video_id: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          session_date: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          bunny_video_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          session_date: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          bunny_video_id?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          session_date?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      pro_sessions: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          is_active: boolean
+          meeting_url: string | null
+          starts_at: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          meeting_url?: string | null
+          starts_at: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          is_active?: boolean
+          meeting_url?: string | null
+          starts_at?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           created_at: string
           display_name: string | null
           id: string
+          pro_access: boolean
           tools_free_access: boolean
           updated_at: string
           user_id: string
@@ -821,6 +933,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          pro_access?: boolean
           tools_free_access?: boolean
           updated_at?: string
           user_id: string
@@ -831,6 +944,7 @@ export type Database = {
           created_at?: string
           display_name?: string | null
           id?: string
+          pro_access?: boolean
           tools_free_access?: boolean
           updated_at?: string
           user_id?: string
@@ -942,6 +1056,13 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_list_pro_access: {
+        Args: never
+        Returns: {
+          pro_access: boolean
+          user_id: string
+        }[]
+      }
       admin_list_users: {
         Args: never
         Returns: {
@@ -956,6 +1077,10 @@ export type Database = {
           tools_free_access: boolean
           user_id: string
         }[]
+      }
+      admin_set_pro_access: {
+        Args: { _enabled: boolean; _user_id: string }
+        Returns: boolean
       }
       admin_set_tools_access: {
         Args: { _enabled: boolean; _user_id: string }
@@ -1002,6 +1127,7 @@ export type Database = {
         }
         Returns: boolean
       }
+      has_pro_access: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
