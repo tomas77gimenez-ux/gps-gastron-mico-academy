@@ -6,6 +6,7 @@ import { useSubscription } from "@/hooks/useSubscription";
 import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { hasPlanAccess } from "@/lib/plan-access";
 import { loc, locLevel, locPlan, locCategory } from "@/lib/localize";
+import { NovedadesBanner } from "@/components/NovedadesBanner";
 import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
@@ -119,6 +120,7 @@ function CursosPage() {
   return (
     <div className="min-h-screen pt-20 pb-12 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
+        <NovedadesBanner />
         {/* Mentoría hero — high-contrast left accent */}
         <div className="mb-12 border-l-4 border-primary pl-6">
           <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.heroKicker")}</span>
