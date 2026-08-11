@@ -54,6 +54,7 @@ function PerfilPage() {
     id: string;
     title: string;
     thumbnail_url: string | null;
+    sortOrder: number;
     total: number;
     completed: number;
     lastAt: string;
