@@ -204,6 +204,7 @@ export function UserManager() {
     u.email.toLowerCase().includes(search.toLowerCase()),
   );
 
+
   const totalActive = users.filter(
     (u) => u.status === "active" || u.status === "trialing",
   ).length;
