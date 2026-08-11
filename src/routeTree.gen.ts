@@ -13,6 +13,7 @@ import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TiendaRouteImport } from './routes/tienda'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SalaProRouteImport } from './routes/sala-pro'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as ReembolsosRouteImport } from './routes/reembolsos'
@@ -41,6 +42,7 @@ import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
+import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-embed'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
 import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
 import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
@@ -70,6 +72,11 @@ const TerminosRoute = TerminosRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalaProRoute = SalaProRouteImport.update({
+  id: '/sala-pro',
+  path: '/sala-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -216,6 +223,11 @@ const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
   path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicProEmbedRoute = ApiPublicProEmbedRouteImport.update({
+  id: '/api/public/pro-embed',
+  path: '/api/public/pro-embed',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMaterialDownloadRoute =
   ApiPublicMaterialDownloadRouteImport.update({
     id: '/api/public/material-download',
@@ -288,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -309,6 +322,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -331,6 +345,7 @@ export interface FileRoutesByTo {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -352,6 +367,7 @@ export interface FileRoutesByTo {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -376,6 +392,7 @@ export interface FileRoutesById {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -397,6 +414,7 @@ export interface FileRoutesById {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
   '/lovable/email/auth/webhook': typeof LovableEmailAuthWebhookRoute
@@ -422,6 +440,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -443,6 +462,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -465,6 +485,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -486,6 +507,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -509,6 +531,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -530,6 +553,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
     | '/lovable/email/auth/webhook'
@@ -554,6 +578,7 @@ export interface RootRouteChildren {
   ReembolsosRoute: typeof ReembolsosRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SalaProRoute: typeof SalaProRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
   TiendaRoute: typeof TiendaRoute
@@ -568,6 +593,7 @@ export interface RootRouteChildren {
   ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
   ApiPublicLessonEmbedRoute: typeof ApiPublicLessonEmbedRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
+  ApiPublicProEmbedRoute: typeof ApiPublicProEmbedRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
   LovableEmailAuthWebhookRoute: typeof LovableEmailAuthWebhookRoute
@@ -604,6 +630,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sala-pro': {
+      id: '/sala-pro'
+      path: '/sala-pro'
+      fullPath: '/sala-pro'
+      preLoaderRoute: typeof SalaProRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -802,6 +835,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailSuppressionRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/pro-embed': {
+      id: '/api/public/pro-embed'
+      path: '/api/public/pro-embed'
+      fullPath: '/api/public/pro-embed'
+      preLoaderRoute: typeof ApiPublicProEmbedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/material-download': {
       id: '/api/public/material-download'
       path: '/api/public/material-download'
@@ -915,6 +955,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReembolsosRoute: ReembolsosRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SalaProRoute: SalaProRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
   TiendaRoute: TiendaRoute,
@@ -930,6 +971,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
   ApiPublicLessonEmbedRoute: ApiPublicLessonEmbedRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
+  ApiPublicProEmbedRoute: ApiPublicProEmbedRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,
   LovableEmailAuthWebhookRoute: LovableEmailAuthWebhookRoute,

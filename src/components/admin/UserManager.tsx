@@ -24,6 +24,7 @@ interface UserRow {
   subscription_id: string | null;
   is_admin: boolean;
   tools_free_access: boolean;
+  pro_access?: boolean;
 }
 
 const DURATIONS = [
@@ -61,7 +62,7 @@ function planBadge(plan: PlanTier | null, env: string | null, status: string | n
       }`}
     >
       {isPremium ? <Crown className="w-3 h-3" /> : <Star className="w-3 h-3" />}
-      {isPremium ? "Premium" : "Básico"}
+      {isPremium ? "Academy Pro" : "Academy"}
       {env === "manual" && (
         <span className="ml-1 text-[9px] opacity-70 uppercase">manual</span>
       )}
@@ -88,8 +89,18 @@ export function UserManager() {
     setLoading(true);
     setError(null);
     const { data, error: err } = await supabase.rpc("admin_list_users");
-    if (err) setError(err.message);
-    else setUsers((data as UserRow[]) ?? []);
+    if (err) {
+      setError(err.message);
+      setLoading(false);
+      return;
+    }
+    const { data: proData } = await supabase.rpc("admin_list_pro_access");
+    const proMap = new Map(
+      ((proData as { user_id: string; pro_access: boolean }[]) ?? []).map((r) => [r.user_id, r.pro_access]),
+    );
+    setUsers(
+      ((data as UserRow[]) ?? []).map((u) => ({ ...u, pro_access: proMap.get(u.user_id) ?? false })),
+    );
     setLoading(false);
   }
 
@@ -156,6 +167,23 @@ export function UserManager() {
     );
   }
 
+  async function toggleProAccess(u: UserRow) {
+    const next = !u.pro_access;
+    setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: next } : row)));
+    const { error: err } = await supabase.rpc("admin_set_pro_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: !next } : row)));
+      toast.error("No se pudo actualizar el Acceso Pro", { description: err.message });
+      return;
+    }
+    toast.success(
+      next ? `Acceso Pro activado para ${u.email}` : `Acceso Pro retirado a ${u.email}`,
+    );
+  }
+
   const filtered = users.filter((u) =>
     u.email.toLowerCase().includes(search.toLowerCase()),
   );
@@ -209,6 +237,7 @@ export function UserManager() {
               <th className="text-left px-4 py-3 font-medium">Usuario</th>
               <th className="text-left px-4 py-3 font-medium">Plan</th>
               <th className="text-left px-4 py-3 font-medium">Herramientas</th>
+              <th className="text-left px-4 py-3 font-medium">Acceso Pro</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -247,6 +276,25 @@ export function UserManager() {
                   >
                     <Wrench className="w-3 h-3" />
                     {u.is_admin ? "admin" : u.tools_free_access ? "Gratis activo" : "Sin acceso libre"}
+                  </button>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleProAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso a la Sala Pro"
+                        : "Acceso manual a la Sala Pro (fundadores / alumnos de mentoría)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.pro_access || u.is_admin
+                        ? "border-primary/40 bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                    }`}
+                  >
+                    <Crown className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.pro_access ? "Pro activo" : "Sin Pro"}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">

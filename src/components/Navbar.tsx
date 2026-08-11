@@ -1,10 +1,11 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, Crown, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useSubscription } from "@/hooks/useSubscription";
+import { useProAccess } from "@/hooks/useProAccess";
 import logoGps from "@/assets/logo-gps.jpg";
 
 export function Navbar() {
@@ -12,6 +13,7 @@ export function Navbar() {
   const navigate = useNavigate();
   const { user } = useAuthSession();
   const sub = useSubscription();
+  const pro = useProAccess();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -22,6 +24,7 @@ export function Navbar() {
     { to: "/", label: t("nav.inicio"), icon: Home },
     { to: "/herramientas", label: t("nav.herramientas"), icon: Wrench },
     { to: "/cursos", label: t("nav.mentoria"), icon: Film },
+    { to: "/sala-pro", label: t("nav.salaPro"), icon: pro.hasPro ? Crown : Lock },
     { to: "/planes", label: t("nav.planes"), icon: CreditCard },
     { to: "/tienda", label: t("nav.productos"), icon: ShoppingCart },
     { to: "/perfil", label: t("nav.perfil"), icon: User },

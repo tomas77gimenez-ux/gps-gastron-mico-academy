@@ -39,7 +39,6 @@ export const TOOLS: ToolMeta[] = [
       "Banco de ingredientes con costo real y precio sugerido por plato según tu CMV objetivo.",
     icon: ClipboardList,
     status: "Disponible",
-    requiresPremium: true,
   },
   {
     to: "/herramientas/control-caja",

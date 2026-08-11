@@ -24,7 +24,6 @@ function Page() {
       title="SUP"
       subtitle="Primero armá tu banco de ingredientes con costo real; después costeá cada plato y definí su precio."
       icon={ClipboardList}
-      requiresPremium
     >
       <RecipeTool />
     </ToolPage>
