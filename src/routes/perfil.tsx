@@ -277,6 +277,14 @@ function PerfilPage() {
             </div>
           ) : sub.hasActive ? (
             <div className="space-y-4">
+              {sub.inGrace && (
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
+                  <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+                  <p className="text-sm font-medium">
+                    Actualizá tu método de pago — tenés 5 días de acceso mientras se regulariza el cobro.
+                  </p>
+                </div>
+              )}
               <div className="grid sm:grid-cols-2 gap-4">
                 <div className="bg-background/50 rounded-lg p-4 border border-border">
                   <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">
@@ -334,11 +342,20 @@ function PerfilPage() {
             <div className="text-center py-6">
               <p className="font-medium mb-1">{t("perfil.sinSuscripcion")}</p>
               <p className="text-sm text-muted-foreground mb-4">{t("perfil.sinSuscripcionDesc")}</p>
-              {!sub.hasActive && (
+              <div className="flex flex-wrap items-center justify-center gap-2">
                 <Button asChild>
                   <Link to="/planes">{t("perfil.verPlanes")}</Link>
                 </Button>
-              )}
+                {sub.status && (
+                  <Button onClick={openPortal} disabled={portalLoading} variant="outline">
+                    {portalLoading ? (
+                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("perfil.abriendoPortal")}</>
+                    ) : (
+                      <><ExternalLink className="w-4 h-4 mr-2" />{t("perfil.gestionar")}</>
+                    )}
+                  </Button>
+                )}
+              </div>
             </div>
           )}
         </section>
