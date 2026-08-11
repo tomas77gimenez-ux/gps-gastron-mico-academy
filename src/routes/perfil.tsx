@@ -113,7 +113,13 @@ function PerfilPage() {
     if (!isReady || !user) { setCoursesLoading(false); return; }
     let active = true;
     setCoursesLoading(true);
-*** MARKER ***
+    (async () => {
+      const list = await listGerentesDigitales();
+      const owned = await listOwnedGdIds(user.id, list.map((g) => g.id));
+      if (!active) return;
+      setMyGds(list.filter((g) => owned.includes(g.id)));
+      setGdsLoading(false);
+    })();
     (async () => {
       const { data: progress } = await supabase
         .from("lesson_progress")
