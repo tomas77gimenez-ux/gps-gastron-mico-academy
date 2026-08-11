@@ -185,7 +185,7 @@ const translations = {
 
   "compare.cursos": { es: "Acceso a todos los cursos", en: "Access to all courses", pt: "Acesso a todos os cursos" },
   "compare.clases": { es: "Clases de la mentoría", en: "Mentorship classes", pt: "Aulas da mentoria" },
-  "compare.tools": { es: "Herramientas de gestión (DRE, Punto de Equilibrio, Caja, CMV)", en: "Management tools (DRE, Break-even, Cash, CMV)", pt: "Ferramentas de gestão (DRE, Ponto de Equilíbrio, Caixa, CMV)" },
+  "compare.tools": { es: "Todas las herramientas de gestión (DRE, Punto de Equilibrio, Caja, CMV, Fichas Técnicas)", en: "All management tools (DRE, Break-even, Cash, CMV, Recipe Cards)", pt: "Todas as ferramentas de gestão (DRE, Ponto de Equilíbrio, Caixa, CMV, Fichas Técnicas)" },
   "compare.vip": { es: "Grupo VIP de WhatsApp", en: "VIP WhatsApp group", pt: "Grupo VIP no WhatsApp" },
   "compare.soporte": { es: "Soporte diario del equipo de Daniel", en: "Daily support from Daniel's team", pt: "Suporte diário da equipe do Daniel" },
   "compare.dre": { es: "Planillas DRE y SUP", en: "DRE & SUP spreadsheets", pt: "Planilhas DRE e SUP" },
