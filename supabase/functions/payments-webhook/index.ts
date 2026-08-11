@@ -1,6 +1,6 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { type StripeEnv, verifyWebhook } from "../_shared/stripe.ts";
+import { type StripeEnv, verifyWebhook, createStripeClient } from "../_shared/stripe.ts";
 
 const supabase = createClient(
   Deno.env.get("SUPABASE_URL")!,
@@ -10,8 +10,9 @@ const supabase = createClient(
 const APP_URL = "https://plataforma-test1.lovable.app";
 
 function planName(planTier: string | null | undefined) {
-  if (planTier === "premium") return "Plan Premium";
-  if (planTier === "basico") return "Plan Básico";
+  if (planTier === "elite") return "Academy Élite";
+  if (planTier === "premium") return "Academy Pro";
+  if (planTier === "basico") return "Academy";
   return "tu suscripción";
 }
 
@@ -134,6 +135,10 @@ serve(async (req) => {
 
 async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   console.log("Checkout completed:", session.id, "mode:", session.mode);
+  if (session.mode === "payment") {
+    await handleOneTimePurchase(session, env);
+    return;
+  }
   if (session.mode !== "subscription" || !session.subscription) return;
   const userId = session.metadata?.userId;
   if (!userId) return;
@@ -146,8 +151,69 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     .eq("environment", env);
 }
 
-function planTierFrom(priceId: string | null, nickname?: string | null): "basico" | "premium" | null {
+/**
+ * Compra única: entrega los Gerentes Digitales comprados (entitlement + email).
+ * El acceso se guarda por user_id cuando hay sesión, o por email para que se
+ * reclame automáticamente al crear la cuenta con ese mismo correo.
+ */
+async function handleOneTimePurchase(session: any, env: StripeEnv) {
+  if (session.payment_status !== "paid") {
+    console.log("One-time checkout not paid yet:", session.id, session.payment_status);
+    return;
+  }
+
+  const stripe = createStripeClient(env);
+  const lineItems = await stripe.checkout.sessions.listLineItems(session.id, {
+    limit: 20,
+    expand: ["data.price"],
+  });
+
+  const lookupKeys = lineItems.data
+    .map((item: any) => item.price?.lookup_key)
+    .filter((k: unknown): k is string => typeof k === "string" && k.length > 0);
+  if (!lookupKeys.length) return;
+
+  const { data: products } = await supabase
+    .from("gerentes_digitales")
+    .select("id, slug, name, stripe_price_id")
+    .in("stripe_price_id", lookupKeys);
+  if (!products?.length) {
+    console.log("No Gerente Digital matched for", lookupKeys.join(","));
+    return;
+  }
+
+  const userId: string | null = session.metadata?.userId ?? null;
+  const email: string | null =
+    session.customer_details?.email ?? session.customer_email ?? null;
+
+  for (const product of products) {
+    const { error } = await supabase.from("gd_entitlements").upsert(
+      {
+        gd_id: product.id,
+        user_id: userId,
+        email: email,
+        granted_via: "purchase",
+        stripe_session_id: session.id,
+      },
+      { onConflict: userId ? "gd_id,user_id" : undefined, ignoreDuplicates: true },
+    );
+    if (error) console.error("Entitlement insert failed", product.slug, error.message);
+
+    if (email) {
+      await sendLifecycleEmail("gd-access", email, `gd-access-${session.id}-${product.id}`, {
+        productName: product.name,
+        hasAccount: !!userId,
+        ctaUrl: `${APP_URL}/gerente-digital/${product.id}`,
+        signupUrl: `${APP_URL}/registro`,
+        email,
+      });
+    }
+  }
+}
+
+function planTierFrom(priceId: string | null, nickname?: string | null): "basico" | "premium" | "elite" | null {
   const hay = `${priceId ?? ""} ${nickname ?? ""}`.toLowerCase();
+  if (hay.includes("elite") || hay.includes("élite")) return "elite";
   if (hay.includes("premium")) return "premium";
   if (hay.includes("basico") || hay.includes("básico") || hay.includes("basic")) return "basico";
   return null;
