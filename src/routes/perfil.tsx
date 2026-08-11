@@ -136,7 +136,7 @@ function PerfilPage() {
         total: totals.get(c.id) ?? 0,
         completed: byCourse.get(c.id)?.completed.size ?? 0,
         lastAt: byCourse.get(c.id)?.lastAt ?? "",
-      })).sort((a, b) => (a.lastAt < b.lastAt ? 1 : -1));
+      })).sort((a, b) => (a.lastAt === b.lastAt ? 0 : a.lastAt < b.lastAt ? 1 : -1));
       if (active) { setCourses(result); setCoursesLoading(false); }
     })();
     return () => { active = false; };
