@@ -1,4 +1,4 @@
-export type PlanTier = "basico" | "premium";
+export type PlanTier = "basico" | "premium" | "elite";
 
 export const PLAN_TIERS: { value: PlanTier; label: string }[] = [
   { value: "basico", label: "Básico" },
