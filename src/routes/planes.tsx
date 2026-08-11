@@ -130,9 +130,9 @@ export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
       { title: "Planes de Membresía — GPS Gastronômico" },
-      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante: Academy o Academy Pro." },
+      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite." },
       { property: "og:title", content: 'Planes de Membresía — GPS Gastronômico' },
-      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante: Academy o Academy Pro.' },
+      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/planes" }
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/planes" }],
@@ -309,7 +309,7 @@ function PlanesPage() {
   return (
     <div className="min-h-screen pt-20 pb-16">
       <PaymentTestModeBanner />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold font-display mb-3">{t("planes.titulo")}</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("planes.desc")}</p>
