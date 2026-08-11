@@ -13,6 +13,7 @@ import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as TiendaRouteImport } from './routes/tienda'
 import { Route as TerminosRouteImport } from './routes/terminos'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as SalaProRouteImport } from './routes/sala-pro'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as RegistroRouteImport } from './routes/registro'
 import { Route as ReembolsosRouteImport } from './routes/reembolsos'
@@ -71,6 +72,11 @@ const TerminosRoute = TerminosRouteImport.update({
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalaProRoute = SalaProRouteImport.update({
+  id: '/sala-pro',
+  path: '/sala-pro',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
@@ -294,6 +300,7 @@ export interface FileRoutesByFullPath {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -338,6 +345,7 @@ export interface FileRoutesByTo {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -384,6 +392,7 @@ export interface FileRoutesById {
   '/reembolsos': typeof ReembolsosRoute
   '/registro': typeof RegistroRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/sala-pro': typeof SalaProRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
   '/terminos': typeof TerminosRoute
   '/tienda': typeof TiendaRoute
@@ -431,6 +440,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -475,6 +485,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -520,6 +531,7 @@ export interface FileRouteTypes {
     | '/reembolsos'
     | '/registro'
     | '/reset-password'
+    | '/sala-pro'
     | '/sitemap.xml'
     | '/terminos'
     | '/tienda'
@@ -566,6 +578,7 @@ export interface RootRouteChildren {
   ReembolsosRoute: typeof ReembolsosRoute
   RegistroRoute: typeof RegistroRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SalaProRoute: typeof SalaProRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
   TerminosRoute: typeof TerminosRoute
   TiendaRoute: typeof TiendaRoute
@@ -617,6 +630,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sala-pro': {
+      id: '/sala-pro'
+      path: '/sala-pro'
+      fullPath: '/sala-pro'
+      preLoaderRoute: typeof SalaProRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reset-password': {
@@ -935,6 +955,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReembolsosRoute: ReembolsosRoute,
   RegistroRoute: RegistroRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SalaProRoute: SalaProRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
   TerminosRoute: TerminosRoute,
   TiendaRoute: TiendaRoute,
