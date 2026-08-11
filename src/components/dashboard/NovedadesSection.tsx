@@ -58,7 +58,7 @@ export function NovedadesSection() {
   if (items === null) return null;
 
   return (
-    <section className="border-b border-border bg-surface/40 py-14">
+    <section id="novedades" className="border-b border-border bg-surface/40 py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-6 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.5} />

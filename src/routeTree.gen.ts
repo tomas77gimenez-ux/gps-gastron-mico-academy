@@ -43,6 +43,7 @@ import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } fr
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
 import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-embed'
+import { Route as ApiPublicNovedadesRouteImport } from './routes/api.public.novedades'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
 import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
 import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
@@ -228,6 +229,11 @@ const ApiPublicProEmbedRoute = ApiPublicProEmbedRouteImport.update({
   path: '/api/public/pro-embed',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicNovedadesRoute = ApiPublicNovedadesRouteImport.update({
+  id: '/api/public/novedades',
+  path: '/api/public/novedades',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMaterialDownloadRoute =
   ApiPublicMaterialDownloadRouteImport.update({
     id: '/api/public/material-download',
@@ -322,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/novedades': typeof ApiPublicNovedadesRoute
   '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -367,6 +374,7 @@ export interface FileRoutesByTo {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/novedades': typeof ApiPublicNovedadesRoute
   '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -414,6 +422,7 @@ export interface FileRoutesById {
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
+  '/api/public/novedades': typeof ApiPublicNovedadesRoute
   '/api/public/pro-embed': typeof ApiPublicProEmbedRoute
   '/lovable/email/suppression': typeof LovableEmailSuppressionRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -462,6 +471,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/novedades'
     | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -507,6 +517,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/novedades'
     | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -553,6 +564,7 @@ export interface FileRouteTypes {
     | '/api/public/bunny-thumbs'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
+    | '/api/public/novedades'
     | '/api/public/pro-embed'
     | '/lovable/email/suppression'
     | '/lovable/email/auth/preview'
@@ -593,6 +605,7 @@ export interface RootRouteChildren {
   ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
   ApiPublicLessonEmbedRoute: typeof ApiPublicLessonEmbedRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
+  ApiPublicNovedadesRoute: typeof ApiPublicNovedadesRoute
   ApiPublicProEmbedRoute: typeof ApiPublicProEmbedRoute
   LovableEmailSuppressionRoute: typeof LovableEmailSuppressionRoute
   LovableEmailAuthPreviewRoute: typeof LovableEmailAuthPreviewRoute
@@ -842,6 +855,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicProEmbedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/novedades': {
+      id: '/api/public/novedades'
+      path: '/api/public/novedades'
+      fullPath: '/api/public/novedades'
+      preLoaderRoute: typeof ApiPublicNovedadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/material-download': {
       id: '/api/public/material-download'
       path: '/api/public/material-download'
@@ -971,6 +991,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
   ApiPublicLessonEmbedRoute: ApiPublicLessonEmbedRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
+  ApiPublicNovedadesRoute: ApiPublicNovedadesRoute,
   ApiPublicProEmbedRoute: ApiPublicProEmbedRoute,
   LovableEmailSuppressionRoute: LovableEmailSuppressionRoute,
   LovableEmailAuthPreviewRoute: LovableEmailAuthPreviewRoute,

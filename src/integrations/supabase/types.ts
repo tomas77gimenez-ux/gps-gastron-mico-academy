@@ -204,6 +204,7 @@ export type Database = {
       }
       course_materials: {
         Row: {
+          announced_at: string | null
           course_id: string | null
           created_at: string
           file_size: number | null
@@ -216,6 +217,7 @@ export type Database = {
           title: string
         }
         Insert: {
+          announced_at?: string | null
           course_id?: string | null
           created_at?: string
           file_size?: number | null
@@ -228,6 +230,7 @@ export type Database = {
           title: string
         }
         Update: {
+          announced_at?: string | null
           course_id?: string | null
           created_at?: string
           file_size?: number | null
@@ -691,6 +694,7 @@ export type Database = {
       }
       lessons: {
         Row: {
+          announced_at: string | null
           bunny_video_id: string | null
           bunny_video_id_2: string | null
           content_type: string
@@ -715,6 +719,7 @@ export type Database = {
           video_url: string | null
         }
         Insert: {
+          announced_at?: string | null
           bunny_video_id?: string | null
           bunny_video_id_2?: string | null
           content_type?: string
@@ -739,6 +744,7 @@ export type Database = {
           video_url?: string | null
         }
         Update: {
+          announced_at?: string | null
           bunny_video_id?: string | null
           bunny_video_id_2?: string | null
           content_type?: string
@@ -807,6 +813,7 @@ export type Database = {
       }
       pro_cases: {
         Row: {
+          announced_at: string | null
           attachment_name: string | null
           attachment_url: string | null
           bunny_video_id: string | null
@@ -820,6 +827,7 @@ export type Database = {
           year: number
         }
         Insert: {
+          announced_at?: string | null
           attachment_name?: string | null
           attachment_url?: string | null
           bunny_video_id?: string | null
@@ -833,6 +841,7 @@ export type Database = {
           year: number
         }
         Update: {
+          announced_at?: string | null
           attachment_name?: string | null
           attachment_url?: string | null
           bunny_video_id?: string | null
@@ -849,6 +858,7 @@ export type Database = {
       }
       pro_recordings: {
         Row: {
+          announced_at: string | null
           attachment_name: string | null
           attachment_url: string | null
           bunny_video_id: string | null
@@ -860,6 +870,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          announced_at?: string | null
           attachment_name?: string | null
           attachment_url?: string | null
           bunny_video_id?: string | null
@@ -871,6 +882,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          announced_at?: string | null
           attachment_name?: string | null
           attachment_url?: string | null
           bunny_video_id?: string | null
@@ -921,7 +933,9 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          email_novedades: boolean
           id: string
+          novedades_dismissed_at: string | null
           pro_access: boolean
           tools_free_access: boolean
           updated_at: string
@@ -932,7 +946,9 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email_novedades?: boolean
           id?: string
+          novedades_dismissed_at?: string | null
           pro_access?: boolean
           tools_free_access?: boolean
           updated_at?: string
@@ -943,7 +959,9 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          email_novedades?: boolean
           id?: string
+          novedades_dismissed_at?: string | null
           pro_access?: boolean
           tools_free_access?: boolean
           updated_at?: string
@@ -1146,6 +1164,7 @@ export type Database = {
         }
         Returns: number
       }
+      novedades_dispatch: { Args: never; Returns: undefined }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {

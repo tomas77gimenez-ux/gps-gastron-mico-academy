@@ -50,6 +50,8 @@ function PerfilPage() {
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSaving, setProfileSaving] = useState(false);
   const [memberSince, setMemberSince] = useState<string | null>(null);
+  const [emailNovedades, setEmailNovedades] = useState(true);
+  const [savingPref, setSavingPref] = useState(false);
   const [courses, setCourses] = useState<Array<{
     id: string;
     title: string;
@@ -68,7 +70,7 @@ function PerfilPage() {
     (async () => {
       const { data } = await supabase
         .from("profiles")
-        .select("display_name, created_at")
+        .select("display_name, created_at, email_novedades")
         .eq("user_id", user.id)
         .maybeSingle();
       if (!active) return;
@@ -76,6 +78,7 @@ function PerfilPage() {
       setDisplayName(name);
       setInitialName(name);
       setMemberSince(data?.created_at ?? null);
+      setEmailNovedades(data?.email_novedades ?? true);
       setProfileLoading(false);
     })();
     return () => { active = false; };
@@ -168,6 +171,22 @@ function PerfilPage() {
   async function signOut() {
     await supabase.auth.signOut();
     navigate({ to: "/" });
+  }
+
+  async function toggleNovedades(next: boolean) {
+    if (!user) return;
+    setEmailNovedades(next);
+    setSavingPref(true);
+    const { error } = await supabase
+      .from("profiles")
+      .upsert({ user_id: user.id, email_novedades: next }, { onConflict: "user_id" });
+    setSavingPref(false);
+    if (error) {
+      setEmailNovedades(!next);
+      toast.error(t("perfil.errorGuardar"));
+    } else {
+      toast.success(next ? "Vas a recibir las novedades por correo" : "Ya no vas a recibir novedades por correo");
+    }
   }
 
   async function openPortal() {
@@ -304,6 +323,28 @@ function PerfilPage() {
                 )}
               </Button>
             </form>
+
+            <div className="mt-6 pt-5 border-t border-border flex items-start justify-between gap-4 max-w-md">
+              <div>
+                <p className="text-sm font-medium">Recibir novedades por correo</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Un solo correo con el contenido nuevo (clases, materiales y Sala Pro).
+                </p>
+              </div>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={emailNovedades}
+                aria-label="Recibir novedades por correo"
+                disabled={savingPref || profileLoading}
+                onClick={() => void toggleNovedades(!emailNovedades)}
+                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${emailNovedades ? "bg-primary" : "bg-secondary border border-border"}`}
+              >
+                <span
+                  className={`absolute top-0.5 h-5 w-5 rounded-full bg-background transition-transform ${emailNovedades ? "translate-x-5" : "translate-x-0.5"}`}
+                />
+              </button>
+            </div>
           </section>
         )}
 
