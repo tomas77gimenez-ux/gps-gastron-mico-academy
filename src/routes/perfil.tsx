@@ -110,7 +110,7 @@ function PerfilPage() {
   }, [isReady, user]);
 
   useEffect(() => {
-    if (!isReady || !user) { setCoursesLoading(false); return; }
+    if (!isReady || !user) { setCoursesLoading(false); setGdsLoading(false); return; }
     let active = true;
     setCoursesLoading(true);
     (async () => {
