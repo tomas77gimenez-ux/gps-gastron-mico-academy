@@ -1199,6 +1199,14 @@ export type Database = {
         Args: { _gd_id: string; _user_id: string }
         Returns: boolean
       }
+      admin_list_access_flags: {
+        Args: never
+        Returns: {
+          elite_access: boolean
+          pro_access: boolean
+          user_id: string
+        }[]
+      }
       admin_list_gd_entitlements: {
         Args: never
         Returns: {
