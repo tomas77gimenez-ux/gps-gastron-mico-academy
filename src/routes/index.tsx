@@ -233,9 +233,14 @@ function HomePage() {
         </div>
       </section>
 
+      {/* ---------------- PRÓXIMO EN VIVO ---------------- */}
+      <ProximoEnVivoCard />
+
+      {/* ---------------- NOVEDADES ---------------- */}
+      <NovedadesSection />
+
       {/* ---------------- STATS ---------------- */}
       <section className="border-y border-border">
-      {/* placeholder */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
           <div className="grid grid-cols-2 divide-border sm:divide-x lg:grid-cols-4">
             {stats.map((s) => (
