@@ -113,6 +113,7 @@ function PerfilPage() {
     if (!isReady || !user) { setCoursesLoading(false); return; }
     let active = true;
     setCoursesLoading(true);
+*** MARKER ***
     (async () => {
       const { data: progress } = await supabase
         .from("lesson_progress")
