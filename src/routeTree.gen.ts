@@ -36,6 +36,7 @@ import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herrami
 import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
 import { Route as HerramientasDreRouteImport } from './routes/herramientas.dre'
 import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
+import { Route as GerenteDigitalIdRouteImport } from './routes/gerente-digital.$id'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -193,6 +194,11 @@ const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
   path: '/control-caja',
   getParentRoute: () => HerramientasRoute,
 } as any)
+const GerenteDigitalIdRoute = GerenteDigitalIdRouteImport.update({
+  id: '/gerente-digital/$id',
+  path: '/gerente-digital/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -322,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -369,6 +376,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -418,6 +426,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -468,6 +477,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -515,6 +525,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -563,6 +574,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos_/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -612,6 +624,7 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CursosIdRoute: typeof CursosIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  GerenteDigitalIdRoute: typeof GerenteDigitalIdRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBunnySyncRoute: typeof ApiPublicBunnySyncRoute
   ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
@@ -819,6 +832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasControlCajaRouteImport
       parentRoute: typeof HerramientasRoute
     }
+    '/gerente-digital/$id': {
+      id: '/gerente-digital/$id'
+      path: '/gerente-digital/$id'
+      fullPath: '/gerente-digital/$id'
+      preLoaderRoute: typeof GerenteDigitalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -1006,6 +1026,7 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CursosIdRoute: CursosIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  GerenteDigitalIdRoute: GerenteDigitalIdRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBunnySyncRoute: ApiPublicBunnySyncRoute,
   ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
