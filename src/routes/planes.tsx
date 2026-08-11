@@ -74,36 +74,35 @@ const plans = [
       ],
     },
   },
+  {
+    id: "elite",
+    name: { es: "Academy Élite", en: "Academy Élite" },
+    monthlyPrice: 167,
+    yearlyPrice: 1703,
+    priceIdMonthly: "plan_elite_monthly",
+    priceIdYearly: "plan_elite_yearly",
+    description: {
+      es: "Todo lo de Pro más acompañamiento 1 a 1 con Daniel y la línea completa de Gerentes Digitales.",
+      en: "Everything in Pro plus 1-on-1 guidance with Daniel and the full Digital Managers line.",
+    },
+    icon: Gem,
+    featured: false,
+    features: {
+      es: [
+        "Todo lo del plan Academy Pro",
+        "1 llamada 1 a 1 mensual con Daniel Gimenez",
+        "Acceso incluido a TODOS los Gerentes Digitales (presentes y futuros)",
+        "Prioridad máxima en soporte y revisiones",
+      ],
+      en: [
+        "Everything in Academy Pro",
+        "1 monthly 1-on-1 call with Daniel Gimenez",
+        "Included access to ALL Digital Managers (present and future)",
+        "Highest priority support and reviews",
+      ],
+    },
+  },
 ];
-
-plans.push({
-  id: "elite",
-  name: { es: "Academy Élite", en: "Academy Élite" },
-  monthlyPrice: 167,
-  yearlyPrice: 1703,
-  priceIdMonthly: "plan_elite_monthly",
-  priceIdYearly: "plan_elite_yearly",
-  description: {
-    es: "Todo lo de Pro más acompañamiento 1 a 1 con Daniel y la línea completa de Gerentes Digitales.",
-    en: "Everything in Pro plus 1-on-1 guidance with Daniel and the full Digital Managers line.",
-  },
-  icon: Gem,
-  featured: false,
-  features: {
-    es: [
-      "Todo lo del plan Academy Pro",
-      "1 llamada 1 a 1 mensual con Daniel Gimenez",
-      "Acceso incluido a TODOS los Gerentes Digitales (presentes y futuros)",
-      "Prioridad máxima en soporte y revisiones",
-    ],
-    en: [
-      "Everything in Academy Pro",
-      "1 monthly 1-on-1 call with Daniel Gimenez",
-      "Included access to ALL Digital Managers (present and future)",
-      "Highest priority support and reviews",
-    ],
-  },
-});
 
 const compareFeatures = [
   { key: "compare.cursos", basico: true, premium: true, elite: true },
