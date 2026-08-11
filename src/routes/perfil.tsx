@@ -189,11 +189,6 @@ function PerfilPage() {
     }
   }
 
-  async function signOutLegacy() {
-    await supabase.auth.signOut();
-    navigate({ to: "/" });
-  }
-
   async function openPortal() {
     if (!stripeCustomerId) {
       setPortalError(null);
