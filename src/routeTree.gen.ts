@@ -36,6 +36,7 @@ import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herrami
 import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
 import { Route as HerramientasDreRouteImport } from './routes/herramientas.dre'
 import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
+import { Route as GerenteDigitalIdRouteImport } from './routes/gerente-digital.$id'
 import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
 import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
 import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
@@ -46,6 +47,7 @@ import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-e
 import { Route as ApiPublicNovedadesRouteImport } from './routes/api.public.novedades'
 import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
 import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
+import { Route as ApiPublicGdDownloadRouteImport } from './routes/api.public.gd-download'
 import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
 import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
@@ -192,6 +194,11 @@ const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
   path: '/control-caja',
   getParentRoute: () => HerramientasRoute,
 } as any)
+const GerenteDigitalIdRoute = GerenteDigitalIdRouteImport.update({
+  id: '/gerente-digital/$id',
+  path: '/gerente-digital/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
   id: '/email/unsubscribe',
   path: '/email/unsubscribe',
@@ -243,6 +250,11 @@ const ApiPublicMaterialDownloadRoute =
 const ApiPublicLessonEmbedRoute = ApiPublicLessonEmbedRouteImport.update({
   id: '/api/public/lesson-embed',
   path: '/api/public/lesson-embed',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicGdDownloadRoute = ApiPublicGdDownloadRouteImport.update({
+  id: '/api/public/gd-download',
+  path: '/api/public/gd-download',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBunnyThumbsRoute = ApiPublicBunnyThumbsRouteImport.update({
@@ -316,6 +328,7 @@ export interface FileRoutesByFullPath {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -326,6 +339,7 @@ export interface FileRoutesByFullPath {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -362,6 +376,7 @@ export interface FileRoutesByTo {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -372,6 +387,7 @@ export interface FileRoutesByTo {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -410,6 +426,7 @@ export interface FileRoutesById {
   '/checkout/return': typeof CheckoutReturnRoute
   '/cursos_/$id': typeof CursosIdRoute
   '/email/unsubscribe': typeof EmailUnsubscribeRoute
+  '/gerente-digital/$id': typeof GerenteDigitalIdRoute
   '/herramientas/control-caja': typeof HerramientasControlCajaRoute
   '/herramientas/dre': typeof HerramientasDreRoute
   '/herramientas/dre-mensual': typeof HerramientasDreMensualRoute
@@ -420,6 +437,7 @@ export interface FileRoutesById {
   '/.mcp/invoke-tool/$tool': typeof Char91DotmcpChar93InvokeToolToolRoute
   '/api/public/bunny-sync': typeof ApiPublicBunnySyncRoute
   '/api/public/bunny-thumbs': typeof ApiPublicBunnyThumbsRoute
+  '/api/public/gd-download': typeof ApiPublicGdDownloadRoute
   '/api/public/lesson-embed': typeof ApiPublicLessonEmbedRoute
   '/api/public/material-download': typeof ApiPublicMaterialDownloadRoute
   '/api/public/novedades': typeof ApiPublicNovedadesRoute
@@ -459,6 +477,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -469,6 +488,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -505,6 +525,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -515,6 +536,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -552,6 +574,7 @@ export interface FileRouteTypes {
     | '/checkout/return'
     | '/cursos_/$id'
     | '/email/unsubscribe'
+    | '/gerente-digital/$id'
     | '/herramientas/control-caja'
     | '/herramientas/dre'
     | '/herramientas/dre-mensual'
@@ -562,6 +585,7 @@ export interface FileRouteTypes {
     | '/.mcp/invoke-tool/$tool'
     | '/api/public/bunny-sync'
     | '/api/public/bunny-thumbs'
+    | '/api/public/gd-download'
     | '/api/public/lesson-embed'
     | '/api/public/material-download'
     | '/api/public/novedades'
@@ -600,9 +624,11 @@ export interface RootRouteChildren {
   CheckoutReturnRoute: typeof CheckoutReturnRoute
   CursosIdRoute: typeof CursosIdRoute
   EmailUnsubscribeRoute: typeof EmailUnsubscribeRoute
+  GerenteDigitalIdRoute: typeof GerenteDigitalIdRoute
   Char91DotmcpChar93InvokeToolToolRoute: typeof Char91DotmcpChar93InvokeToolToolRoute
   ApiPublicBunnySyncRoute: typeof ApiPublicBunnySyncRoute
   ApiPublicBunnyThumbsRoute: typeof ApiPublicBunnyThumbsRoute
+  ApiPublicGdDownloadRoute: typeof ApiPublicGdDownloadRoute
   ApiPublicLessonEmbedRoute: typeof ApiPublicLessonEmbedRoute
   ApiPublicMaterialDownloadRoute: typeof ApiPublicMaterialDownloadRoute
   ApiPublicNovedadesRoute: typeof ApiPublicNovedadesRoute
@@ -806,6 +832,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof HerramientasControlCajaRouteImport
       parentRoute: typeof HerramientasRoute
     }
+    '/gerente-digital/$id': {
+      id: '/gerente-digital/$id'
+      path: '/gerente-digital/$id'
+      fullPath: '/gerente-digital/$id'
+      preLoaderRoute: typeof GerenteDigitalIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/email/unsubscribe': {
       id: '/email/unsubscribe'
       path: '/email/unsubscribe'
@@ -874,6 +907,13 @@ declare module '@tanstack/react-router' {
       path: '/api/public/lesson-embed'
       fullPath: '/api/public/lesson-embed'
       preLoaderRoute: typeof ApiPublicLessonEmbedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/gd-download': {
+      id: '/api/public/gd-download'
+      path: '/api/public/gd-download'
+      fullPath: '/api/public/gd-download'
+      preLoaderRoute: typeof ApiPublicGdDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/bunny-thumbs': {
@@ -986,9 +1026,11 @@ const rootRouteChildren: RootRouteChildren = {
   CheckoutReturnRoute: CheckoutReturnRoute,
   CursosIdRoute: CursosIdRoute,
   EmailUnsubscribeRoute: EmailUnsubscribeRoute,
+  GerenteDigitalIdRoute: GerenteDigitalIdRoute,
   Char91DotmcpChar93InvokeToolToolRoute: Char91DotmcpChar93InvokeToolToolRoute,
   ApiPublicBunnySyncRoute: ApiPublicBunnySyncRoute,
   ApiPublicBunnyThumbsRoute: ApiPublicBunnyThumbsRoute,
+  ApiPublicGdDownloadRoute: ApiPublicGdDownloadRoute,
   ApiPublicLessonEmbedRoute: ApiPublicLessonEmbedRoute,
   ApiPublicMaterialDownloadRoute: ApiPublicMaterialDownloadRoute,
   ApiPublicNovedadesRoute: ApiPublicNovedadesRoute,

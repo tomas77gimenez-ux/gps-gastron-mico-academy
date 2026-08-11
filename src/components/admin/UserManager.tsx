@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench } from "lucide-react";
+import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench, Gem } from "lucide-react";
 import { toast } from "sonner";
 import type { PlanTier } from "@/lib/admin-types";
 
@@ -25,6 +25,7 @@ interface UserRow {
   is_admin: boolean;
   tools_free_access: boolean;
   pro_access?: boolean;
+  elite_access?: boolean;
 }
 
 const DURATIONS = [
@@ -49,6 +50,15 @@ function planBadge(plan: PlanTier | null, env: string | null, status: string | n
     return (
       <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
         Sin acceso
+      </span>
+    );
+  }
+  if (plan === "elite") {
+    return (
+      <span className="text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-medium bg-accent/20 text-accent">
+        <Gem className="w-3 h-3" />
+        Academy Élite
+        {env === "manual" && <span className="ml-1 text-[9px] opacity-70 uppercase">manual</span>}
       </span>
     );
   }
@@ -94,12 +104,18 @@ export function UserManager() {
       setLoading(false);
       return;
     }
-    const { data: proData } = await supabase.rpc("admin_list_pro_access");
-    const proMap = new Map(
-      ((proData as { user_id: string; pro_access: boolean }[]) ?? []).map((r) => [r.user_id, r.pro_access]),
+    const { data: flagData } = await (supabase.rpc as unknown as (
+      fn: string,
+    ) => Promise<{ data: { user_id: string; pro_access: boolean; elite_access: boolean }[] | null }>)(
+      "admin_list_access_flags",
     );
+    const flagMap = new Map((flagData ?? []).map((r) => [r.user_id, r]));
     setUsers(
-      ((data as UserRow[]) ?? []).map((u) => ({ ...u, pro_access: proMap.get(u.user_id) ?? false })),
+      ((data as UserRow[]) ?? []).map((u) => ({
+        ...u,
+        pro_access: flagMap.get(u.user_id)?.pro_access ?? false,
+        elite_access: flagMap.get(u.user_id)?.elite_access ?? false,
+      })),
     );
     setLoading(false);
   }
@@ -184,9 +200,28 @@ export function UserManager() {
     );
   }
 
+  async function toggleEliteAccess(u: UserRow) {
+    const next = !u.elite_access;
+    setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, elite_access: next } : row)));
+    const { error: err } = await (supabase.rpc as unknown as (
+      fn: string,
+      args: Record<string, unknown>,
+    ) => Promise<{ error: { message: string } | null }>)("admin_set_elite_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, elite_access: !next } : row)));
+      toast.error("No se pudo actualizar el Acceso Élite", { description: err.message });
+      return;
+    }
+    toast.success(next ? `Acceso Élite activado para ${u.email}` : `Acceso Élite retirado a ${u.email}`);
+  }
+
   const filtered = users.filter((u) =>
     u.email.toLowerCase().includes(search.toLowerCase()),
   );
+
 
   const totalActive = users.filter(
     (u) => u.status === "active" || u.status === "trialing",
@@ -238,6 +273,7 @@ export function UserManager() {
               <th className="text-left px-4 py-3 font-medium">Plan</th>
               <th className="text-left px-4 py-3 font-medium">Herramientas</th>
               <th className="text-left px-4 py-3 font-medium">Acceso Pro</th>
+              <th className="text-left px-4 py-3 font-medium">Acceso Élite</th>
               <th className="text-left px-4 py-3 font-medium">Vence</th>
               <th className="text-left px-4 py-3 font-medium">Registro</th>
               <th className="text-right px-4 py-3 font-medium">Acciones</th>
@@ -295,6 +331,25 @@ export function UserManager() {
                   >
                     <Crown className="w-3 h-3" />
                     {u.is_admin ? "admin" : u.pro_access ? "Pro activo" : "Sin Pro"}
+                  </button>
+                </td>
+                <td className="px-4 py-3">
+                  <button
+                    onClick={() => toggleEliteAccess(u)}
+                    disabled={u.is_admin}
+                    title={
+                      u.is_admin
+                        ? "Los admins ya tienen acceso Élite"
+                        : "Acceso Élite manual (incluye todos los Gerentes Digitales)"
+                    }
+                    className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
+                      u.elite_access || u.is_admin
+                        ? "border-accent/50 bg-accent/10 text-accent"
+                        : "border-border text-muted-foreground hover:border-accent/50 hover:text-accent"
+                    }`}
+                  >
+                    <Gem className="w-3 h-3" />
+                    {u.is_admin ? "admin" : u.elite_access ? "Élite activo" : "Sin Élite"}
                   </button>
                 </td>
                 <td className="px-4 py-3 text-muted-foreground text-xs">

@@ -457,6 +457,24 @@ const translations = {
   "compare.caso": { es: "Caso Real del Mes", en: "Real Case of the Month", pt: "Caso Real do Mês" },
   "compare.prioritario": { es: "Soporte prioritario", en: "Priority support", pt: "Suporte prioritário" },
   "compare.comunidadMiembros": { es: "Comunidad de miembros", en: "Members community", pt: "Comunidade de membros" },
+  "compare.llamada1a1": { es: "Llamada 1 a 1 mensual con Daniel Gimenez", en: "Monthly 1-on-1 call with Daniel Gimenez", pt: "Chamada 1 a 1 mensal com Daniel Gimenez" },
+  "compare.gerentes": { es: "Todos los Gerentes Digitales incluidos", en: "All Digital Managers included", pt: "Todos os Gerentes Digitais incluídos" },
+
+  // Gerentes Digitales
+  "gd.tituloLinea": { es: "Gerentes Digitales", en: "Digital Managers", pt: "Gerentes Digitais" },
+  "gd.descLinea": { es: "Checklists de auditoría operativa listos para usar. Compra única, acceso permanente.", en: "Ready-to-use operational audit checklists. One-time purchase, permanent access.", pt: "Checklists de auditoria operacional prontos para usar. Compra única, acesso permanente." },
+  "gd.comprar": { es: "Comprar", en: "Buy", pt: "Comprar" },
+  "gd.acceder": { es: "Acceder", en: "Open", pt: "Acessar" },
+  "gd.yaTienes": { es: "Ya lo tenés", en: "You own it", pt: "Você já tem" },
+  "gd.incluidoElite": { es: "Incluido en Academy Élite", en: "Included in Academy Élite", pt: "Incluído no Academy Élite" },
+  "gd.compraUnica": { es: "Pago único", en: "One-time payment", pt: "Pagamento único" },
+  "gd.misGerentes": { es: "Mis Gerentes Digitales", en: "My Digital Managers", pt: "Meus Gerentes Digitais" },
+  "gd.sinAcceso": { es: "Todavía no tenés ningún Gerente Digital.", en: "You don't own any Digital Manager yet.", pt: "Você ainda não tem nenhum Gerente Digital." },
+  "gd.archivos": { es: "Archivos incluidos", en: "Included files", pt: "Arquivos incluídos" },
+  "gd.descargar": { es: "Descargar", en: "Download", pt: "Baixar" },
+  "gd.sinArchivos": { es: "Los archivos se están cargando. Te avisamos por correo cuando estén disponibles.", en: "Files are being uploaded. We'll email you when they're available.", pt: "Os arquivos estão sendo carregados. Avisaremos por e-mail quando estiverem disponíveis." },
+  "gd.bloqueado": { es: "No tenés acceso a este Gerente Digital.", en: "You don't have access to this Digital Manager.", pt: "Você não tem acesso a este Gerente Digital." },
+  "gd.verTienda": { es: "Ver en la Tienda", en: "View in Store", pt: "Ver na Loja" },
 } as const;
 
 type TranslationKey = keyof typeof translations;

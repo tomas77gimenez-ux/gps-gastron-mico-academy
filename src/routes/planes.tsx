@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, X, Star, Crown, Shield, CreditCard, Settings, Loader2 } from "lucide-react";
+import { Check, X, Star, Crown, Gem, Shield, CreditCard, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -23,8 +23,8 @@ const plans = [
   {
     id: "basico",
     name: { es: "Academy", en: "Academy" },
-    monthlyPrice: 39,
-    yearlyPrice: 398,
+    monthlyPrice: 57,
+    yearlyPrice: 581,
     priceIdMonthly: "plan_basico_monthly",
     priceIdYearly: "plan_basico_yearly",
     description: { es: "Curso completo, todas las herramientas de gestión y la comunidad de miembros.", en: "Complete course, all management tools and the members community." },
@@ -50,8 +50,8 @@ const plans = [
   {
     id: "premium",
     name: { es: "Academy Pro", en: "Academy Pro" },
-    monthlyPrice: 97,
-    yearlyPrice: 989,
+    monthlyPrice: 87,
+    yearlyPrice: 887,
     priceIdMonthly: "plan_premium_monthly",
     priceIdYearly: "plan_premium_yearly",
     description: { es: "Todo lo de Academy más acompañamiento en vivo cada semana en la Sala Pro.", en: "Everything in Academy plus weekly live guidance in the Pro Room." },
@@ -74,17 +74,47 @@ const plans = [
       ],
     },
   },
+  {
+    id: "elite",
+    name: { es: "Academy Élite", en: "Academy Élite" },
+    monthlyPrice: 167,
+    yearlyPrice: 1703,
+    priceIdMonthly: "plan_elite_monthly",
+    priceIdYearly: "plan_elite_yearly",
+    description: {
+      es: "Todo lo de Pro más acompañamiento 1 a 1 con Daniel y la línea completa de Gerentes Digitales.",
+      en: "Everything in Pro plus 1-on-1 guidance with Daniel and the full Digital Managers line.",
+    },
+    icon: Gem,
+    featured: false,
+    features: {
+      es: [
+        "Todo lo del plan Academy Pro",
+        "1 llamada 1 a 1 mensual con Daniel Gimenez",
+        "Acceso incluido a TODOS los Gerentes Digitales (presentes y futuros)",
+        "Prioridad máxima en soporte y revisiones",
+      ],
+      en: [
+        "Everything in Academy Pro",
+        "1 monthly 1-on-1 call with Daniel Gimenez",
+        "Included access to ALL Digital Managers (present and future)",
+        "Highest priority support and reviews",
+      ],
+    },
+  },
 ];
 
 const compareFeatures = [
-  { key: "compare.cursos", basico: true, premium: true },
-  { key: "compare.tools", basico: true, premium: true },
-  { key: "compare.comunidadMiembros", basico: true, premium: true },
-  { key: "compare.asistente", basico: true, premium: true },
-  { key: "compare.actualizaciones", basico: true, premium: true },
-  { key: "compare.reunion", basico: false, premium: true },
-  { key: "compare.caso", basico: false, premium: true },
-  { key: "compare.prioritario", basico: false, premium: true },
+  { key: "compare.cursos", basico: true, premium: true, elite: true },
+  { key: "compare.tools", basico: true, premium: true, elite: true },
+  { key: "compare.comunidadMiembros", basico: true, premium: true, elite: true },
+  { key: "compare.asistente", basico: true, premium: true, elite: true },
+  { key: "compare.actualizaciones", basico: true, premium: true, elite: true },
+  { key: "compare.reunion", basico: false, premium: true, elite: true },
+  { key: "compare.caso", basico: false, premium: true, elite: true },
+  { key: "compare.prioritario", basico: false, premium: true, elite: true },
+  { key: "compare.llamada1a1", basico: false, premium: false, elite: true },
+  { key: "compare.gerentes", basico: false, premium: false, elite: true },
 ] as const;
 
 const faqs = [
@@ -100,9 +130,9 @@ export const Route = createFileRoute("/planes")({
   head: () => ({
     meta: [
       { title: "Planes de Membresía — GPS Gastronômico" },
-      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante: Academy o Academy Pro." },
+      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite." },
       { property: "og:title", content: 'Planes de Membresía — GPS Gastronômico' },
-      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante: Academy o Academy Pro.' },
+      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite.' },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/planes" }
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/planes" }],
@@ -279,7 +309,7 @@ function PlanesPage() {
   return (
     <div className="min-h-screen pt-20 pb-16">
       <PaymentTestModeBanner />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold font-display mb-3">{t("planes.titulo")}</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">{t("planes.desc")}</p>
@@ -340,7 +370,7 @@ function PlanesPage() {
           </motion.div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-start">
           {plans.map((plan, i) => {
             const yearlyPrice = plan.yearlyPrice ?? Math.round(plan.monthlyPrice * 12 * yearlyDiscount);
             const yearlySavings = plan.monthlyPrice * 12 - yearlyPrice;
@@ -356,9 +386,9 @@ function PlanesPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className={`relative rounded-2xl border p-8 flex flex-col ${
+                className={`relative rounded-2xl border p-7 flex flex-col ${
                   plan.featured
-                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)]"
+                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)] md:scale-[1.04] md:z-10"
                     : "border-border bg-card"
                 } ${isCurrent ? "ring-2 ring-primary" : ""}`}
               >
@@ -489,15 +519,16 @@ function PlanesPage() {
             {t("planes.compararTitulo")}
           </h2>
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
-            <div className="grid grid-cols-3 bg-secondary/40 border-b border-border">
+            <div className="grid grid-cols-4 bg-secondary/40 border-b border-border">
               <div className="px-4 py-4 text-sm font-semibold">{t("planes.feature")}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[0].name, lang)}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(plans[1].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[2].name, lang)}</div>
             </div>
             {compareFeatures.map((row, idx) => (
               <div
                 key={row.key}
-                className={`grid grid-cols-3 items-center ${idx !== compareFeatures.length - 1 ? "border-b border-border" : ""}`}
+                className={`grid grid-cols-4 items-center ${idx !== compareFeatures.length - 1 ? "border-b border-border" : ""}`}
               >
                 <div className="px-4 py-3 text-sm">{t(row.key)}</div>
                 <div className="px-4 py-3 flex justify-center">
@@ -509,6 +540,13 @@ function PlanesPage() {
                 </div>
                 <div className="px-4 py-3 flex justify-center">
                   {row.premium ? (
+                    <Check className="w-5 h-5 text-primary" />
+                  ) : (
+                    <X className="w-5 h-5 text-muted-foreground/40" />
+                  )}
+                </div>
+                <div className="px-4 py-3 flex justify-center">
+                  {row.elite ? (
                     <Check className="w-5 h-5 text-primary" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40" />

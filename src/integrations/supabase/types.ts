@@ -620,6 +620,124 @@ export type Database = {
         }
         Relationships: []
       }
+      gd_entitlements: {
+        Row: {
+          created_at: string
+          email: string | null
+          gd_id: string
+          granted_via: string
+          id: string
+          stripe_session_id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          gd_id: string
+          granted_via?: string
+          id?: string
+          stripe_session_id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          gd_id?: string
+          granted_via?: string
+          id?: string
+          stripe_session_id?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gd_entitlements_gd_id_fkey"
+            columns: ["gd_id"]
+            isOneToOne: false
+            referencedRelation: "gerentes_digitales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gd_files: {
+        Row: {
+          created_at: string
+          file_size: number | null
+          file_type: string
+          file_url: string
+          gd_id: string
+          id: string
+          sort_order: number
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          file_size?: number | null
+          file_type?: string
+          file_url: string
+          gd_id: string
+          id?: string
+          sort_order?: number
+          title: string
+        }
+        Update: {
+          created_at?: string
+          file_size?: number | null
+          file_type?: string
+          file_url?: string
+          gd_id?: string
+          id?: string
+          sort_order?: number
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gd_files_gd_id_fkey"
+            columns: ["gd_id"]
+            isOneToOne: false
+            referencedRelation: "gerentes_digitales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gerentes_digitales: {
+        Row: {
+          active: boolean
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price_cents: number
+          slug: string
+          sort_order: number
+          stripe_price_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price_cents?: number
+          slug: string
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price_cents?: number
+          slug?: string
+          sort_order?: number
+          stripe_price_id?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       ingredients: {
         Row: {
           created_at: string
@@ -933,6 +1051,7 @@ export type Database = {
           avatar_url: string | null
           created_at: string
           display_name: string | null
+          elite_access: boolean
           email_novedades: boolean
           id: string
           novedades_dismissed_at: string | null
@@ -946,6 +1065,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          elite_access?: boolean
           email_novedades?: boolean
           id?: string
           novedades_dismissed_at?: string | null
@@ -959,6 +1079,7 @@ export type Database = {
           avatar_url?: string | null
           created_at?: string
           display_name?: string | null
+          elite_access?: boolean
           email_novedades?: boolean
           id?: string
           novedades_dismissed_at?: string | null
@@ -1074,9 +1195,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_grant_gd: {
+        Args: { _gd_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_list_access_flags: {
+        Args: never
+        Returns: {
+          elite_access: boolean
+          pro_access: boolean
+          user_id: string
+        }[]
+      }
+      admin_list_gd_entitlements: {
+        Args: never
+        Returns: {
+          created_at: string
+          email: string
+          gd_id: string
+          granted_via: string
+          user_id: string
+        }[]
+      }
       admin_list_pro_access: {
         Args: never
         Returns: {
+          elite_access: boolean
           pro_access: boolean
           user_id: string
         }[]
@@ -1095,6 +1239,14 @@ export type Database = {
           tools_free_access: boolean
           user_id: string
         }[]
+      }
+      admin_revoke_gd: {
+        Args: { _gd_id: string; _user_id: string }
+        Returns: boolean
+      }
+      admin_set_elite_access: {
+        Args: { _enabled: boolean; _user_id: string }
+        Returns: boolean
       }
       admin_set_pro_access: {
         Args: { _enabled: boolean; _user_id: string }
@@ -1136,6 +1288,11 @@ export type Database = {
       }
       has_active_subscription: {
         Args: { check_env?: string; user_uuid: string }
+        Returns: boolean
+      }
+      has_elite_access: { Args: { _user_id: string }; Returns: boolean }
+      has_gd_access: {
+        Args: { _gd_id: string; _user_id: string }
         Returns: boolean
       }
       has_plan_access: {
@@ -1184,7 +1341,7 @@ export type Database = {
     }
     Enums: {
       app_role: "admin" | "moderator" | "user"
-      plan_tier: "basico" | "premium"
+      plan_tier: "basico" | "premium" | "elite"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1313,7 +1470,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "moderator", "user"],
-      plan_tier: ["basico", "premium"],
+      plan_tier: ["basico", "premium", "elite"],
     },
   },
 } as const
