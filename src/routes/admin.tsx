@@ -5,7 +5,8 @@ import { CourseManager } from "@/components/admin/CourseManager";
 import { UserManager } from "@/components/admin/UserManager";
 import { MetricsPanel } from "@/components/admin/MetricsPanel";
 import { LiveEventManager } from "@/components/admin/LiveEventManager";
-import { Shield, LogIn, BookOpen, Users, TrendingUp, Radio } from "lucide-react";
+import { SalaProManager } from "@/components/admin/SalaProManager";
+import { Shield, LogIn, BookOpen, Users, TrendingUp, Radio, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
@@ -32,7 +33,7 @@ function AdminPage() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [loginLoading, setLoginLoading] = useState(false);
   const [isSignup, setIsSignup] = useState(false);
-  const [tab, setTab] = useState<"metrics" | "courses" | "users" | "live">("metrics");
+  const [tab, setTab] = useState<"metrics" | "courses" | "users" | "live" | "pro">("metrics");
 
   useEffect(() => {
     let cancelled = false;
@@ -197,11 +198,20 @@ function AdminPage() {
           >
             <Radio className="w-4 h-4" /> En vivo
           </button>
+          <button
+            onClick={() => setTab("pro")}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-all inline-flex items-center gap-2 ${
+              tab === "pro" ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+            }`}
+          >
+            <Crown className="w-4 h-4" /> Sala Pro
+          </button>
         </div>
         {tab === "metrics" && <MetricsPanel />}
         {tab === "courses" && <CourseManager />}
         {tab === "users" && <UserManager />}
         {tab === "live" && <LiveEventManager />}
+        {tab === "pro" && <SalaProManager />}
       </div>
     </div>
   );
