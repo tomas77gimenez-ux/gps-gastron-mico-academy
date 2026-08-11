@@ -24,6 +24,7 @@ interface UserRow {
   subscription_id: string | null;
   is_admin: boolean;
   tools_free_access: boolean;
+  pro_access?: boolean;
 }
 
 const DURATIONS = [
@@ -61,7 +62,7 @@ function planBadge(plan: PlanTier | null, env: string | null, status: string | n
       }`}
     >
       {isPremium ? <Crown className="w-3 h-3" /> : <Star className="w-3 h-3" />}
-      {isPremium ? "Premium" : "Básico"}
+      {isPremium ? "Academy Pro" : "Academy"}
       {env === "manual" && (
         <span className="ml-1 text-[9px] opacity-70 uppercase">manual</span>
       )}
@@ -88,8 +89,18 @@ export function UserManager() {
     setLoading(true);
     setError(null);
     const { data, error: err } = await supabase.rpc("admin_list_users");
-    if (err) setError(err.message);
-    else setUsers((data as UserRow[]) ?? []);
+    if (err) {
+      setError(err.message);
+      setLoading(false);
+      return;
+    }
+    const { data: proData } = await supabase.rpc("admin_list_pro_access");
+    const proMap = new Map(
+      ((proData as { user_id: string; pro_access: boolean }[]) ?? []).map((r) => [r.user_id, r.pro_access]),
+    );
+    setUsers(
+      ((data as UserRow[]) ?? []).map((u) => ({ ...u, pro_access: proMap.get(u.user_id) ?? false })),
+    );
     setLoading(false);
   }
 
@@ -153,6 +164,23 @@ export function UserManager() {
       next
         ? `Acceso gratuito a herramientas activado para ${u.email}`
         : `Acceso gratuito a herramientas retirado a ${u.email}`,
+    );
+  }
+
+  async function toggleProAccess(u: UserRow) {
+    const next = !u.pro_access;
+    setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: next } : row)));
+    const { error: err } = await supabase.rpc("admin_set_pro_access", {
+      _user_id: u.user_id,
+      _enabled: next,
+    });
+    if (err) {
+      setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: !next } : row)));
+      toast.error("No se pudo actualizar el Acceso Pro", { description: err.message });
+      return;
+    }
+    toast.success(
+      next ? `Acceso Pro activado para ${u.email}` : `Acceso Pro retirado a ${u.email}`,
     );
   }
 
