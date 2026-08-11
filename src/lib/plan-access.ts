@@ -10,10 +10,12 @@ export function hasPlanAccess(
   requiredTier: PlanTier,
 ): boolean {
   if (!userTier) return false;
-  if (userTier === "premium") return true;
+  if (userTier === "elite") return true;
+  if (userTier === "premium") return requiredTier !== "elite";
   return requiredTier === "basico";
 }
 
 export function planLabel(tier: PlanTier): string {
+  if (tier === "elite") return "Élite";
   return tier === "premium" ? "Premium" : "Básico";
 }
