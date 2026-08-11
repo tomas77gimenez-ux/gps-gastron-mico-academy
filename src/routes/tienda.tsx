@@ -144,6 +144,8 @@ function TiendaPage() {
   const [checkoutPriceId, setCheckoutPriceId] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | undefined>();
   const [userId, setUserId] = useState<string | undefined>();
+  const [gds, setGds] = useState<GerenteDigital[]>([]);
+  const [ownedGdIds, setOwnedGdIds] = useState<string[]>([]);
   const { t, lang } = useI18n();
 
   useEffect(() => {
@@ -154,6 +156,24 @@ function TiendaPage() {
       }
     });
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const list = await listGerentesDigitales();
+      if (cancelled) return;
+      setGds(list);
+      if (userId) {
+        const owned = await listOwnedGdIds(userId, list.map((g) => g.id));
+        if (!cancelled) setOwnedGdIds(owned);
+      } else {
+        setOwnedGdIds([]);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [userId]);
 
   const handleBuy = (product: Product) => {
     if (!product.priceId) {
@@ -292,6 +312,73 @@ function TiendaPage() {
             </div>
           );
         })()}
+
+        {gds.length > 0 && (
+          <section className="mt-14">
+            <div className="mb-6">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-3">
+                <ClipboardCheck className="w-3.5 h-3.5" /> {t("gd.tituloLinea")}
+              </div>
+              <h2 className="text-2xl sm:text-3xl font-bold font-display">{t("gd.tituloLinea")}</h2>
+              <p className="text-muted-foreground mt-2 max-w-2xl">{t("gd.descLinea")}</p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {gds.map((gd, i) => {
+                const owned = ownedGdIds.includes(gd.id);
+                return (
+                  <motion.div
+                    key={gd.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.05 }}
+                    className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 transition-all duration-300"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <ClipboardCheck className="w-5 h-5 text-primary" />
+                      </div>
+                      {owned && (
+                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success text-success-foreground text-[10px] font-bold uppercase tracking-wider">
+                          <Check className="w-3 h-3" /> {t("gd.yaTienes")}
+                        </span>
+                      )}
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-2">{gd.name}</h3>
+                    <p className="text-sm text-muted-foreground mb-4 flex-1">{gd.description}</p>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex flex-col">
+                        <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
+                          {t("gd.compraUnica")}
+                        </span>
+                        <span className="text-xl font-bold text-primary leading-tight">
+                          {formatGdPrice(gd.price_cents)}
+                        </span>
+                      </div>
+                      {owned ? (
+                        <Button asChild size="sm" variant="outline" className="rounded-xl shrink-0">
+                          <Link to="/gerente-digital/$id" params={{ id: gd.id }}>
+                            {t("gd.acceder")}
+                          </Link>
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shrink-0"
+                          onClick={() => gd.stripe_price_id && setCheckoutPriceId(gd.stripe_price_id)}
+                          disabled={!gd.stripe_price_id}
+                        >
+                          <ShoppingCart className="w-4 h-4 mr-1.5" />
+                          {t("gd.comprar")}
+                        </Button>
+                      )}
+                    </div>
+                    <p className="text-[11px] text-muted-foreground mt-3">{t("gd.incluidoElite")}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </section>
+        )}
       </div>
 
       <Dialog open={!!checkoutPriceId} onOpenChange={(open) => !open && setCheckoutPriceId(null)}>
