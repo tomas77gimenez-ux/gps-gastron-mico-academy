@@ -168,8 +168,9 @@ export function MetricsPanel() {
             <p className="text-sm text-muted-foreground text-center py-6">Sin suscripciones activas.</p>
           ) : (
             <div className="space-y-4">
-              <PlanBar label="Básico" count={metrics.basico} total={metrics.actives} icon={Star} color="bg-blue-500" />
-              <PlanBar label="Premium" count={metrics.premium} total={metrics.actives} icon={Crown} color="bg-primary" />
+              <PlanBar label="Academy" count={metrics.basico} total={metrics.actives} icon={Star} color="bg-blue-500" />
+              <PlanBar label="Academy Pro" count={metrics.premium} total={metrics.actives} icon={Crown} color="bg-primary" />
+              <PlanBar label="Academy Élite" count={metrics.elite} total={metrics.actives} icon={Crown} color="bg-amber-400" />
             </div>
           )}
         </div>
