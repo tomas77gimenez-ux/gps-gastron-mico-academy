@@ -184,6 +184,7 @@ export function UserManager() {
   }
 
   async function toggleProAccess(u: UserRow) {
+    // eslint-disable-next-line no-empty-function
     const next = !u.pro_access;
     setUsers((prev) => prev.map((row) => (row.user_id === u.user_id ? { ...row, pro_access: next } : row)));
     const { error: err } = await supabase.rpc("admin_set_pro_access", {
