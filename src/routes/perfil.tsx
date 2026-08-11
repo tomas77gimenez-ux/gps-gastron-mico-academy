@@ -462,6 +462,51 @@ function PerfilPage() {
           <section className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                <ClipboardCheck className="w-5 h-5 text-primary" />
+              </div>
+              <h2 className="text-xl font-semibold">{t("gd.misGerentes")}</h2>
+            </div>
+            {gdsLoading ? (
+              <div className="flex items-center gap-2 text-muted-foreground py-4">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                <span className="text-sm">…</span>
+              </div>
+            ) : myGds.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-sm text-muted-foreground mb-4">{t("gd.sinAcceso")}</p>
+                <Button asChild variant="outline">
+                  <Link to="/tienda">{t("gd.verTienda")}</Link>
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {myGds.map((gd) => (
+                  <Link
+                    key={gd.id}
+                    to="/gerente-digital/$id"
+                    params={{ id: gd.id }}
+                    className="flex items-center gap-4 p-3 rounded-lg border border-border bg-background/40 hover:border-primary/40 transition-colors group"
+                  >
+                    <div className="w-10 h-10 shrink-0 rounded-md bg-primary/10 flex items-center justify-center">
+                      <ClipboardCheck className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium truncate group-hover:text-primary transition-colors">{gd.name}</h3>
+                      <p className="text-xs text-muted-foreground truncate">{gd.description}</p>
+                    </div>
+                    <ArrowRight className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
+                  </Link>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+
+        {/* Mis cursos en progreso */}
+        {user && (
+          <section className="bg-card rounded-xl border border-border p-6">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
                 <BookOpen className="w-5 h-5 text-primary" />
               </div>
               <h2 className="text-xl font-semibold">{t("perfil.misCursos")}</h2>
