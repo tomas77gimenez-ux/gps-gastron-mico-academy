@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, Calculator } from "lucide-react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, ClipboardCheck, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -8,6 +8,12 @@ import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useI18n } from "@/lib/i18n";
+import {
+  formatGdPrice,
+  listGerentesDigitales,
+  listOwnedGdIds,
+  type GerenteDigital,
+} from "@/lib/gerentes-digitales";
 
 // WhatsApp de Daniel Giménez para consultas y soporte
 const WHATSAPP_NUMBER = "14709439722";
@@ -62,17 +68,6 @@ const products: Product[] = [
     priceId: "rebranding_restaurante_base",
     priceLabel: "$1.800",
     badge: { text: "Más vendido", textEn: "Best seller", variant: "accent" },
-  },
-  {
-    id: "gerente-digital",
-    area: "Área 3",
-    title: "Gerente Digital",
-    titleEn: "Digital Manager",
-    description: "Herramientas prácticas para implementar en tu operación y mejorar tu performance. Incluye una reunión de implementación por Google Meet.",
-    descEn: "Practical tools to implement in your operation and improve performance. Includes an implementation meeting via Google Meet.",
-    icon: Calculator,
-    priceId: "gerente_digital_base",
-    priceLabel: "$320",
   },
   {
     id: "libro-rentabilidad",
