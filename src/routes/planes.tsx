@@ -23,8 +23,8 @@ const plans = [
   {
     id: "basico",
     name: { es: "Academy", en: "Academy" },
-    monthlyPrice: 39,
-    yearlyPrice: 398,
+    monthlyPrice: 57,
+    yearlyPrice: 581,
     priceIdMonthly: "plan_basico_monthly",
     priceIdYearly: "plan_basico_yearly",
     description: { es: "Curso completo, todas las herramientas de gestión y la comunidad de miembros.", en: "Complete course, all management tools and the members community." },
@@ -50,8 +50,8 @@ const plans = [
   {
     id: "premium",
     name: { es: "Academy Pro", en: "Academy Pro" },
-    monthlyPrice: 97,
-    yearlyPrice: 989,
+    monthlyPrice: 87,
+    yearlyPrice: 887,
     priceIdMonthly: "plan_premium_monthly",
     priceIdYearly: "plan_premium_yearly",
     description: { es: "Todo lo de Academy más acompañamiento en vivo cada semana en la Sala Pro.", en: "Everything in Academy plus weekly live guidance in the Pro Room." },
@@ -77,14 +77,16 @@ const plans = [
 ];
 
 const compareFeatures = [
-  { key: "compare.cursos", basico: true, premium: true },
-  { key: "compare.tools", basico: true, premium: true },
-  { key: "compare.comunidadMiembros", basico: true, premium: true },
-  { key: "compare.asistente", basico: true, premium: true },
-  { key: "compare.actualizaciones", basico: true, premium: true },
-  { key: "compare.reunion", basico: false, premium: true },
-  { key: "compare.caso", basico: false, premium: true },
-  { key: "compare.prioritario", basico: false, premium: true },
+  { key: "compare.cursos", basico: true, premium: true, elite: true },
+  { key: "compare.tools", basico: true, premium: true, elite: true },
+  { key: "compare.comunidadMiembros", basico: true, premium: true, elite: true },
+  { key: "compare.asistente", basico: true, premium: true, elite: true },
+  { key: "compare.actualizaciones", basico: true, premium: true, elite: true },
+  { key: "compare.reunion", basico: false, premium: true, elite: true },
+  { key: "compare.caso", basico: false, premium: true, elite: true },
+  { key: "compare.prioritario", basico: false, premium: true, elite: true },
+  { key: "compare.llamada1a1", basico: false, premium: false, elite: true },
+  { key: "compare.gerentes", basico: false, premium: false, elite: true },
 ] as const;
 
 const faqs = [
