@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench } from "lucide-react";
+import { Users, Shield, Crown, Star, Loader2, Ban, Gift, Search, ShieldCheck, Wrench, Gem } from "lucide-react";
 import { toast } from "sonner";
 import type { PlanTier } from "@/lib/admin-types";
 
@@ -25,6 +25,7 @@ interface UserRow {
   is_admin: boolean;
   tools_free_access: boolean;
   pro_access?: boolean;
+  elite_access?: boolean;
 }
 
 const DURATIONS = [
@@ -49,6 +50,15 @@ function planBadge(plan: PlanTier | null, env: string | null, status: string | n
     return (
       <span className="text-xs px-2 py-0.5 rounded-full bg-secondary text-muted-foreground">
         Sin acceso
+      </span>
+    );
+  }
+  if (plan === "elite") {
+    return (
+      <span className="text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-medium bg-accent/20 text-accent">
+        <Gem className="w-3 h-3" />
+        Academy Élite
+        {env === "manual" && <span className="ml-1 text-[9px] opacity-70 uppercase">manual</span>}
       </span>
     );
   }
@@ -94,12 +104,18 @@ export function UserManager() {
       setLoading(false);
       return;
     }
-    const { data: proData } = await supabase.rpc("admin_list_pro_access");
-    const proMap = new Map(
-      ((proData as { user_id: string; pro_access: boolean }[]) ?? []).map((r) => [r.user_id, r.pro_access]),
+    const { data: flagData } = await (supabase.rpc as unknown as (
+      fn: string,
+    ) => Promise<{ data: { user_id: string; pro_access: boolean; elite_access: boolean }[] | null }>)(
+      "admin_list_access_flags",
     );
+    const flagMap = new Map((flagData ?? []).map((r) => [r.user_id, r]));
     setUsers(
-      ((data as UserRow[]) ?? []).map((u) => ({ ...u, pro_access: proMap.get(u.user_id) ?? false })),
+      ((data as UserRow[]) ?? []).map((u) => ({
+        ...u,
+        pro_access: flagMap.get(u.user_id)?.pro_access ?? false,
+        elite_access: flagMap.get(u.user_id)?.elite_access ?? false,
+      })),
     );
     setLoading(false);
   }
