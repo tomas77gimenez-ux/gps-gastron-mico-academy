@@ -4,6 +4,7 @@ import { template as trialEndingTemplate } from './trial-ending'
 import { template as paymentFailedTemplate } from './payment-failed'
 import { template as subscriptionCanceledTemplate } from './subscription-canceled'
 import { template as novedadesTemplate } from './novedades'
+import { template as gdAccessTemplate } from './gd-access'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -28,4 +29,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'payment-failed': paymentFailedTemplate,
   'subscription-canceled': subscriptionCanceledTemplate,
   novedades: novedadesTemplate,
+  'gd-access': gdAccessTemplate,
 }
