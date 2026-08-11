@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, Calculator, LineChart } from "lucide-react";
+import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -52,19 +52,8 @@ const products: Product[] = [
     whatsappMessage: "Hola, tengo interés en GPS Marketing (branding, redes sociales y herramientas con IA). Me gustaría agendar una reunión para hablar con su agencia de marketing sobre mi negocio. ¡Gracias!",
   },
   {
-    id: "esfera-digital",
-    area: "Área 2",
-    title: "Esfera Digital",
-    titleEn: "Digital Sphere",
-    description: "Entendé los números de tu Instagram y tomá decisiones claras para hacer crecer tu cuenta de forma orgánica, sin depender solo del alcance pagado.",
-    descEn: "Understand your Instagram numbers and make clear decisions to grow your account organically, without relying only on paid reach.",
-    icon: LineChart,
-    priceId: "esfera_digital_mensual",
-    priceLabel: "$119/mes",
-  },
-  {
     id: "rebranding",
-    area: "Área 3",
+    area: "Área 2",
     title: "Rebranding",
     titleEn: "Rebranding",
     description: "Renová la imagen de tu restaurante con menú nuevo, website con pedidos online, logotipo, manual de marca y aplicaciones en todos tus materiales.",
@@ -76,7 +65,7 @@ const products: Product[] = [
   },
   {
     id: "gerente-digital",
-    area: "Área 4",
+    area: "Área 3",
     title: "Gerente Digital",
     titleEn: "Digital Manager",
     description: "Herramientas prácticas para implementar en tu operación y mejorar tu performance. Incluye una reunión de implementación por Google Meet.",
@@ -87,7 +76,7 @@ const products: Product[] = [
   },
   {
     id: "libro-rentabilidad",
-    area: "Área 5",
+    area: "Área 4",
     title: "Libro · El Desafío de la Rentabilidad",
     titleEn: "Book · The Profitability Challenge",
     description: "Guía fundamental para el emprendedor gastronómico. 37 años de experiencia de Daniel Giménez condensados en un manual directo y aplicable.",
@@ -99,7 +88,7 @@ const products: Product[] = [
   },
   {
     id: "club-elite-plus",
-    area: "Área 6",
+    area: "Área 5",
     title: "Club Elite Plus",
     titleEn: "Elite Plus Club",
     description: "Consultoría personalizada con Daniel Giménez y su equipo de consultores. Programa de 60 a 90 días para transformar tu restaurante.",
@@ -195,7 +184,7 @@ function TiendaPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4">
-            <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 6 ÁREAS
+            <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 5 ÁREAS
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display leading-tight">{t("tienda.titulo")}</h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">{t("tienda.desc")}</p>
