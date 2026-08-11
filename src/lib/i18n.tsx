@@ -225,6 +225,8 @@ const translations = {
   "perfil.gestionarDesc": { es: "Cancelar, actualizar método de pago o ver facturas.", en: "Cancel, update payment method or view invoices.", pt: "Cancelar, atualizar método de pagamento ou ver faturas." },
   "perfil.abriendoPortal": { es: "Abriendo portal...", en: "Opening portal...", pt: "Abrindo portal..." },
   "perfil.errorPortal": { es: "No se pudo abrir el portal. Intentá de nuevo.", en: "Could not open the portal. Please try again.", pt: "Não foi possível abrir o portal. Tente novamente." },
+  "perfil.sinCliente": { es: "No tenés una suscripción de Stripe activa. Este botón es para suscriptores pagos.", en: "You don't have an active Stripe subscription. This button is for paying subscribers.", pt: "Você não tem uma assinatura Stripe ativa. Este botão é para assinantes pagos." },
+  "perfil.detalleTecnico": { es: "Ver detalle técnico", en: "View technical detail", pt: "Ver detalhe técnico" },
   "perfil.datosPersonales": { es: "Datos personales", en: "Personal info", pt: "Dados pessoais" },
   "perfil.nombre": { es: "Nombre para mostrar", en: "Display name", pt: "Nome de exibição" },
   "perfil.guardar": { es: "Guardar cambios", en: "Save changes", pt: "Salvar alterações" },

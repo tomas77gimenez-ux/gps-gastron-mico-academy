@@ -42,6 +42,9 @@ function PerfilPage() {
   const { isReady, user } = useAuthSession();
   const navigate = useNavigate();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [portalError, setPortalError] = useState<string | null>(null);
+  const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
+  const [customerChecked, setCustomerChecked] = useState(false);
   const [displayName, setDisplayName] = useState("");
   const [initialName, setInitialName] = useState("");
   const [profileLoading, setProfileLoading] = useState(false);
@@ -51,6 +54,7 @@ function PerfilPage() {
     id: string;
     title: string;
     thumbnail_url: string | null;
+    sortOrder: number;
     total: number;
     completed: number;
     lastAt: string;
@@ -78,6 +82,28 @@ function PerfilPage() {
   }, [isReady, user]);
 
   useEffect(() => {
+    if (!isReady || !user) { setStripeCustomerId(null); setCustomerChecked(true); return; }
+    let active = true;
+    setCustomerChecked(false);
+    (async () => {
+      const { data } = await supabase
+        .from("subscriptions")
+        .select("stripe_customer_id, environment, updated_at")
+        .eq("user_id", user.id)
+        .not("stripe_customer_id", "is", null)
+        .order("updated_at", { ascending: false })
+        .limit(5);
+      if (!active) return;
+      const valid = (data ?? []).find(
+        (r) => r.stripe_customer_id && !r.stripe_customer_id.startsWith("cus_test_fake"),
+      );
+      setStripeCustomerId(valid?.stripe_customer_id ?? null);
+      setCustomerChecked(true);
+    })();
+    return () => { active = false; };
+  }, [isReady, user]);
+
+  useEffect(() => {
     if (!isReady || !user) { setCoursesLoading(false); return; }
     let active = true;
     setCoursesLoading(true);
@@ -94,14 +120,13 @@ function PerfilPage() {
         if (row.last_watched_at > entry.lastAt) entry.lastAt = row.last_watched_at;
         byCourse.set(row.course_id, entry);
       }
-      const courseIds = Array.from(byCourse.keys());
-      if (courseIds.length === 0) {
-        if (active) { setCourses([]); setCoursesLoading(false); }
-        return;
-      }
       const [{ data: courseRows }, { data: lessonRows }] = await Promise.all([
-        supabase.from("courses").select("id, title, title_en, title_pt, thumbnail_url").in("id", courseIds),
-        supabase.from("lessons").select("course_id").in("course_id", courseIds),
+        supabase
+          .from("courses")
+          .select("id, title, title_en, title_pt, thumbnail_url, status, sort_order")
+          .eq("status", "published")
+          .order("sort_order", { ascending: true }),
+        supabase.from("lessons").select("course_id"),
       ]);
       const totals = new Map<string, number>();
       for (const l of lessonRows ?? []) totals.set(l.course_id, (totals.get(l.course_id) ?? 0) + 1);
@@ -109,10 +134,11 @@ function PerfilPage() {
         id: c.id,
         title: loc(c, "title", lang),
         thumbnail_url: c.thumbnail_url,
+        sortOrder: c.sort_order ?? 0,
         total: totals.get(c.id) ?? 0,
         completed: byCourse.get(c.id)?.completed.size ?? 0,
         lastAt: byCourse.get(c.id)?.lastAt ?? "",
-      })).sort((a, b) => (a.lastAt < b.lastAt ? 1 : -1));
+      })).sort((a, b) => (a.lastAt === b.lastAt ? a.sortOrder - b.sortOrder : a.lastAt < b.lastAt ? 1 : -1));
       if (active) { setCourses(result); setCoursesLoading(false); }
     })();
     return () => { active = false; };
@@ -145,7 +171,13 @@ function PerfilPage() {
   }
 
   async function openPortal() {
+    if (!stripeCustomerId) {
+      setPortalError(null);
+      toast.info(t("perfil.sinCliente"));
+      return;
+    }
     setPortalLoading(true);
+    setPortalError(null);
     try {
       const { data, error } = await supabase.functions.invoke("create-portal-session", {
         body: {
@@ -153,15 +185,42 @@ function PerfilPage() {
           environment: getStripeEnvironment(),
         },
       });
-      if (error || !data?.url) throw new Error(error?.message || "no url");
-      window.open(data.url, "_blank", "noopener,noreferrer");
+      const detail =
+        (data && typeof data === "object" && "error" in data ? String((data as { error?: unknown }).error) : null) ??
+        error?.message ??
+        null;
+      if (!data?.url) {
+        setPortalError(detail || "El portal de facturación no devolvió una URL válida.");
+        return;
+      }
+      window.open(data.url as string, "_blank", "noopener,noreferrer");
     } catch (e) {
       console.error("portal error", e);
-      toast.error(t("perfil.errorPortal"));
+      setPortalError(e instanceof Error ? e.message : String(e));
     } finally {
       setPortalLoading(false);
     }
   }
+
+  const portalNotice = portalError ? (
+    <div className="mt-3 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-left">
+      <p className="text-sm font-medium text-destructive">{t("perfil.errorPortal")}</p>
+      <details className="mt-2">
+        <summary className="text-xs text-muted-foreground cursor-pointer">{t("perfil.detalleTecnico")}</summary>
+        <pre className="mt-2 text-xs whitespace-pre-wrap break-words text-muted-foreground">{portalError}</pre>
+      </details>
+    </div>
+  ) : null;
+
+  const portalButton = (
+    <Button onClick={openPortal} disabled={portalLoading} variant="outline">
+      {portalLoading ? (
+        <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("perfil.abriendoPortal")}</>
+      ) : (
+        <><ExternalLink className="w-4 h-4 mr-2" />{t("perfil.gestionar")}</>
+      )}
+    </Button>
+  );
 
   const memberLabel = memberSince
     ? new Date(memberSince).toLocaleDateString(lang === "en" ? "en-US" : "es-ES", { month: "long", year: "numeric" })
@@ -328,14 +387,15 @@ function PerfilPage() {
               )}
 
               <div className="pt-2 border-t border-border">
-                <p className="text-sm text-muted-foreground mb-3">{t("perfil.gestionarDesc")}</p>
-                <Button onClick={openPortal} disabled={portalLoading} variant="outline">
-                  {portalLoading ? (
-                    <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("perfil.abriendoPortal")}</>
-                  ) : (
-                    <><ExternalLink className="w-4 h-4 mr-2" />{t("perfil.gestionar")}</>
-                  )}
-                </Button>
+                {customerChecked && !stripeCustomerId ? (
+                  <p className="text-sm text-muted-foreground">{t("perfil.sinCliente")}</p>
+                ) : (
+                  <>
+                    <p className="text-sm text-muted-foreground mb-3">{t("perfil.gestionarDesc")}</p>
+                    {portalButton}
+                    {portalNotice}
+                  </>
+                )}
               </div>
             </div>
           ) : (
@@ -346,16 +406,9 @@ function PerfilPage() {
                 <Button asChild>
                   <Link to="/planes">{t("perfil.verPlanes")}</Link>
                 </Button>
-                {sub.status && (
-                  <Button onClick={openPortal} disabled={portalLoading} variant="outline">
-                    {portalLoading ? (
-                      <><Loader2 className="w-4 h-4 mr-2 animate-spin" />{t("perfil.abriendoPortal")}</>
-                    ) : (
-                      <><ExternalLink className="w-4 h-4 mr-2" />{t("perfil.gestionar")}</>
-                    )}
-                  </Button>
-                )}
+                {customerChecked && stripeCustomerId && portalButton}
               </div>
+              {portalNotice}
             </div>
           )}
         </section>
