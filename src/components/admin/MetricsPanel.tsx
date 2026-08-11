@@ -15,7 +15,7 @@ interface UserRow {
   is_admin: boolean;
 }
 
-const PRICES: Record<PlanTier, number> = { basico: 27, premium: 97 };
+const PRICES: Record<PlanTier, number> = { basico: 57, premium: 87, elite: 167 };
 
 function StatCard({ icon: Icon, label, value, hint, accent }: {
   icon: React.ComponentType<{ className?: string }>;
@@ -62,6 +62,7 @@ export function MetricsPanel() {
     const actives = users.filter(isActive);
     const basico = actives.filter((u) => u.plan_tier === "basico");
     const premium = actives.filter((u) => u.plan_tier === "premium");
+    const elite = actives.filter((u) => u.plan_tier === "elite");
     const paying = actives.filter((u) => u.environment !== "manual");
     const manual = actives.filter((u) => u.environment === "manual");
 
@@ -91,6 +92,7 @@ export function MetricsPanel() {
       actives: actives.length,
       basico: basico.length,
       premium: premium.length,
+      elite: elite.length,
       paying: paying.length,
       manual: manual.length,
       mrr,
