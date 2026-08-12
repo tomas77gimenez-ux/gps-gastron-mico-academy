@@ -54,6 +54,7 @@ serve(async (req) => {
     const reusedCustomerId = userId ? await existingCustomerId(userId, env) : null;
 
     const session = await stripe.checkout.sessions.create({
+      allow_promotion_codes: true,
       line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
       mode: isRecurring ? "subscription" : "payment",
       ui_mode: "embedded",
