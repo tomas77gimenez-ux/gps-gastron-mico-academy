@@ -1,0 +1,6 @@
+insert into public.gd_files (gd_id, title, file_url, file_type, file_size, sort_order) values
+('c8d31755-6e9d-4087-a419-42b3700d5c3c','Checklist — Hospitalidad','https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/gerentes-digitales/gd1/CHECK_LIST_HOSPITALIDAD.xlsx','xlsx',123537,1),
+('c8d31755-6e9d-4087-a419-42b3700d5c3c','Checklist — Mise en Place · Salón','https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/gerentes-digitales/gd1/CHEK_LIST_SALON.xlsx','xlsx',66334,2),
+('c8d31755-6e9d-4087-a419-42b3700d5c3c','Checklist — Limpieza y Sanitización','https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/gerentes-digitales/gd1/CHEK_LIST_LIMPIEZA.xlsx','xlsx',65654,3),
+('c8d31755-6e9d-4087-a419-42b3700d5c3c','Checklist — Organigrama de Meseros','https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/gerentes-digitales/gd1/checklist_meseros.xlsx','xlsx',15171,4),
+('c8d31755-6e9d-4087-a419-42b3700d5c3c','Organigrama Semanal de Meseros','https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/gerentes-digitales/gd1/Organigrama_MESEROS.xlsx','xlsx',17308,5);
