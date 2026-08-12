@@ -9,142 +9,57 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
-import { Route as TiendaRouteImport } from './routes/tienda'
-import { Route as TerminosRouteImport } from './routes/terminos'
-import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
-import { Route as SalaProRouteImport } from './routes/sala-pro'
-import { Route as ResetPasswordRouteImport } from './routes/reset-password'
-import { Route as RegistroRouteImport } from './routes/registro'
-import { Route as ReembolsosRouteImport } from './routes/reembolsos'
-import { Route as PrivacidadRouteImport } from './routes/privacidad'
-import { Route as PlanesRouteImport } from './routes/planes'
-import { Route as PerfilRouteImport } from './routes/perfil'
-import { Route as McpRouteImport } from './routes/mcp'
-import { Route as LoginRouteImport } from './routes/login'
-import { Route as HerramientasRouteImport } from './routes/herramientas'
-import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
-import { Route as DashboardRouteImport } from './routes/dashboard'
-import { Route as CursosRouteImport } from './routes/cursos'
-import { Route as AsistenteRouteImport } from './routes/asistente'
-import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as HerramientasIndexRouteImport } from './routes/herramientas.index'
-import { Route as HerramientasPuntoEquilibrioRouteImport } from './routes/herramientas.punto-equilibrio'
-import { Route as HerramientasMonitorCmvRouteImport } from './routes/herramientas.monitor-cmv'
-import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herramientas.fichas-tecnicas'
-import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
-import { Route as HerramientasDreRouteImport } from './routes/herramientas.dre'
-import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
-import { Route as GerenteDigitalIdRouteImport } from './routes/gerente-digital.$id'
-import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
-import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
-import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
-import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as AdminRouteImport } from './routes/admin'
+import { Route as AsistenteRouteImport } from './routes/asistente'
+import { Route as CursosRouteImport } from './routes/cursos'
+import { Route as DashboardRouteImport } from './routes/dashboard'
+import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
+import { Route as HerramientasRouteImport } from './routes/herramientas'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as McpRouteImport } from './routes/mcp'
+import { Route as PerfilRouteImport } from './routes/perfil'
+import { Route as PlanesRouteImport } from './routes/planes'
+import { Route as PrivacidadRouteImport } from './routes/privacidad'
+import { Route as ReembolsosRouteImport } from './routes/reembolsos'
+import { Route as RegistroRouteImport } from './routes/registro'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SalaProRouteImport } from './routes/sala-pro'
+import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as TerminosRouteImport } from './routes/terminos'
+import { Route as TiendaRouteImport } from './routes/tienda'
+import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as Char91DotmcpChar93ListToolsRouteImport } from './routes/[.mcp]/list-tools'
-import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
-import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-embed'
-import { Route as ApiPublicNovedadesRouteImport } from './routes/api.public.novedades'
-import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
-import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
-import { Route as ApiPublicGdDownloadRouteImport } from './routes/api.public.gd-download'
-import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
-import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
+import { Route as CheckoutReturnRouteImport } from './routes/checkout.return'
+import { Route as CursosIdRouteImport } from './routes/cursos_.$id'
+import { Route as EmailUnsubscribeRouteImport } from './routes/email/unsubscribe'
+import { Route as GerenteDigitalIdRouteImport } from './routes/gerente-digital.$id'
+import { Route as HerramientasIndexRouteImport } from './routes/herramientas.index'
+import { Route as HerramientasControlCajaRouteImport } from './routes/herramientas.control-caja'
+import { Route as HerramientasDreRouteImport } from './routes/herramientas.dre'
+import { Route as HerramientasDreMensualRouteImport } from './routes/herramientas.dre-mensual'
+import { Route as HerramientasFichasTecnicasRouteImport } from './routes/herramientas.fichas-tecnicas'
+import { Route as HerramientasMonitorCmvRouteImport } from './routes/herramientas.monitor-cmv'
+import { Route as HerramientasPuntoEquilibrioRouteImport } from './routes/herramientas.punto-equilibrio'
 import { Route as Char91DotmcpChar93InvokeToolToolRouteImport } from './routes/[.mcp]/invoke-tool/$tool'
-import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
-import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
-import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
-import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as ApiPublicBunnySyncRouteImport } from './routes/api.public.bunny-sync'
+import { Route as ApiPublicBunnyThumbsRouteImport } from './routes/api.public.bunny-thumbs'
+import { Route as ApiPublicGdDownloadRouteImport } from './routes/api.public.gd-download'
+import { Route as ApiPublicLessonEmbedRouteImport } from './routes/api.public.lesson-embed'
+import { Route as ApiPublicMaterialDownloadRouteImport } from './routes/api.public.material-download'
+import { Route as ApiPublicNovedadesRouteImport } from './routes/api.public.novedades'
+import { Route as ApiPublicProEmbedRouteImport } from './routes/api.public.pro-embed'
+import { Route as LovableEmailSuppressionRouteImport } from './routes/lovable/email/suppression'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
+import { Route as LovableEmailAuthWebhookRouteImport } from './routes/lovable/email/auth/webhook'
+import { Route as LovableEmailQueueProcessRouteImport } from './routes/lovable/email/queue/process'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as LovableEmailTransactionalSendRouteImport } from './routes/lovable/email/transactional/send'
 
-const UnsubscribeRoute = UnsubscribeRouteImport.update({
-  id: '/unsubscribe',
-  path: '/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TiendaRoute = TiendaRouteImport.update({
-  id: '/tienda',
-  path: '/tienda',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const TerminosRoute = TerminosRouteImport.update({
-  id: '/terminos',
-  path: '/terminos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
-  id: '/sitemap.xml',
-  path: '/sitemap.xml',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SalaProRoute = SalaProRouteImport.update({
-  id: '/sala-pro',
-  path: '/sala-pro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ResetPasswordRoute = ResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const RegistroRoute = RegistroRouteImport.update({
-  id: '/registro',
-  path: '/registro',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReembolsosRoute = ReembolsosRouteImport.update({
-  id: '/reembolsos',
-  path: '/reembolsos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacidadRoute = PrivacidadRouteImport.update({
-  id: '/privacidad',
-  path: '/privacidad',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PlanesRoute = PlanesRouteImport.update({
-  id: '/planes',
-  path: '/planes',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PerfilRoute = PerfilRouteImport.update({
-  id: '/perfil',
-  path: '/perfil',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const McpRoute = McpRouteImport.update({
-  id: '/mcp',
-  path: '/mcp',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LoginRoute = LoginRouteImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const HerramientasRoute = HerramientasRouteImport.update({
-  id: '/herramientas',
-  path: '/herramientas',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
-  id: '/forgot-password',
-  path: '/forgot-password',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DashboardRoute = DashboardRouteImport.update({
-  id: '/dashboard',
-  path: '/dashboard',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CursosRoute = CursosRouteImport.update({
-  id: '/cursos',
-  path: '/cursos',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AsistenteRoute = AsistenteRouteImport.update({
-  id: '/asistente',
-  path: '/asistente',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -152,9 +67,126 @@ const AdminRoute = AdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const AsistenteRoute = AsistenteRouteImport.update({
+  id: '/asistente',
+  path: '/asistente',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosRoute = CursosRouteImport.update({
+  id: '/cursos',
+  path: '/cursos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ForgotPasswordRoute = ForgotPasswordRouteImport.update({
+  id: '/forgot-password',
+  path: '/forgot-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HerramientasRoute = HerramientasRouteImport.update({
+  id: '/herramientas',
+  path: '/herramientas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PerfilRoute = PerfilRouteImport.update({
+  id: '/perfil',
+  path: '/perfil',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanesRoute = PlanesRouteImport.update({
+  id: '/planes',
+  path: '/planes',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacidadRoute = PrivacidadRouteImport.update({
+  id: '/privacidad',
+  path: '/privacidad',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReembolsosRoute = ReembolsosRouteImport.update({
+  id: '/reembolsos',
+  path: '/reembolsos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RegistroRoute = RegistroRouteImport.update({
+  id: '/registro',
+  path: '/registro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SalaProRoute = SalaProRouteImport.update({
+  id: '/sala-pro',
+  path: '/sala-pro',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
+  id: '/sitemap.xml',
+  path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TerminosRoute = TerminosRouteImport.update({
+  id: '/terminos',
+  path: '/terminos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TiendaRoute = TiendaRouteImport.update({
+  id: '/tienda',
+  path: '/tienda',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const UnsubscribeRoute = UnsubscribeRouteImport.update({
+  id: '/unsubscribe',
+  path: '/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const Char91DotmcpChar93ListToolsRoute =
+  Char91DotmcpChar93ListToolsRouteImport.update({
+    id: '/.mcp/list-tools',
+    path: '/.mcp/list-tools',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
+  id: '/checkout/return',
+  path: '/checkout/return',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CursosIdRoute = CursosIdRouteImport.update({
+  id: '/cursos_/$id',
+  path: '/cursos/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
+  id: '/email/unsubscribe',
+  path: '/email/unsubscribe',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GerenteDigitalIdRoute = GerenteDigitalIdRouteImport.update({
+  id: '/gerente-digital/$id',
+  path: '/gerente-digital/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const HerramientasIndexRoute = HerramientasIndexRouteImport.update({
@@ -162,15 +194,19 @@ const HerramientasIndexRoute = HerramientasIndexRouteImport.update({
   path: '/',
   getParentRoute: () => HerramientasRoute,
 } as any)
-const HerramientasPuntoEquilibrioRoute =
-  HerramientasPuntoEquilibrioRouteImport.update({
-    id: '/punto-equilibrio',
-    path: '/punto-equilibrio',
-    getParentRoute: () => HerramientasRoute,
-  } as any)
-const HerramientasMonitorCmvRoute = HerramientasMonitorCmvRouteImport.update({
-  id: '/monitor-cmv',
-  path: '/monitor-cmv',
+const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
+  id: '/control-caja',
+  path: '/control-caja',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasDreRoute = HerramientasDreRouteImport.update({
+  id: '/dre',
+  path: '/dre',
+  getParentRoute: () => HerramientasRoute,
+} as any)
+const HerramientasDreMensualRoute = HerramientasDreMensualRouteImport.update({
+  id: '/dre-mensual',
+  path: '/dre-mensual',
   getParentRoute: () => HerramientasRoute,
 } as any)
 const HerramientasFichasTecnicasRoute =
@@ -179,66 +215,41 @@ const HerramientasFichasTecnicasRoute =
     path: '/fichas-tecnicas',
     getParentRoute: () => HerramientasRoute,
   } as any)
-const HerramientasDreMensualRoute = HerramientasDreMensualRouteImport.update({
-  id: '/dre-mensual',
-  path: '/dre-mensual',
+const HerramientasMonitorCmvRoute = HerramientasMonitorCmvRouteImport.update({
+  id: '/monitor-cmv',
+  path: '/monitor-cmv',
   getParentRoute: () => HerramientasRoute,
 } as any)
-const HerramientasDreRoute = HerramientasDreRouteImport.update({
-  id: '/dre',
-  path: '/dre',
-  getParentRoute: () => HerramientasRoute,
-} as any)
-const HerramientasControlCajaRoute = HerramientasControlCajaRouteImport.update({
-  id: '/control-caja',
-  path: '/control-caja',
-  getParentRoute: () => HerramientasRoute,
-} as any)
-const GerenteDigitalIdRoute = GerenteDigitalIdRouteImport.update({
-  id: '/gerente-digital/$id',
-  path: '/gerente-digital/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const EmailUnsubscribeRoute = EmailUnsubscribeRouteImport.update({
-  id: '/email/unsubscribe',
-  path: '/email/unsubscribe',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CursosIdRoute = CursosIdRouteImport.update({
-  id: '/cursos_/$id',
-  path: '/cursos/$id',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutReturnRoute = CheckoutReturnRouteImport.update({
-  id: '/checkout/return',
-  path: '/checkout/return',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Char91DotwellKnownChar93OauthProtectedResourceRoute =
-  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
-    id: '/.well-known/oauth-protected-resource',
-    path: '/.well-known/oauth-protected-resource',
+const HerramientasPuntoEquilibrioRoute =
+  HerramientasPuntoEquilibrioRouteImport.update({
+    id: '/punto-equilibrio',
+    path: '/punto-equilibrio',
+    getParentRoute: () => HerramientasRoute,
+  } as any)
+const Char91DotmcpChar93InvokeToolToolRoute =
+  Char91DotmcpChar93InvokeToolToolRouteImport.update({
+    id: '/.mcp/invoke-tool/$tool',
+    path: '/.mcp/invoke-tool/$tool',
     getParentRoute: () => rootRouteImport,
   } as any)
-const Char91DotmcpChar93ListToolsRoute =
-  Char91DotmcpChar93ListToolsRouteImport.update({
-    id: '/.mcp/list-tools',
-    path: '/.mcp/list-tools',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
-  id: '/lovable/email/suppression',
-  path: '/lovable/email/suppression',
+const ApiPublicBunnySyncRoute = ApiPublicBunnySyncRouteImport.update({
+  id: '/api/public/bunny-sync',
+  path: '/api/public/bunny-sync',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicProEmbedRoute = ApiPublicProEmbedRouteImport.update({
-  id: '/api/public/pro-embed',
-  path: '/api/public/pro-embed',
+const ApiPublicBunnyThumbsRoute = ApiPublicBunnyThumbsRouteImport.update({
+  id: '/api/public/bunny-thumbs',
+  path: '/api/public/bunny-thumbs',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicNovedadesRoute = ApiPublicNovedadesRouteImport.update({
-  id: '/api/public/novedades',
-  path: '/api/public/novedades',
+const ApiPublicGdDownloadRoute = ApiPublicGdDownloadRouteImport.update({
+  id: '/api/public/gd-download',
+  path: '/api/public/gd-download',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicLessonEmbedRoute = ApiPublicLessonEmbedRouteImport.update({
+  id: '/api/public/lesson-embed',
+  path: '/api/public/lesson-embed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicMaterialDownloadRoute =
@@ -247,36 +258,35 @@ const ApiPublicMaterialDownloadRoute =
     path: '/api/public/material-download',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicLessonEmbedRoute = ApiPublicLessonEmbedRouteImport.update({
-  id: '/api/public/lesson-embed',
-  path: '/api/public/lesson-embed',
+const ApiPublicNovedadesRoute = ApiPublicNovedadesRouteImport.update({
+  id: '/api/public/novedades',
+  path: '/api/public/novedades',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicGdDownloadRoute = ApiPublicGdDownloadRouteImport.update({
-  id: '/api/public/gd-download',
-  path: '/api/public/gd-download',
+const ApiPublicProEmbedRoute = ApiPublicProEmbedRouteImport.update({
+  id: '/api/public/pro-embed',
+  path: '/api/public/pro-embed',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicBunnyThumbsRoute = ApiPublicBunnyThumbsRouteImport.update({
-  id: '/api/public/bunny-thumbs',
-  path: '/api/public/bunny-thumbs',
+const LovableEmailSuppressionRoute = LovableEmailSuppressionRouteImport.update({
+  id: '/lovable/email/suppression',
+  path: '/lovable/email/suppression',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiPublicBunnySyncRoute = ApiPublicBunnySyncRouteImport.update({
-  id: '/api/public/bunny-sync',
-  path: '/api/public/bunny-sync',
+const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
+  id: '/lovable/email/auth/preview',
+  path: '/lovable/email/auth/preview',
   getParentRoute: () => rootRouteImport,
 } as any)
-const Char91DotmcpChar93InvokeToolToolRoute =
-  Char91DotmcpChar93InvokeToolToolRouteImport.update({
-    id: '/.mcp/invoke-tool/$tool',
-    path: '/.mcp/invoke-tool/$tool',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const LovableEmailTransactionalSendRoute =
-  LovableEmailTransactionalSendRouteImport.update({
-    id: '/lovable/email/transactional/send',
-    path: '/lovable/email/transactional/send',
+const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
+  id: '/lovable/email/auth/webhook',
+  path: '/lovable/email/auth/webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LovableEmailQueueProcessRoute =
+  LovableEmailQueueProcessRouteImport.update({
+    id: '/lovable/email/queue/process',
+    path: '/lovable/email/queue/process',
     getParentRoute: () => rootRouteImport,
   } as any)
 const LovableEmailTransactionalPreviewRoute =
@@ -285,22 +295,12 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
-const LovableEmailQueueProcessRoute =
-  LovableEmailQueueProcessRouteImport.update({
-    id: '/lovable/email/queue/process',
-    path: '/lovable/email/queue/process',
+const LovableEmailTransactionalSendRoute =
+  LovableEmailTransactionalSendRouteImport.update({
+    id: '/lovable/email/transactional/send',
+    path: '/lovable/email/transactional/send',
     getParentRoute: () => rootRouteImport,
   } as any)
-const LovableEmailAuthWebhookRoute = LovableEmailAuthWebhookRouteImport.update({
-  id: '/lovable/email/auth/webhook',
-  path: '/lovable/email/auth/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LovableEmailAuthPreviewRoute = LovableEmailAuthPreviewRouteImport.update({
-  id: '/lovable/email/auth/preview',
-  path: '/lovable/email/auth/preview',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -643,130 +643,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/unsubscribe': {
-      id: '/unsubscribe'
-      path: '/unsubscribe'
-      fullPath: '/unsubscribe'
-      preLoaderRoute: typeof UnsubscribeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/tienda': {
-      id: '/tienda'
-      path: '/tienda'
-      fullPath: '/tienda'
-      preLoaderRoute: typeof TiendaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/terminos': {
-      id: '/terminos'
-      path: '/terminos'
-      fullPath: '/terminos'
-      preLoaderRoute: typeof TerminosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sitemap.xml': {
-      id: '/sitemap.xml'
-      path: '/sitemap.xml'
-      fullPath: '/sitemap.xml'
-      preLoaderRoute: typeof SitemapDotxmlRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/sala-pro': {
-      id: '/sala-pro'
-      path: '/sala-pro'
-      fullPath: '/sala-pro'
-      preLoaderRoute: typeof SalaProRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reset-password': {
-      id: '/reset-password'
-      path: '/reset-password'
-      fullPath: '/reset-password'
-      preLoaderRoute: typeof ResetPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/registro': {
-      id: '/registro'
-      path: '/registro'
-      fullPath: '/registro'
-      preLoaderRoute: typeof RegistroRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reembolsos': {
-      id: '/reembolsos'
-      path: '/reembolsos'
-      fullPath: '/reembolsos'
-      preLoaderRoute: typeof ReembolsosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacidad': {
-      id: '/privacidad'
-      path: '/privacidad'
-      fullPath: '/privacidad'
-      preLoaderRoute: typeof PrivacidadRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/planes': {
-      id: '/planes'
-      path: '/planes'
-      fullPath: '/planes'
-      preLoaderRoute: typeof PlanesRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/perfil': {
-      id: '/perfil'
-      path: '/perfil'
-      fullPath: '/perfil'
-      preLoaderRoute: typeof PerfilRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/mcp': {
-      id: '/mcp'
-      path: '/mcp'
-      fullPath: '/mcp'
-      preLoaderRoute: typeof McpRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/herramientas': {
-      id: '/herramientas'
-      path: '/herramientas'
-      fullPath: '/herramientas'
-      preLoaderRoute: typeof HerramientasRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/forgot-password': {
-      id: '/forgot-password'
-      path: '/forgot-password'
-      fullPath: '/forgot-password'
-      preLoaderRoute: typeof ForgotPasswordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dashboard': {
-      id: '/dashboard'
-      path: '/dashboard'
-      fullPath: '/dashboard'
-      preLoaderRoute: typeof DashboardRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cursos': {
-      id: '/cursos'
-      path: '/cursos'
-      fullPath: '/cursos'
-      preLoaderRoute: typeof CursosRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/asistente': {
-      id: '/asistente'
-      path: '/asistente'
-      fullPath: '/asistente'
-      preLoaderRoute: typeof AsistenteRouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -776,95 +657,130 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/asistente': {
+      id: '/asistente'
+      path: '/asistente'
+      fullPath: '/asistente'
+      preLoaderRoute: typeof AsistenteRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/herramientas/': {
-      id: '/herramientas/'
-      path: '/'
-      fullPath: '/herramientas/'
-      preLoaderRoute: typeof HerramientasIndexRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/punto-equilibrio': {
-      id: '/herramientas/punto-equilibrio'
-      path: '/punto-equilibrio'
-      fullPath: '/herramientas/punto-equilibrio'
-      preLoaderRoute: typeof HerramientasPuntoEquilibrioRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/monitor-cmv': {
-      id: '/herramientas/monitor-cmv'
-      path: '/monitor-cmv'
-      fullPath: '/herramientas/monitor-cmv'
-      preLoaderRoute: typeof HerramientasMonitorCmvRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/fichas-tecnicas': {
-      id: '/herramientas/fichas-tecnicas'
-      path: '/fichas-tecnicas'
-      fullPath: '/herramientas/fichas-tecnicas'
-      preLoaderRoute: typeof HerramientasFichasTecnicasRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/dre-mensual': {
-      id: '/herramientas/dre-mensual'
-      path: '/dre-mensual'
-      fullPath: '/herramientas/dre-mensual'
-      preLoaderRoute: typeof HerramientasDreMensualRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/dre': {
-      id: '/herramientas/dre'
-      path: '/dre'
-      fullPath: '/herramientas/dre'
-      preLoaderRoute: typeof HerramientasDreRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/herramientas/control-caja': {
-      id: '/herramientas/control-caja'
-      path: '/control-caja'
-      fullPath: '/herramientas/control-caja'
-      preLoaderRoute: typeof HerramientasControlCajaRouteImport
-      parentRoute: typeof HerramientasRoute
-    }
-    '/gerente-digital/$id': {
-      id: '/gerente-digital/$id'
-      path: '/gerente-digital/$id'
-      fullPath: '/gerente-digital/$id'
-      preLoaderRoute: typeof GerenteDigitalIdRouteImport
+    '/cursos': {
+      id: '/cursos'
+      path: '/cursos'
+      fullPath: '/cursos'
+      preLoaderRoute: typeof CursosRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/email/unsubscribe': {
-      id: '/email/unsubscribe'
-      path: '/email/unsubscribe'
-      fullPath: '/email/unsubscribe'
-      preLoaderRoute: typeof EmailUnsubscribeRouteImport
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/cursos_/$id': {
-      id: '/cursos_/$id'
-      path: '/cursos/$id'
-      fullPath: '/cursos/$id'
-      preLoaderRoute: typeof CursosIdRouteImport
+    '/forgot-password': {
+      id: '/forgot-password'
+      path: '/forgot-password'
+      fullPath: '/forgot-password'
+      preLoaderRoute: typeof ForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/checkout/return': {
-      id: '/checkout/return'
-      path: '/checkout/return'
-      fullPath: '/checkout/return'
-      preLoaderRoute: typeof CheckoutReturnRouteImport
+    '/herramientas': {
+      id: '/herramientas'
+      path: '/herramientas'
+      fullPath: '/herramientas'
+      preLoaderRoute: typeof HerramientasRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.well-known/oauth-protected-resource': {
-      id: '/.well-known/oauth-protected-resource'
-      path: '/.well-known/oauth-protected-resource'
-      fullPath: '/.well-known/oauth-protected-resource'
-      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/perfil': {
+      id: '/perfil'
+      path: '/perfil'
+      fullPath: '/perfil'
+      preLoaderRoute: typeof PerfilRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/planes': {
+      id: '/planes'
+      path: '/planes'
+      fullPath: '/planes'
+      preLoaderRoute: typeof PlanesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacidad': {
+      id: '/privacidad'
+      path: '/privacidad'
+      fullPath: '/privacidad'
+      preLoaderRoute: typeof PrivacidadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reembolsos': {
+      id: '/reembolsos'
+      path: '/reembolsos'
+      fullPath: '/reembolsos'
+      preLoaderRoute: typeof ReembolsosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/registro': {
+      id: '/registro'
+      path: '/registro'
+      fullPath: '/registro'
+      preLoaderRoute: typeof RegistroRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sala-pro': {
+      id: '/sala-pro'
+      path: '/sala-pro'
+      fullPath: '/sala-pro'
+      preLoaderRoute: typeof SalaProRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/sitemap.xml': {
+      id: '/sitemap.xml'
+      path: '/sitemap.xml'
+      fullPath: '/sitemap.xml'
+      preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terminos': {
+      id: '/terminos'
+      path: '/terminos'
+      fullPath: '/terminos'
+      preLoaderRoute: typeof TerminosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tienda': {
+      id: '/tienda'
+      path: '/tienda'
+      fullPath: '/tienda'
+      preLoaderRoute: typeof TiendaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/unsubscribe': {
+      id: '/unsubscribe'
+      path: '/unsubscribe'
+      fullPath: '/unsubscribe'
+      preLoaderRoute: typeof UnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/.mcp/list-tools': {
@@ -874,53 +790,95 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char91DotmcpChar93ListToolsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/suppression': {
-      id: '/lovable/email/suppression'
-      path: '/lovable/email/suppression'
-      fullPath: '/lovable/email/suppression'
-      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/pro-embed': {
-      id: '/api/public/pro-embed'
-      path: '/api/public/pro-embed'
-      fullPath: '/api/public/pro-embed'
-      preLoaderRoute: typeof ApiPublicProEmbedRouteImport
+    '/checkout/return': {
+      id: '/checkout/return'
+      path: '/checkout/return'
+      fullPath: '/checkout/return'
+      preLoaderRoute: typeof CheckoutReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/novedades': {
-      id: '/api/public/novedades'
-      path: '/api/public/novedades'
-      fullPath: '/api/public/novedades'
-      preLoaderRoute: typeof ApiPublicNovedadesRouteImport
+    '/cursos_/$id': {
+      id: '/cursos_/$id'
+      path: '/cursos/$id'
+      fullPath: '/cursos/$id'
+      preLoaderRoute: typeof CursosIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/material-download': {
-      id: '/api/public/material-download'
-      path: '/api/public/material-download'
-      fullPath: '/api/public/material-download'
-      preLoaderRoute: typeof ApiPublicMaterialDownloadRouteImport
+    '/email/unsubscribe': {
+      id: '/email/unsubscribe'
+      path: '/email/unsubscribe'
+      fullPath: '/email/unsubscribe'
+      preLoaderRoute: typeof EmailUnsubscribeRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/lesson-embed': {
-      id: '/api/public/lesson-embed'
-      path: '/api/public/lesson-embed'
-      fullPath: '/api/public/lesson-embed'
-      preLoaderRoute: typeof ApiPublicLessonEmbedRouteImport
+    '/gerente-digital/$id': {
+      id: '/gerente-digital/$id'
+      path: '/gerente-digital/$id'
+      fullPath: '/gerente-digital/$id'
+      preLoaderRoute: typeof GerenteDigitalIdRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/gd-download': {
-      id: '/api/public/gd-download'
-      path: '/api/public/gd-download'
-      fullPath: '/api/public/gd-download'
-      preLoaderRoute: typeof ApiPublicGdDownloadRouteImport
-      parentRoute: typeof rootRouteImport
+    '/herramientas/': {
+      id: '/herramientas/'
+      path: '/'
+      fullPath: '/herramientas/'
+      preLoaderRoute: typeof HerramientasIndexRouteImport
+      parentRoute: typeof HerramientasRoute
     }
-    '/api/public/bunny-thumbs': {
-      id: '/api/public/bunny-thumbs'
-      path: '/api/public/bunny-thumbs'
-      fullPath: '/api/public/bunny-thumbs'
-      preLoaderRoute: typeof ApiPublicBunnyThumbsRouteImport
+    '/herramientas/control-caja': {
+      id: '/herramientas/control-caja'
+      path: '/control-caja'
+      fullPath: '/herramientas/control-caja'
+      preLoaderRoute: typeof HerramientasControlCajaRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/dre': {
+      id: '/herramientas/dre'
+      path: '/dre'
+      fullPath: '/herramientas/dre'
+      preLoaderRoute: typeof HerramientasDreRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/dre-mensual': {
+      id: '/herramientas/dre-mensual'
+      path: '/dre-mensual'
+      fullPath: '/herramientas/dre-mensual'
+      preLoaderRoute: typeof HerramientasDreMensualRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/fichas-tecnicas': {
+      id: '/herramientas/fichas-tecnicas'
+      path: '/fichas-tecnicas'
+      fullPath: '/herramientas/fichas-tecnicas'
+      preLoaderRoute: typeof HerramientasFichasTecnicasRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/monitor-cmv': {
+      id: '/herramientas/monitor-cmv'
+      path: '/monitor-cmv'
+      fullPath: '/herramientas/monitor-cmv'
+      preLoaderRoute: typeof HerramientasMonitorCmvRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/herramientas/punto-equilibrio': {
+      id: '/herramientas/punto-equilibrio'
+      path: '/punto-equilibrio'
+      fullPath: '/herramientas/punto-equilibrio'
+      preLoaderRoute: typeof HerramientasPuntoEquilibrioRouteImport
+      parentRoute: typeof HerramientasRoute
+    }
+    '/.mcp/invoke-tool/$tool': {
+      id: '/.mcp/invoke-tool/$tool'
+      path: '/.mcp/invoke-tool/$tool'
+      fullPath: '/.mcp/invoke-tool/$tool'
+      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/bunny-sync': {
@@ -930,32 +888,60 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBunnySyncRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/.mcp/invoke-tool/$tool': {
-      id: '/.mcp/invoke-tool/$tool'
-      path: '/.mcp/invoke-tool/$tool'
-      fullPath: '/.mcp/invoke-tool/$tool'
-      preLoaderRoute: typeof Char91DotmcpChar93InvokeToolToolRouteImport
+    '/api/public/bunny-thumbs': {
+      id: '/api/public/bunny-thumbs'
+      path: '/api/public/bunny-thumbs'
+      fullPath: '/api/public/bunny-thumbs'
+      preLoaderRoute: typeof ApiPublicBunnyThumbsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/send': {
-      id: '/lovable/email/transactional/send'
-      path: '/lovable/email/transactional/send'
-      fullPath: '/lovable/email/transactional/send'
-      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
+    '/api/public/gd-download': {
+      id: '/api/public/gd-download'
+      path: '/api/public/gd-download'
+      fullPath: '/api/public/gd-download'
+      preLoaderRoute: typeof ApiPublicGdDownloadRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/transactional/preview': {
-      id: '/lovable/email/transactional/preview'
-      path: '/lovable/email/transactional/preview'
-      fullPath: '/lovable/email/transactional/preview'
-      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+    '/api/public/lesson-embed': {
+      id: '/api/public/lesson-embed'
+      path: '/api/public/lesson-embed'
+      fullPath: '/api/public/lesson-embed'
+      preLoaderRoute: typeof ApiPublicLessonEmbedRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/queue/process': {
-      id: '/lovable/email/queue/process'
-      path: '/lovable/email/queue/process'
-      fullPath: '/lovable/email/queue/process'
-      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+    '/api/public/material-download': {
+      id: '/api/public/material-download'
+      path: '/api/public/material-download'
+      fullPath: '/api/public/material-download'
+      preLoaderRoute: typeof ApiPublicMaterialDownloadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/novedades': {
+      id: '/api/public/novedades'
+      path: '/api/public/novedades'
+      fullPath: '/api/public/novedades'
+      preLoaderRoute: typeof ApiPublicNovedadesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pro-embed': {
+      id: '/api/public/pro-embed'
+      path: '/api/public/pro-embed'
+      fullPath: '/api/public/pro-embed'
+      preLoaderRoute: typeof ApiPublicProEmbedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/suppression': {
+      id: '/lovable/email/suppression'
+      path: '/lovable/email/suppression'
+      fullPath: '/lovable/email/suppression'
+      preLoaderRoute: typeof LovableEmailSuppressionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/auth/preview': {
+      id: '/lovable/email/auth/preview'
+      path: '/lovable/email/auth/preview'
+      fullPath: '/lovable/email/auth/preview'
+      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/lovable/email/auth/webhook': {
@@ -965,11 +951,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailAuthWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/lovable/email/auth/preview': {
-      id: '/lovable/email/auth/preview'
-      path: '/lovable/email/auth/preview'
-      fullPath: '/lovable/email/auth/preview'
-      preLoaderRoute: typeof LovableEmailAuthPreviewRouteImport
+    '/lovable/email/queue/process': {
+      id: '/lovable/email/queue/process'
+      path: '/lovable/email/queue/process'
+      fullPath: '/lovable/email/queue/process'
+      preLoaderRoute: typeof LovableEmailQueueProcessRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lovable/email/transactional/send': {
+      id: '/lovable/email/transactional/send'
+      path: '/lovable/email/transactional/send'
+      fullPath: '/lovable/email/transactional/send'
+      preLoaderRoute: typeof LovableEmailTransactionalSendRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
