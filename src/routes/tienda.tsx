@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, ClipboardCheck, Check } from "lucide-react";
+import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, ClipboardCheck, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -39,6 +39,7 @@ type Product = {
   priceId: string | null; // null = consultar personalizado
   priceLabel?: string;    // ex: "$590"
   whatsappMessage?: string; // mensaje pre-escrito personalizado para Consultar
+  externalUrl?: string;   // si está seteado, abre URL externa en lugar de Stripe
   badge?: Badge;
   featured?: boolean;
   featuredReason?: string;
@@ -79,6 +80,7 @@ const products: Product[] = [
     icon: BookOpen,
     priceId: "libro_desafio_rentabilidad_base",
     priceLabel: "$28",
+    externalUrl: "https://a.co/d/02d4tZ7F",
     badge: { text: "Novedad", textEn: "New", variant: "success" },
   },
   {
@@ -176,6 +178,16 @@ function TiendaPage() {
   }, [userId]);
 
   const handleBuy = (product: Product) => {
+    if (product.externalUrl) {
+      const a = document.createElement("a");
+      a.href = product.externalUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
     if (!product.priceId) {
       const message = product.whatsappMessage
         ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
@@ -294,17 +306,30 @@ function TiendaPage() {
                           {t("tienda.personalizado")}
                         </span>
                       )}
-                      <Button
-                        size="sm"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                        onClick={() => handleBuy(product)}
-                      >
-                        {product.priceId ? (
-                          <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
-                        ) : (
-                          <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
-                        )}
-                      </Button>
+                      {product.externalUrl ? (
+                        <Button
+                          asChild
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                        >
+                          <a href={product.externalUrl} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4 mr-1.5" />
+                            {lang === "en" ? "Buy on Amazon" : "Comprar en Amazon"}
+                          </a>
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                          onClick={() => handleBuy(product)}
+                        >
+                          {product.priceId ? (
+                            <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
+                          ) : (
+                            <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </motion.div>
                 ))}
