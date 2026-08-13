@@ -65,22 +65,50 @@ async function sendLifecycleEmail(
   idempotencyKey: string,
   templateData: Record<string, unknown>
 ) {
+  const internalToken =
+    Deno.env.get("INTERNAL_EMAIL_TOKEN") || Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   try {
     const res = await fetch(`${APP_URL}/lovable/email/transactional/send`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        Authorization: `Bearer ${internalToken}`,
       },
       body: JSON.stringify({ templateName, recipientEmail, idempotencyKey, templateData }),
     });
     if (!res.ok) {
-      console.error("Lifecycle email failed", templateName, res.status, await res.text());
+      const body = await res.text();
+      console.error("Lifecycle email failed", templateName, res.status, body);
+      // Fire-and-forget audit row; never block the caller.
+      supabase
+        .from("email_send_log")
+        .insert({
+          message_id: crypto.randomUUID(),
+          template_name: templateName,
+          recipient_email: recipientEmail,
+          status: "failed",
+          error_message: `webhook POST ${res.status}: ${body.slice(0, 500)}`,
+        })
+        .then(({ error }) => {
+          if (error) console.error("email_send_log insert failed", error.message);
+        });
     } else {
       console.log("Lifecycle email queued", templateName);
     }
   } catch (e) {
     console.error("Lifecycle email error", templateName, e);
+    supabase
+      .from("email_send_log")
+      .insert({
+        message_id: crypto.randomUUID(),
+        template_name: templateName,
+        recipient_email: recipientEmail,
+        status: "failed",
+        error_message: `webhook POST threw: ${String(e).slice(0, 500)}`,
+      })
+      .then(({ error }) => {
+        if (error) console.error("email_send_log insert failed", error.message);
+      });
   }
 }
 
