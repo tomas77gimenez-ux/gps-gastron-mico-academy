@@ -155,7 +155,7 @@ serve(async (req) => {
         break;
       case "invoice.paid":
       case "invoice.payment_succeeded":
-        console.log("Invoice paid:", event.data.object.id);
+        await handleInvoicePaid(event.data.object, env);
         break;
       default:
         console.log("Unhandled event:", event.type);
@@ -187,6 +187,47 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     .update({ user_id: userId, updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", session.subscription)
     .eq("environment", env);
+
+  await sendSubscriptionWelcome(session, env);
+}
+
+/**
+ * Bienvenida de suscripción: un solo envío por suscripción
+ * (idempotencyKey = sub-welcome-<subscription id>).
+ */
+async function sendSubscriptionWelcome(session: any, env: StripeEnv) {
+  try {
+    const email: string | null =
+      session.customer_details?.email ??
+      session.customer_email ??
+      (session.customer ? await emailForCustomer(session.customer, env) : null);
+    if (!email) {
+      console.log("sub-welcome: no email for session", session.id);
+      return;
+    }
+
+    const stripe = createStripeClient(env);
+    const subscription = await stripe.subscriptions.retrieve(session.subscription, {
+      expand: ["items.data.price"],
+    });
+    const { planTier } = priceInfo(subscription);
+    const price = subscription.items?.data?.[0]?.price;
+    const isTrialing = subscription.status === "trialing" && !!subscription.trial_end;
+
+    await sendLifecycleEmail("subscription-welcome", email, `sub-welcome-${session.subscription}`, {
+      planName: planName(planTier),
+      tier: planTier ?? "basico",
+      amount: formatAmount(price?.unit_amount, price?.currency),
+      interval: intervalLabel(price),
+      trialEndDate: isTrialing ? formatDate(subscription.trial_end) : undefined,
+      nextChargeDate: isTrialing
+        ? formatDate(subscription.trial_end)
+        : formatDate(subscription.current_period_end),
+      ctaUrl: `${APP_URL}/dashboard`,
+    });
+  } catch (e) {
+    console.error("sub-welcome failed", e);
+  }
 }
 
 /**
