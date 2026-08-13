@@ -178,6 +178,16 @@ function TiendaPage() {
   }, [userId]);
 
   const handleBuy = (product: Product) => {
+    if (product.externalUrl) {
+      const a = document.createElement("a");
+      a.href = product.externalUrl;
+      a.target = "_blank";
+      a.rel = "noopener noreferrer";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      return;
+    }
     if (!product.priceId) {
       const message = product.whatsappMessage
         ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
