@@ -55,9 +55,16 @@ export const Route = createFileRoute("/lovable/email/transactional/send")({
         const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
         // Server-to-server callers (e.g. the Stripe webhook sending lifecycle
-        // emails) present the service-role key instead of a user JWT.
+        // emails) present a dedicated internal token or the service-role key
+        // instead of a user JWT.
+        const internalToken = process.env.INTERNAL_EMAIL_TOKEN
+        const isInternalCaller =
+          !!internalToken &&
+          token.length === internalToken.length &&
+          token === internalToken
         const isServiceCaller =
-          token.length === supabaseServiceKey.length && token === supabaseServiceKey
+          isInternalCaller ||
+          (token.length === supabaseServiceKey.length && token === supabaseServiceKey)
 
         if (!isServiceCaller) {
           const { data: { user }, error: authError } = await supabase.auth.getUser(token)
