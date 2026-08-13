@@ -80,6 +80,7 @@ const products: Product[] = [
     icon: BookOpen,
     priceId: "libro_desafio_rentabilidad_base",
     priceLabel: "$28",
+    externalUrl: "https://a.co/d/02d4tZ7F",
     badge: { text: "Novedad", textEn: "New", variant: "success" },
   },
   {
