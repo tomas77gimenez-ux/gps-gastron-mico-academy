@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, ClipboardCheck, Check } from "lucide-react";
+import { ShoppingCart, MessageCircle, Users, Megaphone, Palette, BookOpen, ClipboardCheck, Check, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
