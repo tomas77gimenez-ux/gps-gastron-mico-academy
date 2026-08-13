@@ -30,6 +30,16 @@ function formatAmount(cents?: number | null, currency?: string | null) {
   return `${(currency || "usd").toUpperCase()} ${(cents / 100).toFixed(2)}`;
 }
 
+function intervalLabel(price: any): string {
+  const interval = price?.recurring?.interval;
+  const count = price?.recurring?.interval_count ?? 1;
+  if (interval === "year") return count > 1 ? `cada ${count} años` : "anual";
+  if (interval === "month") return count > 1 ? `cada ${count} meses` : "mensual";
+  if (interval === "week") return "semanal";
+  if (interval === "day") return "diaria";
+  return "mensual";
+}
+
 /** Resolves the account email for a Stripe customer via our own subscriptions table. */
 async function emailForCustomer(customerId: string, env: StripeEnv): Promise<string | null> {
   const { data: row } = await supabase
