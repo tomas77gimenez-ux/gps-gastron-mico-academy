@@ -306,17 +306,30 @@ function TiendaPage() {
                           {t("tienda.personalizado")}
                         </span>
                       )}
-                      <Button
-                        size="sm"
-                        className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
-                        onClick={() => handleBuy(product)}
-                      >
-                        {product.priceId ? (
-                          <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
-                        ) : (
-                          <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
-                        )}
-                      </Button>
+                      {product.externalUrl ? (
+                        <Button
+                          asChild
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                        >
+                          <a href={product.externalUrl} target="_blank" rel="noopener noreferrer">
+                            <ExternalLink className="w-4 h-4 mr-1.5" />
+                            {lang === "en" ? "Buy on Amazon" : "Comprar en Amazon"}
+                          </a>
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
+                          onClick={() => handleBuy(product)}
+                        >
+                          {product.priceId ? (
+                            <><ShoppingCart className="w-4 h-4 mr-1.5" />{t("tienda.comprar")}</>
+                          ) : (
+                            <><MessageCircle className="w-4 h-4 mr-1.5" />{t("tienda.consultar")}</>
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </motion.div>
                 ))}
