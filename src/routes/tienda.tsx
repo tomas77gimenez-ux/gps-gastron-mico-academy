@@ -39,6 +39,7 @@ type Product = {
   priceId: string | null; // null = consultar personalizado
   priceLabel?: string;    // ex: "$590"
   whatsappMessage?: string; // mensaje pre-escrito personalizado para Consultar
+  externalUrl?: string;   // si está seteado, abre URL externa en lugar de Stripe
   badge?: Badge;
   featured?: boolean;
   featuredReason?: string;
