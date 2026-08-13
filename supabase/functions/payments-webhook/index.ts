@@ -30,6 +30,16 @@ function formatAmount(cents?: number | null, currency?: string | null) {
   return `${(currency || "usd").toUpperCase()} ${(cents / 100).toFixed(2)}`;
 }
 
+function intervalLabel(price: any): string {
+  const interval = price?.recurring?.interval;
+  const count = price?.recurring?.interval_count ?? 1;
+  if (interval === "year") return count > 1 ? `cada ${count} años` : "anual";
+  if (interval === "month") return count > 1 ? `cada ${count} meses` : "mensual";
+  if (interval === "week") return "semanal";
+  if (interval === "day") return "diaria";
+  return "mensual";
+}
+
 /** Resolves the account email for a Stripe customer via our own subscriptions table. */
 async function emailForCustomer(customerId: string, env: StripeEnv): Promise<string | null> {
   const { data: row } = await supabase
@@ -145,7 +155,7 @@ serve(async (req) => {
         break;
       case "invoice.paid":
       case "invoice.payment_succeeded":
-        console.log("Invoice paid:", event.data.object.id);
+        await handleInvoicePaid(event.data.object, env);
         break;
       default:
         console.log("Unhandled event:", event.type);
@@ -177,6 +187,47 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
     .update({ user_id: userId, updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", session.subscription)
     .eq("environment", env);
+
+  await sendSubscriptionWelcome(session, env);
+}
+
+/**
+ * Bienvenida de suscripción: un solo envío por suscripción
+ * (idempotencyKey = sub-welcome-<subscription id>).
+ */
+async function sendSubscriptionWelcome(session: any, env: StripeEnv) {
+  try {
+    const email: string | null =
+      session.customer_details?.email ??
+      session.customer_email ??
+      (session.customer ? await emailForCustomer(session.customer, env) : null);
+    if (!email) {
+      console.log("sub-welcome: no email for session", session.id);
+      return;
+    }
+
+    const stripe = createStripeClient(env);
+    const subscription = await stripe.subscriptions.retrieve(session.subscription, {
+      expand: ["items.data.price"],
+    });
+    const { planTier } = priceInfo(subscription);
+    const price = subscription.items?.data?.[0]?.price;
+    const isTrialing = subscription.status === "trialing" && !!subscription.trial_end;
+
+    await sendLifecycleEmail("subscription-welcome", email, `sub-welcome-${session.subscription}`, {
+      planName: planName(planTier),
+      tier: planTier ?? "basico",
+      amount: formatAmount(price?.unit_amount, price?.currency),
+      interval: intervalLabel(price),
+      trialEndDate: isTrialing ? formatDate(subscription.trial_end) : undefined,
+      nextChargeDate: isTrialing
+        ? formatDate(subscription.trial_end)
+        : formatDate(subscription.current_period_end),
+      ctaUrl: `${APP_URL}/dashboard`,
+    });
+  } catch (e) {
+    console.error("sub-welcome failed", e);
+  }
 }
 
 /**
@@ -314,6 +365,17 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
   const periodStart = subscription.current_period_start;
   const periodEnd = subscription.current_period_end ?? subscription.trial_end;
 
+  // Estado ANTERIOR (leído antes del update) para decidir qué email enviar.
+  const { data: prev } = await supabase
+    .from("subscriptions")
+    .select("status, cancel_at_period_end, price_id, plan_tier")
+    .eq("stripe_subscription_id", subscription.id)
+    .eq("environment", env)
+    .maybeSingle();
+  const prevCancelAtPeriodEnd = prev?.cancel_at_period_end === true;
+  const prevPriceId = prev?.price_id ?? null;
+  const prevPlanTier = prev?.plan_tier ?? null;
+
   const { data: updated } = await supabase
     .from("subscriptions")
     .update({
@@ -333,7 +395,94 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
   // Assinatura desconhecida (ex.: criada fora do app): cria a linha.
   if (!updated || updated.length === 0) {
     await handleSubscriptionCreated(subscription, env);
+    return;
   }
+
+  const cancelScheduled =
+    subscription.cancel_at_period_end === true && !prevCancelAtPeriodEnd;
+  const planSwitched =
+    !cancelScheduled &&
+    !!prev &&
+    ((priceId && prevPriceId && priceId !== prevPriceId) ||
+      (planTier && prevPlanTier && planTier !== prevPlanTier));
+
+  if (!cancelScheduled && !planSwitched) return;
+
+  const email = await emailForCustomer(subscription.customer, env);
+  if (!email) return;
+
+  if (cancelScheduled) {
+    await sendLifecycleEmail(
+      "cancellation-scheduled",
+      email,
+      `cancel-sched-${subscription.id}-${subscription.current_period_end ?? "na"}`,
+      {
+        planName: planName(planTier ?? prevPlanTier),
+        accessUntil: formatDate(subscription.current_period_end),
+        ctaUrl: `${APP_URL}/perfil`,
+      }
+    );
+    return;
+  }
+
+  const price = subscription.items?.data?.[0]?.price;
+  await sendLifecycleEmail(
+    "plan-changed",
+    email,
+    `plan-changed-${subscription.id}-${priceId ?? "na"}`,
+    {
+      planName: planName(planTier),
+      previousPlanName: prevPlanTier ? planName(prevPlanTier) : undefined,
+      tier: planTier ?? "basico",
+      amount: formatAmount(price?.unit_amount, price?.currency),
+      interval: intervalLabel(price),
+      nextChargeDate: formatDate(subscription.current_period_end),
+      ctaUrl: `${APP_URL}/dashboard`,
+    }
+  );
+}
+
+/**
+ * invoice.paid — solo envía email si la suscripción venía de past_due
+ * (pago recuperado). No enviamos recibo de renovación: Stripe ya lo manda.
+ */
+async function handleInvoicePaid(invoice: any, env: StripeEnv) {
+  console.log("Invoice paid:", invoice.id);
+  if (!invoice.subscription) return;
+
+  // Estado ANTERIOR leído antes del update.
+  const { data: prev } = await supabase
+    .from("subscriptions")
+    .select("status, plan_tier, current_period_end")
+    .eq("stripe_subscription_id", invoice.subscription)
+    .eq("environment", env)
+    .maybeSingle();
+  if (!prev) return;
+  if (prev.status !== "past_due") return;
+
+  await supabase
+    .from("subscriptions")
+    .update({ status: "active", updated_at: new Date().toISOString() })
+    .eq("stripe_subscription_id", invoice.subscription)
+    .eq("environment", env);
+
+  const email = invoice.customer_email || (await emailForCustomer(invoice.customer, env));
+  if (!email) return;
+
+  await sendLifecycleEmail("payment-recovered", email, `pay-recovered-${invoice.id}`, {
+    planName: planName(prev.plan_tier),
+    amount: formatAmount(invoice.amount_paid ?? invoice.amount_due, invoice.currency),
+    nextChargeDate:
+      formatDate(invoice.lines?.data?.[0]?.period?.end) ??
+      (prev.current_period_end
+        ? new Date(prev.current_period_end).toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+          })
+        : undefined),
+    ctaUrl: `${APP_URL}/perfil`,
+  });
 }
 
 async function handleTrialWillEnd(subscription: any, env: StripeEnv, eventId: string) {

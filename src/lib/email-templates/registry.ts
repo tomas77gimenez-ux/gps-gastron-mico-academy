@@ -5,6 +5,10 @@ import { template as paymentFailedTemplate } from './payment-failed'
 import { template as subscriptionCanceledTemplate } from './subscription-canceled'
 import { template as novedadesTemplate } from './novedades'
 import { template as gdAccessTemplate } from './gd-access'
+import { template as subscriptionWelcomeTemplate } from './subscription-welcome'
+import { template as paymentRecoveredTemplate } from './payment-recovered'
+import { template as cancellationScheduledTemplate } from './cancellation-scheduled'
+import { template as planChangedTemplate } from './plan-changed'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -30,4 +34,8 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'subscription-canceled': subscriptionCanceledTemplate,
   novedades: novedadesTemplate,
   'gd-access': gdAccessTemplate,
+  'subscription-welcome': subscriptionWelcomeTemplate,
+  'payment-recovered': paymentRecoveredTemplate,
+  'cancellation-scheduled': cancellationScheduledTemplate,
+  'plan-changed': planChangedTemplate,
 }
