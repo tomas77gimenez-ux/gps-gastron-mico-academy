@@ -343,11 +343,9 @@ export function LessonManager({ courseId }: { courseId: string }) {
 
   async function loadLessons() {
     setLoading(true);
-    const { data, error: err } = await supabase
-      .from("lessons")
-      .select("*")
-      .eq("course_id", courseId)
-      .order("sort_order", { ascending: true });
+    const { data, error: err } = await supabase.rpc("admin_list_lessons", {
+      _course_id: courseId,
+    });
     if (err) setError(err.message);
     else setLessons((data as unknown as Lesson[]) ?? []);
     setLoading(false);

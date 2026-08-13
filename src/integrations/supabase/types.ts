@@ -1217,6 +1217,40 @@ export type Database = {
           user_id: string
         }[]
       }
+      admin_list_lessons: {
+        Args: { _course_id: string }
+        Returns: {
+          announced_at: string | null
+          bunny_video_id: string | null
+          bunny_video_id_2: string | null
+          content_type: string
+          course_id: string
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          description_en: string | null
+          description_pt: string | null
+          duration: string | null
+          id: string
+          is_free: boolean
+          panda_library_id: string | null
+          panda_video_id: string | null
+          poster_url: string | null
+          required_plan: Database["public"]["Enums"]["plan_tier"]
+          sort_order: number
+          title: string
+          title_en: string | null
+          title_pt: string | null
+          updated_at: string
+          video_url: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "lessons"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       admin_list_pro_access: {
         Args: never
         Returns: {
