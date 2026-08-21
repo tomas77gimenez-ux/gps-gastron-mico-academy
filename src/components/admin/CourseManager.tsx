@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { type Course, PILLARS } from "@/lib/admin-types";
 import { LessonManager } from "./LessonManager";
@@ -7,9 +8,10 @@ import { useBunnyLibraryId, saveBunnyLibraryId } from "@/lib/bunny";
 import { BunnySync } from "./BunnySync";
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, ChevronDown, ChevronUp,
-  GripVertical, BookOpen, Save, X, Compass, Radio, Check,
+  GripVertical, BookOpen, Save, X, Compass, Radio, Check, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 
 const LEVELS = ["Principiante", "Intermedio", "Avanzado"];
 
@@ -73,6 +75,64 @@ function CourseForm({ course, onSave, onCancel }: {
     estimated_duration: course?.estimated_duration ?? "",
     thumbnail_url: course?.thumbnail_url ?? "",
   });
+  const coverRef = useRef<HTMLInputElement>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (coverRef.current) coverRef.current.value = "";
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      toast.error("Formato no válido", { description: "Usá PNG, JPG o WEBP." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagen demasiado grande", { description: "El máximo es 5MB." });
+      return;
+    }
+
+    // Aviso (no bloquea) si la proporción no es ~16:9
+    try {
+      const ratio = await new Promise<number>((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img.naturalWidth / img.naturalHeight); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+        img.src = url;
+      });
+      if (Math.abs(ratio - 16 / 9) > 0.2) {
+        toast.warning("Proporción no 16:9", {
+          description: "Las tarjetas recortan la imagen (object-cover). Recomendado 1280×720.",
+        });
+      }
+    } catch {
+      // sin datos de proporción: seguimos igual
+    }
+
+    setCoverUploading(true);
+    const slug = (form.title || "curso")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "curso";
+    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+    const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+    const path = `covers-v4/${slug}-${suffix}.${ext}`;
+
+    const { error } = await supabase.storage.from("course-content").upload(path, file, {
+      contentType: file.type,
+    });
+    if (error) {
+      toast.error("No se pudo subir la portada", { description: error.message });
+      setCoverUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from("course-content").getPublicUrl(path);
+    setForm(f => ({ ...f, thumbnail_url: data.publicUrl }));
+    setCoverUploading(false);
+    toast.success("Portada subida", { description: "Guardá el curso para aplicar el cambio." });
+  }
+
 
   function setPillar(order: number) {
     const p = PILLARS.find(p => p.order === order)!;
@@ -152,12 +212,34 @@ function CourseForm({ course, onSave, onCancel }: {
             placeholder="ej: 4 horas" />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-sm font-medium mb-1">URL Thumbnail</label>
-          <input value={form.thumbnail_url} onChange={e => setForm(f => ({ ...f, thumbnail_url: e.target.value }))}
-            className="w-full rounded-lg border border-input bg-secondary/50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
-            placeholder="https://..." />
+          <label className="block text-sm font-medium mb-1">Portada del curso</label>
+          <div className="flex gap-3">
+            <div className="w-40 shrink-0 aspect-video rounded-lg overflow-hidden border border-border/50 bg-secondary">
+              {form.thumbnail_url ? (
+                <img src={form.thumbnail_url} alt="Portada" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-card to-secondary flex items-center justify-center">
+                  <BookOpen className="w-6 h-6 text-primary/30" />
+                </div>
+              )}
+            </div>
+            <div className="flex-1 space-y-2">
+              <input value={form.thumbnail_url} onChange={e => setForm(f => ({ ...f, thumbnail_url: e.target.value }))}
+                className="w-full rounded-lg border border-input bg-secondary/50 py-2.5 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/50"
+                placeholder="https://... (URL Thumbnail)" />
+              <input ref={coverRef} type="file" accept="image/png,image/jpeg,image/webp" className="hidden" onChange={handleCoverUpload} />
+              <Button type="button" variant="outline" size="sm" disabled={coverUploading} onClick={() => coverRef.current?.click()}>
+                <Upload className="w-4 h-4 mr-1" />
+                {coverUploading ? "Subiendo..." : "Subir imagen"}
+              </Button>
+              <p className="text-xs text-muted-foreground">PNG, JPG o WEBP · máx. 5MB · ideal 16:9 (1280×720)</p>
+            </div>
+          </div>
         </div>
       </div>
+
+
+
       <div className="flex gap-3 justify-end pt-2">
         <Button variant="outline" size="sm" onClick={onCancel}><X className="w-4 h-4 mr-1" /> Cancelar</Button>
         <Button size="sm" onClick={() => onSave(form)} disabled={!form.title.trim()}>
