@@ -1,0 +1,1 @@
+update public.courses set thumbnail_url = 'https://xovgygwweabinsdmkasb.supabase.co/storage/v1/object/public/course-content/covers-v4/04-analisis-de-resultado.png' where title = 'MÓDULO 2 · Análisis de Resultado';
