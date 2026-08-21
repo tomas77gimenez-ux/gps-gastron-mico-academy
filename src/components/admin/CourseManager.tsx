@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { type Course, PILLARS } from "@/lib/admin-types";
 import { LessonManager } from "./LessonManager";
@@ -7,9 +8,10 @@ import { useBunnyLibraryId, saveBunnyLibraryId } from "@/lib/bunny";
 import { BunnySync } from "./BunnySync";
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, ChevronDown, ChevronUp,
-  GripVertical, BookOpen, Save, X, Compass, Radio, Check,
+  GripVertical, BookOpen, Save, X, Compass, Radio, Check, Upload,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 
 const LEVELS = ["Principiante", "Intermedio", "Avanzado"];
 
@@ -176,6 +178,9 @@ function CourseForm({ course, onSave, onCancel }: {
             </div>
           </div>
         </div>
+      </div>
+
+
 
       <div className="flex gap-3 justify-end pt-2">
         <Button variant="outline" size="sm" onClick={onCancel}><X className="w-4 h-4 mr-1" /> Cancelar</Button>
