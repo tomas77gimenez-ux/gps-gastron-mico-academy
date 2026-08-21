@@ -75,6 +75,64 @@ function CourseForm({ course, onSave, onCancel }: {
     estimated_duration: course?.estimated_duration ?? "",
     thumbnail_url: course?.thumbnail_url ?? "",
   });
+  const coverRef = useRef<HTMLInputElement>(null);
+  const [coverUploading, setCoverUploading] = useState(false);
+
+  async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (coverRef.current) coverRef.current.value = "";
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      toast.error("Formato no válido", { description: "Usá PNG, JPG o WEBP." });
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagen demasiado grande", { description: "El máximo es 5MB." });
+      return;
+    }
+
+    // Aviso (no bloquea) si la proporción no es ~16:9
+    try {
+      const ratio = await new Promise<number>((resolve, reject) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => { URL.revokeObjectURL(url); resolve(img.naturalWidth / img.naturalHeight); };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("bad image")); };
+        img.src = url;
+      });
+      if (Math.abs(ratio - 16 / 9) > 0.2) {
+        toast.warning("Proporción no 16:9", {
+          description: "Las tarjetas recortan la imagen (object-cover). Recomendado 1280×720.",
+        });
+      }
+    } catch {
+      // sin datos de proporción: seguimos igual
+    }
+
+    setCoverUploading(true);
+    const slug = (form.title || "curso")
+      .toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "curso";
+    const ext = file.type === "image/png" ? "png" : file.type === "image/webp" ? "webp" : "jpg";
+    const suffix = `${Date.now().toString(36)}${Math.random().toString(36).slice(2, 6)}`;
+    const path = `covers-v4/${slug}-${suffix}.${ext}`;
+
+    const { error } = await supabase.storage.from("course-content").upload(path, file, {
+      contentType: file.type,
+    });
+    if (error) {
+      toast.error("No se pudo subir la portada", { description: error.message });
+      setCoverUploading(false);
+      return;
+    }
+    const { data } = supabase.storage.from("course-content").getPublicUrl(path);
+    setForm(f => ({ ...f, thumbnail_url: data.publicUrl }));
+    setCoverUploading(false);
+    toast.success("Portada subida", { description: "Guardá el curso para aplicar el cambio." });
+  }
+
 
   function setPillar(order: number) {
     const p = PILLARS.find(p => p.order === order)!;
