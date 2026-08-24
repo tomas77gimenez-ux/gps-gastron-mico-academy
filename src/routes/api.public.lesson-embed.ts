@@ -84,9 +84,18 @@ export const Route = createFileRoute("/api/public/lesson-embed")({
           const libraryId = ((settings?.value as string | null) ?? "").trim();
           if (!libraryId) return json({ error: "Falta el Bunny Library ID" }, 400);
 
-          const { data: tokenKeyData } = await supabaseAdmin.rpc("get_app_secret", {
-            _key: BUNNY_TOKEN_KEY_SECRET,
-          } as never);
+          // La firma solo se aplica si el admin activó explícitamente
+          // "bunny_signed_urls" = "on" (con una Token Auth Key válida).
+          const { data: signFlag } = await supabaseAdmin
+            .from("app_settings")
+            .select("value")
+            .eq("key", "bunny_signed_urls")
+            .maybeSingle();
+          const signingEnabled = ((signFlag?.value as string | null) ?? "").trim().toLowerCase() === "on";
+
+          const { data: tokenKeyData } = signingEnabled
+            ? await supabaseAdmin.rpc("get_app_secret", { _key: BUNNY_TOKEN_KEY_SECRET } as never)
+            : { data: null };
           const tokenKey = (tokenKeyData as string | null)?.trim() ?? "";
 
           const guids = [lesson.bunny_video_id, lesson.bunny_video_id_2].filter(
