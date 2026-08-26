@@ -111,14 +111,46 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
 
   async function handleDelete(mat: CourseMaterial) {
     if (!confirm(`¿Eliminar "${mat.title}"?`)) return;
-    // Extract path from URL
-    const urlParts = mat.file_url.split("/course-content/");
-    if (urlParts[1]) {
-      await supabase.storage.from("course-content").remove([urlParts[1]]);
+    const storagePath = (mat as { storage_path?: string | null }).storage_path ?? null;
+    if (storagePath) {
+      await supabase.storage.from("paid-content").remove([storagePath]);
+    } else {
+      // Legacy rows: path is embedded in the old public course-content URL.
+      const urlParts = (mat.file_url ?? "").split("/course-content/");
+      if (urlParts[1]) {
+        await supabase.storage.from("course-content").remove([urlParts[1]]);
+      }
     }
     await supabase.from("course_materials").delete().eq("id", mat.id);
     loadMaterials();
   }
+
+  /** Admin download goes through the protected route, never the raw storage URL. */
+  async function handleDownload(mat: CourseMaterial) {
+    setError(null);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) throw new Error("Sesión expirada");
+      const res = await fetch(
+        `/api/public/material-download?material_id=${encodeURIComponent(mat.id)}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${mat.title}.${mat.file_type || "bin"}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError(err?.message ?? "No se pudo descargar el archivo");
+    }
+  }
+
 
   return (
     <div>
