@@ -213,10 +213,11 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
                 )}
               </p>
             </div>
-            {mat.file_url ? (
-              <a href={mat.file_url} target="_blank" rel="noopener noreferrer"
-                className="p-1.5 rounded hover:bg-secondary"><Download className="w-3 h-3" /></a>
+            {mat.file_url || (mat as { storage_path?: string | null }).storage_path ? (
+              <button type="button" onClick={() => handleDownload(mat)}
+                className="p-1.5 rounded hover:bg-secondary"><Download className="w-3 h-3" /></button>
             ) : null}
+
             <Button
               variant="outline"
               size="sm"
