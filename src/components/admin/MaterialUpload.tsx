@@ -72,12 +72,13 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     setUploading(true);
     setError(null);
     try {
-      const { url, ext } = await uploadFile(file);
+      const { url, path, ext } = await uploadFile(file);
       const { error: insertErr } = await supabase.from("course_materials").insert({
         course_id: lessonId ? null : courseId,
         lesson_id: lessonId ?? null,
         title: file.name.replace(/\.[^.]+$/, ""),
         file_url: url,
+        storage_path: path,
         file_type: ext,
         file_size: file.size,
         required_plan: requiredPlan,
@@ -90,6 +91,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     if (fileRef.current) fileRef.current.value = "";
     loadMaterials();
   }
+
 
   /** Creates a placeholder attachment (title only, file to be uploaded later). */
   async function handleAddPlaceholder() {
