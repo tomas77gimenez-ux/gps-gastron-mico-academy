@@ -32,11 +32,13 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
   useEffect(() => { loadMaterials(); }, [courseId, lessonId]);
 
   async function uploadFile(file: File) {
-    const filePath = `${lessonId ?? courseId}/${Date.now()}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
-    const { error: uploadErr } = await supabase.storage.from("course-content").upload(filePath, file);
+    const token = Math.random().toString(36).slice(2, 10);
+    const path = `materials/${lessonId ?? courseId}/${token}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
+    const { error: uploadErr } = await supabase.storage.from("paid-content").upload(path, file);
     if (uploadErr) throw uploadErr;
-    const { data: urlData } = supabase.storage.from("course-content").getPublicUrl(filePath);
-    return { url: urlData.publicUrl, ext: file.name.split(".").pop() ?? "bin" };
+    // file_url kept for rollback / legacy fallback; downloads go through the protected route.
+    const { data: urlData } = supabase.storage.from("paid-content").getPublicUrl(path);
+    return { url: urlData.publicUrl, path, ext: file.name.split(".").pop() ?? "bin" };
   }
 
   /** Attaches a real file to an existing placeholder material (title already defined). */
@@ -47,10 +49,10 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     setUploading(true);
     setError(null);
     try {
-      const { url, ext } = await uploadFile(file);
+      const { url, path, ext } = await uploadFile(file);
       const { error: updErr } = await supabase
         .from("course_materials")
-        .update({ file_url: url, file_type: ext, file_size: file.size } as any)
+        .update({ file_url: url, storage_path: path, file_type: ext, file_size: file.size } as any)
         .eq("id", targetId);
       if (updErr) throw updErr;
     } catch (err: any) {
@@ -61,6 +63,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     if (attachRef.current) attachRef.current.value = "";
     loadMaterials();
   }
+
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
