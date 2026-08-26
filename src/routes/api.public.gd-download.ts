@@ -1,9 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createClient } from "@supabase/supabase-js";
 
+const PAID_BUCKET = "paid-content";
+const ALLOWED_FOLDERS = ["materials/", "lessons/", "videos/", "gerentes-digitales/"];
+
 function sanitizeFilename(name: string) {
   return name.replace(/[\r\n"\\]/g, "").slice(0, 200) || "archivo";
 }
+
+/** Path must be inside a known folder and must not traverse. */
+function isValidStoragePath(path: string) {
+  if (!path || path.includes("..") || path.startsWith("/") || path.includes("\\")) return false;
+  return ALLOWED_FOLDERS.some((f) => path.startsWith(f));
+}
+
 
 export const Route = createFileRoute("/api/public/gd-download")({
   server: {
