@@ -214,6 +214,7 @@ export type Database = {
           id: string
           lesson_id: string | null
           required_plan: Database["public"]["Enums"]["plan_tier"]
+          storage_path: string | null
           title: string
         }
         Insert: {
@@ -227,6 +228,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           required_plan?: Database["public"]["Enums"]["plan_tier"]
+          storage_path?: string | null
           title: string
         }
         Update: {
@@ -240,6 +242,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           required_plan?: Database["public"]["Enums"]["plan_tier"]
+          storage_path?: string | null
           title?: string
         }
         Relationships: [
@@ -667,6 +670,7 @@ export type Database = {
           gd_id: string
           id: string
           sort_order: number
+          storage_path: string | null
           title: string
         }
         Insert: {
@@ -677,6 +681,7 @@ export type Database = {
           gd_id: string
           id?: string
           sort_order?: number
+          storage_path?: string | null
           title: string
         }
         Update: {
@@ -687,6 +692,7 @@ export type Database = {
           gd_id?: string
           id?: string
           sort_order?: number
+          storage_path?: string | null
           title?: string
         }
         Relationships: [
