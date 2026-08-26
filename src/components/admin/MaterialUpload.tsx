@@ -32,11 +32,13 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
   useEffect(() => { loadMaterials(); }, [courseId, lessonId]);
 
   async function uploadFile(file: File) {
-    const filePath = `${lessonId ?? courseId}/${Date.now()}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
-    const { error: uploadErr } = await supabase.storage.from("course-content").upload(filePath, file);
+    const token = Math.random().toString(36).slice(2, 10);
+    const path = `materials/${lessonId ?? courseId}/${token}_${file.name.replace(/[^a-z0-9.\-_]/gi, "_")}`;
+    const { error: uploadErr } = await supabase.storage.from("paid-content").upload(path, file);
     if (uploadErr) throw uploadErr;
-    const { data: urlData } = supabase.storage.from("course-content").getPublicUrl(filePath);
-    return { url: urlData.publicUrl, ext: file.name.split(".").pop() ?? "bin" };
+    // file_url kept for rollback / legacy fallback; downloads go through the protected route.
+    const { data: urlData } = supabase.storage.from("paid-content").getPublicUrl(path);
+    return { url: urlData.publicUrl, path, ext: file.name.split(".").pop() ?? "bin" };
   }
 
   /** Attaches a real file to an existing placeholder material (title already defined). */
@@ -47,10 +49,10 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     setUploading(true);
     setError(null);
     try {
-      const { url, ext } = await uploadFile(file);
+      const { url, path, ext } = await uploadFile(file);
       const { error: updErr } = await supabase
         .from("course_materials")
-        .update({ file_url: url, file_type: ext, file_size: file.size } as any)
+        .update({ file_url: url, storage_path: path, file_type: ext, file_size: file.size } as any)
         .eq("id", targetId);
       if (updErr) throw updErr;
     } catch (err: any) {
@@ -62,6 +64,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     loadMaterials();
   }
 
+
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,12 +72,13 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     setUploading(true);
     setError(null);
     try {
-      const { url, ext } = await uploadFile(file);
+      const { url, path, ext } = await uploadFile(file);
       const { error: insertErr } = await supabase.from("course_materials").insert({
         course_id: lessonId ? null : courseId,
         lesson_id: lessonId ?? null,
         title: file.name.replace(/\.[^.]+$/, ""),
         file_url: url,
+        storage_path: path,
         file_type: ext,
         file_size: file.size,
         required_plan: requiredPlan,
@@ -87,6 +91,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     if (fileRef.current) fileRef.current.value = "";
     loadMaterials();
   }
+
 
   /** Creates a placeholder attachment (title only, file to be uploaded later). */
   async function handleAddPlaceholder() {
@@ -106,14 +111,46 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
 
   async function handleDelete(mat: CourseMaterial) {
     if (!confirm(`¿Eliminar "${mat.title}"?`)) return;
-    // Extract path from URL
-    const urlParts = mat.file_url.split("/course-content/");
-    if (urlParts[1]) {
-      await supabase.storage.from("course-content").remove([urlParts[1]]);
+    const storagePath = (mat as { storage_path?: string | null }).storage_path ?? null;
+    if (storagePath) {
+      await supabase.storage.from("paid-content").remove([storagePath]);
+    } else {
+      // Legacy rows: path is embedded in the old public course-content URL.
+      const urlParts = (mat.file_url ?? "").split("/course-content/");
+      if (urlParts[1]) {
+        await supabase.storage.from("course-content").remove([urlParts[1]]);
+      }
     }
     await supabase.from("course_materials").delete().eq("id", mat.id);
     loadMaterials();
   }
+
+  /** Admin download goes through the protected route, never the raw storage URL. */
+  async function handleDownload(mat: CourseMaterial) {
+    setError(null);
+    try {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) throw new Error("Sesión expirada");
+      const res = await fetch(
+        `/api/public/material-download?material_id=${encodeURIComponent(mat.id)}`,
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+      if (!res.ok) throw new Error(await res.text());
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `${mat.title}.${mat.file_type || "bin"}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      setError(err?.message ?? "No se pudo descargar el archivo");
+    }
+  }
+
 
   return (
     <div>
@@ -176,10 +213,11 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
                 )}
               </p>
             </div>
-            {mat.file_url ? (
-              <a href={mat.file_url} target="_blank" rel="noopener noreferrer"
-                className="p-1.5 rounded hover:bg-secondary"><Download className="w-3 h-3" /></a>
+            {mat.file_url || (mat as { storage_path?: string | null }).storage_path ? (
+              <button type="button" onClick={() => handleDownload(mat)}
+                className="p-1.5 rounded hover:bg-secondary"><Download className="w-3 h-3" /></button>
             ) : null}
+
             <Button
               variant="outline"
               size="sm"
