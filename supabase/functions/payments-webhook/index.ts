@@ -128,11 +128,15 @@ serve(async (req) => {
   }
 
   const url = new URL(req.url);
-  const env = (url.searchParams.get('env') || 'sandbox') as StripeEnv;
+  const secretHint = (url.searchParams.get('env') || 'sandbox') as StripeEnv;
 
   try {
-    const event = await verifyWebhook(req, env);
+    const event = await verifyWebhook(req, secretHint);
+    // El entorno sale del propio evento, no de la URL: así los pagos reales
+    // siempre se guardan como 'live' aunque el endpoint no lleve ?env=live.
+    const env: StripeEnv = event.livemode ? 'live' : 'sandbox';
     console.log("Received event:", event.type, "env:", env);
+
 
     switch (event.type) {
       case "checkout.session.completed":
