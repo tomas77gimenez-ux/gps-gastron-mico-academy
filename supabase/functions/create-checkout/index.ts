@@ -53,6 +53,19 @@ serve(async (req) => {
 
     const reusedCustomerId = userId ? await existingCustomerId(userId, env) : null;
 
+    // Trial solo para clientes nuevos: si ya hubo alguna suscripción (en
+    // cualquier estado) o reutilizamos un customer existente, sin trial.
+    let hadSubscriptionBefore = false;
+    if (userId) {
+      const { count } = await supabase
+        .from("subscriptions")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", userId);
+      hadSubscriptionBefore = (count ?? 0) > 0;
+    }
+    const trialEligible = isRecurring && !reusedCustomerId && !hadSubscriptionBefore;
+    const subscriptionDataBase = trialEligible ? { trial_period_days: 5 } : {};
+
     const session = await stripe.checkout.sessions.create({
       allow_promotion_codes: true,
       line_items: [{ price: stripePrice.id, quantity: quantity || 1 }],
@@ -67,13 +80,14 @@ serve(async (req) => {
       ...(userId && {
         metadata: { userId },
         ...(isRecurring && {
-          subscription_data: { metadata: { userId }, trial_period_days: 5 },
+          subscription_data: { metadata: { userId }, ...subscriptionDataBase },
         }),
       }),
       ...(isRecurring && !userId && {
-        subscription_data: { trial_period_days: 5 },
+        subscription_data: { ...subscriptionDataBase },
       }),
     });
+
 
     return new Response(JSON.stringify({ clientSecret: session.client_secret }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
