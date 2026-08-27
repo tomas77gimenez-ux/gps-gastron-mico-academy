@@ -386,8 +386,8 @@ async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
 async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
   const { priceId, productId, planTier } = priceInfo(subscription);
 
-  const periodStart = subscription.current_period_start;
-  const periodEnd = subscription.current_period_end ?? subscription.trial_end;
+  const { start: periodStart, end: periodEnd } = periodFrom(subscription);
+
 
   // Estado ANTERIOR (leído antes del update) para decidir qué email enviar.
   const { data: prev } = await supabase
