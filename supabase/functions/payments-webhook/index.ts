@@ -504,6 +504,26 @@ async function handleInvoicePaid(invoice: any, env: StripeEnv) {
     .eq("environment", env)
     .maybeSingle();
   if (!prev) return;
+
+  // Refresca el período de facturación en cada factura pagada (renovación
+  // incluida) leyéndolo del item de la suscripción.
+  try {
+    const stripe = createStripeClient(env);
+    const subscription = await stripe.subscriptions.retrieve(invoice.subscription);
+    const { start: periodStart, end: periodEnd } = periodFrom(subscription);
+    await supabase
+      .from("subscriptions")
+      .update({
+        current_period_start: periodStart ? new Date(periodStart * 1000).toISOString() : null,
+        current_period_end: periodEnd ? new Date(periodEnd * 1000).toISOString() : null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("stripe_subscription_id", invoice.subscription)
+      .eq("environment", env);
+  } catch (e) {
+    console.error("invoice.paid: could not refresh billing period", e);
+  }
+
   if (prev.status !== "past_due") return;
 
   await supabase
@@ -511,6 +531,7 @@ async function handleInvoicePaid(invoice: any, env: StripeEnv) {
     .update({ status: "active", updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", invoice.subscription)
     .eq("environment", env);
+
 
   const email = invoice.customer_email || (await emailForCustomer(invoice.customer, env));
   if (!email) return;
