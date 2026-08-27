@@ -543,7 +543,7 @@ async function handleSubscriptionDeleted(subscription: any, env: StripeEnv, even
   if (!email) return;
   await sendLifecycleEmail("subscription-canceled", email, `sub-canceled-${eventId}`, {
     planName: planName(tier),
-    accessUntil: formatDate(subscription.current_period_end),
+    accessUntil: formatDate(periodEndDate(subscription)),
     ctaUrl: `${APP_URL}/planes`,
   });
 }
