@@ -461,7 +461,7 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
       tier: planTier ?? "basico",
       amount: formatAmount(price?.unit_amount, price?.currency),
       interval: intervalLabel(price),
-      nextChargeDate: formatDate(subscription.current_period_end),
+      nextChargeDate: formatDate(periodEnd ?? undefined),
       ctaUrl: `${APP_URL}/dashboard`,
     }
   );
