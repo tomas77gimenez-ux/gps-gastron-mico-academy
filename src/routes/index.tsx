@@ -434,7 +434,7 @@ function HomePage() {
             </div>
           </RevealOnScroll>
 
-          <div className="mx-auto mt-12 grid max-w-3xl gap-6 md:grid-cols-2">
+          <div className="mx-auto mt-12 grid max-w-6xl gap-6 md:grid-cols-3">
             {plans.map((plan, i) => (
               <RevealOnScroll key={plan.id} delay={i * 70} className="h-full">
                 <div
