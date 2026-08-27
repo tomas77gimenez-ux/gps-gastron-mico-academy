@@ -245,7 +245,8 @@ async function sendSubscriptionWelcome(session: any, env: StripeEnv) {
       trialEndDate: isTrialing ? formatDate(subscription.trial_end) : undefined,
       nextChargeDate: isTrialing
         ? formatDate(subscription.trial_end)
-        : formatDate(subscription.current_period_end),
+        : formatDate(periodEndDate(subscription)),
+
       ctaUrl: `${APP_URL}/dashboard`,
     });
   } catch (e) {
