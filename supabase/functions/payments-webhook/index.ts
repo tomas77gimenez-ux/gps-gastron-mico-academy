@@ -439,10 +439,11 @@ async function handleSubscriptionUpdated(subscription: any, env: StripeEnv) {
     await sendLifecycleEmail(
       "cancellation-scheduled",
       email,
-      `cancel-sched-${subscription.id}-${subscription.current_period_end ?? "na"}`,
+      `cancel-sched-${subscription.id}-${periodEnd ?? "na"}`,
       {
         planName: planName(planTier ?? prevPlanTier),
-        accessUntil: formatDate(subscription.current_period_end),
+        accessUntil: formatDate(periodEnd ?? undefined),
+
         ctaUrl: `${APP_URL}/perfil`,
       }
     );
