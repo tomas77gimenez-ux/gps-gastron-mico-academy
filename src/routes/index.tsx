@@ -4,10 +4,11 @@ import {
   ChefHat, TrendingUp, Users, Award, Play, ArrowRight,
   Star, Quote, BarChart3, Lightbulb,
   LineChart, GraduationCap, Target,
-  Check, Crown, type LucideIcon,
+  Check, type LucideIcon,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, type Lang } from "@/lib/i18n";
+import { membershipPlans as catalogPlans } from "@/lib/plans-catalog";
 import { DreMockupPreview } from "@/components/DreMockupPreview";
 import { GlassCard } from "@/components/visual/GlassCard";
 import { GoldButton } from "@/components/visual/GoldButton";
@@ -141,10 +142,6 @@ function HomePage() {
   const { t, lang } = useI18n();
   const [billing, setBilling] = useState<"monthly" | "yearly">("monthly");
 
-  const basicMonthly = 39;
-  const premiumMonthly = 97;
-  const basicYearly = 398;
-  const premiumYearly = 989;
   const paidPeriod = billing === "monthly" ? t("home.plans.perMonth") : t("home.plans.perYear");
 
   const stats = [
@@ -168,26 +165,15 @@ function HomePage() {
     { icon: Users, title: t("home.howItWorks.b4Title"), desc: t("home.howItWorks.b4Desc"), wide: true },
   ];
 
-  const plans = [
-    {
-      id: "basico",
-      icon: Star,
-      name: t("home.plans.basicName"),
-      amount: billing === "monthly" ? basicMonthly : basicYearly,
-      desc: t("home.plans.basicDesc"),
-      features: [t("home.plans.basicF1"), t("home.plans.basicF2"), t("home.plans.basicF3"), t("home.plans.basicF4")],
-      featured: false,
-    },
-    {
-      id: "premium",
-      icon: Crown,
-      name: t("home.plans.premiumName"),
-      amount: billing === "monthly" ? premiumMonthly : premiumYearly,
-      desc: t("home.plans.premiumDesc"),
-      features: [t("home.plans.premiumF1"), t("home.plans.premiumF2"), t("home.plans.premiumF3"), t("home.plans.premiumF4")],
-      featured: true,
-    },
-  ];
+  const plans = catalogPlans.map((plan) => ({
+    id: plan.id,
+    icon: plan.icon,
+    name: plan.name[(lang as "es" | "en")] ?? plan.name.es,
+    amount: billing === "monthly" ? plan.monthlyPrice : plan.yearlyPrice,
+    desc: plan.description[(lang as "es" | "en")] ?? plan.description.es,
+    features: (plan.features[(lang as "es" | "en")] ?? plan.features.es).slice(0, 4),
+    featured: plan.featured,
+  }));
 
   return (
     <div className="relative min-h-screen">
