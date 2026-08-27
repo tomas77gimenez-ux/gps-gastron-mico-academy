@@ -40,6 +40,25 @@ function intervalLabel(price: any): string {
   return "mensual";
 }
 
+/**
+ * En la API 2025-08-27.basil el período de facturación vive en cada item
+ * (subscription.items.data[0]), no en el objeto subscription. Leemos de ahí,
+ * con fallback al campo viejo y recién después a trial_end.
+ */
+function periodFrom(subscription: any): { start: number | null; end: number | null } {
+  const item = subscription?.items?.data?.[0];
+  const start = item?.current_period_start ?? subscription?.current_period_start ?? null;
+  const end =
+    item?.current_period_end ?? subscription?.current_period_end ?? subscription?.trial_end ?? null;
+  return { start: start ?? null, end: end ?? null };
+}
+
+function periodEndDate(subscription: any): number | undefined {
+  const { end } = periodFrom(subscription);
+  return end ?? undefined;
+}
+
+
 /** Resolves the account email for a Stripe customer via our own subscriptions table. */
 async function emailForCustomer(customerId: string, env: StripeEnv): Promise<string | null> {
   const { data: row } = await supabase
