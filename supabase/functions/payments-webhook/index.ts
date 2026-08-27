@@ -205,13 +205,29 @@ async function handleCheckoutCompleted(session: any, env: StripeEnv) {
   if (!userId) return;
   // Garante o vínculo user <-> subscription mesmo se o evento de subscription
   // chegar antes/sem metadata.
-  await supabase
+  const { data: linked } = await supabase
     .from("subscriptions")
     .update({ user_id: userId, updated_at: new Date().toISOString() })
     .eq("stripe_subscription_id", session.subscription)
-    .eq("environment", env);
+    .eq("environment", env)
+    .select("id");
+
+  // Eventos fuera de orden: si customer.subscription.created no pudo resolver
+  // el userId, no existe ninguna fila. La creamos acá con el userId de la sesión.
+  if (!linked || linked.length === 0) {
+    try {
+      const stripe = createStripeClient(env);
+      const subscription = await stripe.subscriptions.retrieve(session.subscription, {
+        expand: ["items.data.price"],
+      });
+      await handleSubscriptionCreated(subscription, env, userId);
+    } catch (e) {
+      console.error("checkout.completed: could not backfill subscription row", e);
+    }
+  }
 
   await sendSubscriptionWelcome(session, env);
+
 }
 
 /**
