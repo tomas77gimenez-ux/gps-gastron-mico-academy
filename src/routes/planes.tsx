@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Check, X, Star, Crown, Gem, Shield, CreditCard, Settings, Loader2 } from "lucide-react";
+import { Check, X, Shield, CreditCard, Settings, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
@@ -13,96 +13,12 @@ import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { toast } from "sonner";
 import { trackEvent, trackFunnelStep } from "@/lib/analytics";
+import { membershipPlans } from "@/lib/plans-catalog";
 
 // Helper: pick a translation from an object keyed by language, falling back to es
 function pickLang<T>(obj: Partial<Record<Lang, T>> & { es: T }, lang: Lang): T {
   return obj[lang] ?? obj.es;
 }
-
-const plans = [
-  {
-    id: "basico",
-    name: { es: "Academy", en: "Academy" },
-    monthlyPrice: 57,
-    yearlyPrice: 581,
-    priceIdMonthly: "plan_basico_monthly",
-    priceIdYearly: "plan_basico_yearly",
-    description: { es: "Curso completo, todas las herramientas de gestión y la comunidad de miembros.", en: "Complete course, all management tools and the members community." },
-    icon: Star,
-    featured: false,
-    features: {
-      es: [
-        "Curso completo GPS Gastronómico (7 módulos)",
-        "Todas las herramientas de gestión (DRE, Punto de Equilibrio, Control de Caja, Monitor de CMV, Fichas Técnicas)",
-        "Comunidad de miembros",
-        "Asistente IA gastronómico",
-        "Actualizaciones mensuales",
-      ],
-      en: [
-        "Complete GPS Gastronômico course (7 modules)",
-        "All management tools (DRE, Break-even, Cash Control, CMV Monitor, Recipe Cards)",
-        "Members community",
-        "Gastronomic AI assistant",
-        "Monthly updates",
-      ],
-    },
-  },
-  {
-    id: "premium",
-    name: { es: "Academy Pro", en: "Academy Pro" },
-    monthlyPrice: 87,
-    yearlyPrice: 887,
-    priceIdMonthly: "plan_premium_monthly",
-    priceIdYearly: "plan_premium_yearly",
-    description: { es: "Todo lo de Academy más acompañamiento en vivo cada semana en la Sala Pro.", en: "Everything in Academy plus weekly live guidance in the Pro Room." },
-    icon: Crown,
-    featured: true,
-    features: {
-      es: [
-        "Todo lo del plan Academy",
-        "Reunión semanal de implementación en vivo",
-        "Caso Real del Mes (análisis antes/después)",
-        "Acceso a la Sala Pro y al archivo de grabaciones",
-        "Soporte prioritario del equipo de Daniel",
-      ],
-      en: [
-        "Everything in Academy",
-        "Weekly live implementation call",
-        "Real Case of the Month (before/after analysis)",
-        "Pro Room access and recordings archive",
-        "Priority support from Daniel's team",
-      ],
-    },
-  },
-  {
-    id: "elite",
-    name: { es: "Academy Élite", en: "Academy Élite" },
-    monthlyPrice: 167,
-    yearlyPrice: 1703,
-    priceIdMonthly: "plan_elite_monthly",
-    priceIdYearly: "plan_elite_yearly",
-    description: {
-      es: "Todo lo de Pro más acompañamiento 1 a 1 con Daniel y la línea completa de Gerentes Digitales.",
-      en: "Everything in Pro plus 1-on-1 guidance with Daniel and the full Digital Managers line.",
-    },
-    icon: Gem,
-    featured: false,
-    features: {
-      es: [
-        "Todo lo del plan Academy Pro",
-        "1 llamada 1 a 1 mensual con Daniel Gimenez",
-        "Acceso incluido a TODOS los Gerentes Digitales (presentes y futuros)",
-        "Prioridad máxima en soporte y revisiones",
-      ],
-      en: [
-        "Everything in Academy Pro",
-        "1 monthly 1-on-1 call with Daniel Gimenez",
-        "Included access to ALL Digital Managers (present and future)",
-        "Highest priority support and reviews",
-      ],
-    },
-  },
-];
 
 const compareFeatures = [
   { key: "compare.cursos", basico: true, premium: true, elite: true },
@@ -116,6 +32,7 @@ const compareFeatures = [
   { key: "compare.llamada1a1", basico: false, premium: false, elite: true },
   { key: "compare.gerentes", basico: false, premium: false, elite: true },
 ] as const;
+
 
 const faqs = [
   { q: "planes.faqQ1", a: "planes.faqA1" },
@@ -158,7 +75,7 @@ function PlanesPage() {
     const retryPlan = params.get("retry_plan");
     const retryPeriod = params.get("retry_period") as "monthly" | "yearly" | null;
     if (!retryPlan) return;
-    const plan = plans.find((p) => p.id === retryPlan);
+    const plan = membershipPlans.find((p) => p.id === retryPlan);
     if (!plan) return;
     if (retryPeriod === "monthly" || retryPeriod === "yearly") {
       setBilling(retryPeriod);
@@ -371,7 +288,7 @@ function PlanesPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-6xl mx-auto items-start">
-          {plans.map((plan, i) => {
+          {membershipPlans.map((plan, i) => {
             const yearlyPrice = plan.yearlyPrice ?? Math.round(plan.monthlyPrice * 12 * yearlyDiscount);
             const yearlySavings = plan.monthlyPrice * 12 - yearlyPrice;
             const monthlyEquivalent = (yearlyPrice / 12).toFixed(2);
@@ -521,9 +438,9 @@ function PlanesPage() {
           <div className="rounded-2xl border border-border bg-card overflow-hidden">
             <div className="grid grid-cols-4 bg-secondary/40 border-b border-border">
               <div className="px-4 py-4 text-sm font-semibold">{t("planes.feature")}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[0].name, lang)}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(plans[1].name, lang)}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(plans[2].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(membershipPlans[0].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(membershipPlans[1].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(membershipPlans[2].name, lang)}</div>
             </div>
             {compareFeatures.map((row, idx) => (
               <div
@@ -612,13 +529,13 @@ function PlanesPage() {
               customerEmail={userEmail}
               userId={userId}
               returnUrl={`${typeof window !== "undefined" ? window.location.origin : ""}/checkout/return?session_id={CHECKOUT_SESSION_ID}`}
-              plan={plans.find((p) => p.priceIdMonthly === checkoutPriceId || p.priceIdYearly === checkoutPriceId)?.id}
+              plan={membershipPlans.find((p) => p.priceIdMonthly === checkoutPriceId || p.priceIdYearly === checkoutPriceId)?.id}
               period={billing}
               onSessionCreated={(sessionId) => {
                 setCheckoutSessionId(sessionId);
                 if (typeof window !== "undefined") {
                   // Find the plan slug from the active priceId
-                  const planMatch = plans.find(
+                  const planMatch = membershipPlans.find(
                     (p) => p.priceIdMonthly === checkoutPriceId || p.priceIdYearly === checkoutPriceId,
                   );
                   window.sessionStorage.setItem(
