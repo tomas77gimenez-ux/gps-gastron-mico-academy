@@ -369,12 +369,17 @@ async function resolveUserId(subscription: any, env: StripeEnv): Promise<string 
   return data?.user_id ?? null;
 }
 
-async function handleSubscriptionCreated(subscription: any, env: StripeEnv) {
-  const userId = await resolveUserId(subscription, env);
+async function handleSubscriptionCreated(
+  subscription: any,
+  env: StripeEnv,
+  userIdOverride?: string | null,
+) {
+  const userId = userIdOverride ?? (await resolveUserId(subscription, env));
   if (!userId) {
     console.error("No userId resolved for subscription", subscription.id);
     return;
   }
+
 
   const { priceId, productId, planTier } = priceInfo(subscription);
 
