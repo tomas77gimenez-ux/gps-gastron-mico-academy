@@ -45,14 +45,43 @@ export function createStripeClient(env: StripeEnv): Stripe {
   });
 }
 
-export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ type: string; data: { object: any } }> {
+async function signatureMatches(secret: string, timestamp: string, body: string, v1Signatures: string[]): Promise<boolean> {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signed = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    new TextEncoder().encode(`${timestamp}.${body}`)
+  );
+  const expected = new TextDecoder().decode(encode(new Uint8Array(signed)));
+  return v1Signatures.includes(expected);
+}
+
+export async function verifyWebhook(
+  req: Request,
+  env: StripeEnv,
+): Promise<{ id?: string; type: string; livemode?: boolean; data: { object: any } }> {
   const signature = req.headers.get("stripe-signature");
   const body = await req.text();
-  const secret = (env === 'sandbox'
-    ? Deno.env.get('PAYMENTS_SANDBOX_WEBHOOK_SECRET')
-    : Deno.env.get('PAYMENTS_LIVE_WEBHOOK_SECRET')) || Deno.env.get('STRIPE_WEBHOOK_SECRET');
 
-  if (!secret) {
+  const sandboxSecret = Deno.env.get('PAYMENTS_SANDBOX_WEBHOOK_SECRET');
+  const liveSecret = Deno.env.get('PAYMENTS_LIVE_WEBHOOK_SECRET');
+  const fallbackSecret = Deno.env.get('STRIPE_WEBHOOK_SECRET');
+
+  // El query param solo decide qué secret se prueba primero; si falla,
+  // probamos el otro antes de rechazar el evento.
+  const preferred = env === 'sandbox' ? sandboxSecret : liveSecret;
+  const other = env === 'sandbox' ? liveSecret : sandboxSecret;
+  const secrets = [preferred, other, fallbackSecret].filter(
+    (s): s is string => typeof s === 'string' && s.length > 0,
+  );
+
+  if (!secrets.length) {
     throw new Error('Webhook secret environment variable is not configured');
   }
 
@@ -77,23 +106,18 @@ export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ typ
     throw new Error("Webhook timestamp too old");
   }
 
-  const key = await crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
-  const signed = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(`${timestamp}.${body}`)
-  );
-  const expected = new TextDecoder().decode(encode(new Uint8Array(signed)));
+  let verified = false;
+  for (const secret of secrets) {
+    if (await signatureMatches(secret, timestamp, body, v1Signatures)) {
+      verified = true;
+      break;
+    }
+  }
 
-  if (!v1Signatures.includes(expected)) {
+  if (!verified) {
     throw new Error("Invalid webhook signature");
   }
 
   return JSON.parse(body);
 }
+
