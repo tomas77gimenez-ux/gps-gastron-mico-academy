@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { LineChart, Save, Loader2, Settings2, AlertTriangle, CheckCircle2, Calendar } from "lucide-react";
 import { money, num, pct } from "@/lib/tools-format";
 import { Callout, Field, KPI, NumberInput, Pill, ToolCard, ToolSectionTitle, inputClass } from "./ToolUI";
+import { useI18n, type Lang } from "@/lib/i18n";
 
 interface WeekRow {
   purchases: string;
@@ -13,22 +14,25 @@ interface WeekRow {
 
 const WEEKS = [1, 2, 3, 4];
 
-function monthOptions(): { value: string; label: string }[] {
+const LOCALE: Record<Lang, string> = { es: "es-MX", en: "en-US", pt: "pt-BR" };
+
+function monthOptions(lang: Lang): { value: string; label: string }[] {
   const out: { value: string; label: string }[] = [];
   const now = new Date();
   for (let i = 0; i < 12; i++) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
     out.push({
       value: `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`,
-      label: d.toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+      label: d.toLocaleDateString(LOCALE[lang], { month: "long", year: "numeric" }),
     });
   }
   return out;
 }
 
 export function CmvMonitorTool() {
+  const { t, lang } = useI18n();
   const { user, isReady } = useAuthSession();
-  const months = useMemo(monthOptions, []);
+  const months = useMemo(() => monthOptions(lang), [lang]);
   const [month, setMonth] = useState(months[0].value);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -94,10 +98,10 @@ export function CmvMonitorTool() {
     ]);
     setSaving(false);
     if (s1.error || s2.error) {
-      toast.error("No se pudo guardar", { description: s1.error?.message ?? s2.error?.message });
+      toast.error(t("cmv.errorGuardar"), { description: s1.error?.message ?? s2.error?.message });
       return;
     }
-    toast.success("Monitor guardado");
+    toast.success(t("cmv.guardado"));
   }
 
   const meta = num(target) || 32;
@@ -124,7 +128,7 @@ export function CmvMonitorTool() {
   if (loading) {
     return (
       <div className="text-center py-16 text-muted-foreground text-sm">
-        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando monitor...
+        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> {t("cmv.cargando")}
       </div>
     );
   }
@@ -132,31 +136,31 @@ export function CmvMonitorTool() {
   return (
     <div className="space-y-6">
       <ToolCard>
-        <ToolSectionTitle icon={Settings2}>Configuración</ToolSectionTitle>
+        <ToolSectionTitle icon={Settings2}>{t("cmv.config")}</ToolSectionTitle>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Field label="Mes">
+          <Field label={t("cmv.mes")}>
             <select value={month} onChange={(e) => setMonth(e.target.value)} className={inputClass}>
               {months.map((m) => (
                 <option key={m.value} value={m.value}>{m.label}</option>
               ))}
             </select>
           </Field>
-          <Field label="Meta de CMV %">
+          <Field label={t("cmv.meta")}>
             <NumberInput value={target} onChange={setTarget} placeholder="32" min={1} />
           </Field>
-          <Field label="Tolerancia (puntos)">
+          <Field label={t("cmv.tolerancia")}>
             <NumberInput value={tolerance} onChange={setTolerance} placeholder="3" min={0} />
           </Field>
         </div>
       </ToolCard>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <KPI title="CMV acumulado" value={pct(cmvAcc)} subtitle={`Compras ${money(totals.purchases)} · Ventas ${money(totals.sales)}`} icon={LineChart} tone={cmvAcc === 0 ? "neutral" : cmvAcc <= meta ? "success" : cmvAcc <= meta + tol ? "warning" : "danger"} />
-        <KPI title="Meta" value={pct(meta)} subtitle={`Tolerancia ± ${tol} pts`} icon={Calendar} tone="primary" />
+        <KPI title={t("cmv.acumulado")} value={pct(cmvAcc)} subtitle={t("cmv.comprasVentas").replace("{p}", money(totals.purchases)).replace("{s}", money(totals.sales))} icon={LineChart} tone={cmvAcc === 0 ? "neutral" : cmvAcc <= meta ? "success" : cmvAcc <= meta + tol ? "warning" : "danger"} />
+        <KPI title={t("cmv.metaCorta")} value={pct(meta)} subtitle={t("cmv.toleranciaSub").replace("{tol}", String(tol))} icon={Calendar} tone="primary" />
         <KPI
-          title="Desvío"
+          title={t("cmv.desvio")}
           value={`${deviation >= 0 ? "+" : ""}${deviation.toFixed(1)} pts`}
-          subtitle={deviation > 0 ? "Por encima de la meta" : "Dentro o por debajo de la meta"}
+          subtitle={deviation > 0 ? t("cmv.porEncima") : t("cmv.dentroDebajo")}
           icon={deviation > tol ? AlertTriangle : CheckCircle2}
           tone={cmvAcc === 0 ? "neutral" : deviation <= 0 ? "success" : deviation <= tol ? "warning" : "danger"}
         />
@@ -166,17 +170,17 @@ export function CmvMonitorTool() {
         <table className="w-full text-sm">
           <thead className="bg-secondary/40 text-xs uppercase tracking-wide text-muted-foreground">
             <tr>
-              <th className="text-left px-4 py-3 font-medium">Semana</th>
-              <th className="text-left px-4 py-3 font-medium">Compras</th>
-              <th className="text-left px-4 py-3 font-medium">Ventas</th>
+              <th className="text-left px-4 py-3 font-medium">{t("cmv.thSemana")}</th>
+              <th className="text-left px-4 py-3 font-medium">{t("cmv.thCompras")}</th>
+              <th className="text-left px-4 py-3 font-medium">{t("cmv.thVentas")}</th>
               <th className="text-right px-4 py-3 font-medium">CMV</th>
-              <th className="text-right px-4 py-3 font-medium">Estado</th>
+              <th className="text-right px-4 py-3 font-medium">{t("cmv.thEstado")}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
             {weekly.map((w) => (
               <tr key={w.week}>
-                <td className="px-4 py-3 font-medium whitespace-nowrap">Semana {w.week}</td>
+                <td className="px-4 py-3 font-medium whitespace-nowrap">{t("cmv.semanaN").replace("{n}", String(w.week))}</td>
                 <td className="px-4 py-3">
                   <NumberInput
                     value={rows[w.week].purchases}
@@ -201,7 +205,7 @@ export function CmvMonitorTool() {
                 <td className="px-4 py-3 text-right">
                   {w.sales > 0 && (
                     <Pill tone={w.tone}>
-                      {w.tone === "success" ? "En meta" : w.tone === "warning" ? "Atención" : "Fuera de meta"}
+                      {w.tone === "success" ? t("cmv.enMeta") : w.tone === "warning" ? t("cmv.atencion") : t("cmv.fueraMeta")}
                     </Pill>
                   )}
                 </td>
@@ -212,15 +216,15 @@ export function CmvMonitorTool() {
       </ToolCard>
 
       <ToolCard>
-        <ToolSectionTitle icon={LineChart} hint={`La línea punteada marca la meta de ${pct(meta)}.`}>
-          CMV semanal
+        <ToolSectionTitle icon={LineChart} hint={t("cmv.semanalHint").replace("{pct}", pct(meta))}>
+          {t("cmv.semanalTitulo")}
         </ToolSectionTitle>
         <div className="relative h-52 flex items-end gap-4 pt-4">
           <div
             className="absolute left-0 right-0 border-t border-dashed border-primary/70"
             style={{ bottom: `${(meta / maxCmv) * 100}%` }}
           >
-            <span className="absolute -top-5 right-0 text-[10px] text-primary-text">Meta {pct(meta, 0)}</span>
+            <span className="absolute -top-5 right-0 text-[10px] text-primary-text">{t("cmv.metaBadge").replace("{pct}", pct(meta, 0))}</span>
           </div>
           {weekly.map((w) => (
             <div key={w.week} className="flex-1 flex flex-col items-center justify-end h-full gap-2">
@@ -231,7 +235,7 @@ export function CmvMonitorTool() {
                 }`}
                 style={{ height: `${Math.max(2, Math.min(100, (w.cmv / maxCmv) * 100))}%` }}
               />
-              <span className="text-xs text-muted-foreground">S{w.week}</span>
+              <span className="text-xs text-muted-foreground">{t("cmv.semanaAbbr").replace("{n}", String(w.week))}</span>
             </div>
           ))}
         </div>
@@ -240,8 +244,8 @@ export function CmvMonitorTool() {
       {totals.sales > 0 && (
         <Callout tone={deviation <= 0 ? "success" : deviation <= tol ? "warning" : "danger"}>
           {deviation <= 0
-            ? `Vas dentro de la meta. Cada punto por debajo son ${money(totals.sales / 100)} extra de margen al mes.`
-            : `El desvío ya le costó aproximadamente ${money(Math.abs(impact))} este mes. Audite fichas técnicas, proveedores y control de porciones.`}
+            ? t("cmv.dentroMeta").replace("{amount}", money(totals.sales / 100))
+            : t("cmv.desvioCosto").replace("{amount}", money(Math.abs(impact)))}
         </Callout>
       )}
 
@@ -250,7 +254,7 @@ export function CmvMonitorTool() {
         disabled={saving}
         className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
       >
-        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} Guardar monitor
+        {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />} {t("cmv.guardar")}
       </button>
     </div>
   );
