@@ -61,7 +61,7 @@ export function NovedadesSection() {
     <section id="novedades" className="border-b border-border bg-surface/40 py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-6 flex items-center gap-2">
-          <Sparkles className="h-4 w-4 text-primary" strokeWidth={1.5} />
+          <Sparkles className="h-4 w-4 text-primary-text" strokeWidth={1.5} />
           <h2 className="font-display text-xl font-semibold">Novedades</h2>
           <span className="text-xs text-muted-foreground">· últimos 30 días</span>
         </div>
@@ -77,7 +77,7 @@ export function NovedadesSection() {
               const content = (
                 <div className="h-full rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40">
                   <div className="mb-2 flex items-center justify-between gap-2">
-                    <span className="inline-flex items-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-wider text-primary">
+                    <span className="inline-flex items-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-wider text-primary-text">
                       <meta.icon className="h-3.5 w-3.5" strokeWidth={1.5} /> {meta.label}
                     </span>
                     <span className="text-[0.65rem] text-muted-foreground">{formatDate(item.createdAt)}</span>

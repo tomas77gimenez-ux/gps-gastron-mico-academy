@@ -55,7 +55,7 @@ function ForgotPasswordPage() {
               Si existe una cuenta con <strong className="text-foreground">{email}</strong>, 
               recibirás un enlace para restablecer tu contraseña.
             </p>
-            <Link to="/login" className="text-primary text-sm font-medium hover:underline">
+            <Link to="/login" className="text-primary-text text-sm font-medium hover:underline">
               Volver al login
             </Link>
           </div>

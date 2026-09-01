@@ -146,7 +146,7 @@ function AsistentePage() {
               animate={{ opacity: 1, scale: 1 }}
               className="w-16 h-16 rounded-2xl bg-primary/15 flex items-center justify-center mb-6 border border-primary/20"
             >
-              <Sparkles className="w-8 h-8 text-primary" />
+              <Sparkles className="w-8 h-8 text-primary-text" />
             </motion.div>
             <h1 className="text-2xl font-bold font-display mb-2 text-center">Asistente GPS Gastronômico</h1>
             <p className="text-muted-foreground text-center mb-8 max-w-md">
@@ -179,7 +179,7 @@ function AsistentePage() {
                 >
                   {msg.role === "assistant" && (
                     <div className="shrink-0 w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center mt-1">
-                      <Bot className="w-4 h-4 text-primary" />
+                      <Bot className="w-4 h-4 text-primary-text" />
                     </div>
                   )}
                   <div
@@ -208,7 +208,7 @@ function AsistentePage() {
             {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-lg bg-primary/15 flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-primary" />
+                  <Bot className="w-4 h-4 text-primary-text" />
                 </div>
                 <div className="bg-card border border-border rounded-2xl px-4 py-3">
                   <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />

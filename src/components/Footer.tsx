@@ -30,7 +30,7 @@ export function Footer() {
           <div className="lg:col-span-4 space-y-5">
             <Link to="/" className="inline-flex items-center gap-2">
               <div className="w-9 h-9 rounded-xl glass flex items-center justify-center">
-                <ChefHat className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                <ChefHat className="w-5 h-5 text-primary-text" strokeWidth={1.5} />
               </div>
               <span className="font-display font-bold text-lg">GPS Gastronômico</span>
             </Link>
@@ -61,10 +61,10 @@ export function Footer() {
           <div className="lg:col-span-2">
             <h4 className="font-display font-semibold text-sm mb-4">{t("footer.explorar")}</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("nav.inicio")}</Link></li>
-              <li><Link to="/cursos" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("nav.mentoria")}</Link></li>
-              <li><Link to="/planes" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("nav.planes")}</Link></li>
-              <li><Link to="/tienda" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("nav.productos")}</Link></li>
+              <li><Link to="/" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("nav.inicio")}</Link></li>
+              <li><Link to="/cursos" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("nav.mentoria")}</Link></li>
+              <li><Link to="/planes" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("nav.planes")}</Link></li>
+              <li><Link to="/tienda" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("nav.productos")}</Link></li>
             </ul>
           </div>
 
@@ -72,10 +72,10 @@ export function Footer() {
           <div className="lg:col-span-2">
             <h4 className="font-display font-semibold text-sm mb-4">{t("footer.recursos")}</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/herramientas/dre" className="link-underline text-muted-foreground hover:text-primary transition-colors">DRE</Link></li>
-              <li><Link to="/dashboard" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.dashboard")}</Link></li>
-              <li><Link to="/asistente" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.asistente")}</Link></li>
-              <li><Link to="/perfil" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("nav.perfil")}</Link></li>
+              <li><Link to="/herramientas/dre" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">DRE</Link></li>
+              <li><Link to="/dashboard" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("footer.dashboard")}</Link></li>
+              <li><Link to="/asistente" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("footer.asistente")}</Link></li>
+              <li><Link to="/perfil" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("nav.perfil")}</Link></li>
             </ul>
           </div>
 
@@ -83,9 +83,9 @@ export function Footer() {
           <div className="lg:col-span-2">
             <h4 className="font-display font-semibold text-sm mb-4">{t("footer.legal")}</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/terminos" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.terminos")}</Link></li>
-              <li><Link to="/privacidad" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.privacidad")}</Link></li>
-              <li><Link to="/reembolsos" className="link-underline text-muted-foreground hover:text-primary transition-colors">{t("footer.reembolsos")}</Link></li>
+              <li><Link to="/terminos" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("footer.terminos")}</Link></li>
+              <li><Link to="/privacidad" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("footer.privacidad")}</Link></li>
+              <li><Link to="/reembolsos" className="link-underline text-muted-foreground hover:text-primary-text transition-colors">{t("footer.reembolsos")}</Link></li>
             </ul>
           </div>
 
@@ -94,7 +94,7 @@ export function Footer() {
             <h4 className="font-display font-semibold text-sm mb-4">{t("footer.contacto")}</h4>
             <a
               href="mailto:hola@gpsgastronomico.com"
-              className="link-underline mb-4 inline-flex max-w-full items-center gap-2 break-all text-sm text-muted-foreground transition-colors hover:text-primary"
+              className="link-underline mb-4 inline-flex max-w-full items-center gap-2 break-all text-sm text-muted-foreground transition-colors hover:text-primary-text"
             >
               <Mail className="h-4 w-4 shrink-0" />
               hola@gpsgastronomico.com
@@ -105,7 +105,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Instagram @gestionderestaurantes"
-                className="w-9 h-9 rounded-xl glass flex items-center justify-center text-muted-foreground transition-all duration-200 hover:text-primary hover:border-primary/40 hover:-translate-y-0.5"
+                className="w-9 h-9 rounded-xl glass flex items-center justify-center text-muted-foreground transition-all duration-200 hover:text-primary-text hover:border-primary/40 hover:-translate-y-0.5"
               >
                 <Instagram className="w-4 h-4" />
               </a>
@@ -114,7 +114,7 @@ export function Footer() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="YouTube @danielgimenezcoach"
-                className="w-9 h-9 rounded-xl glass flex items-center justify-center text-muted-foreground transition-all duration-200 hover:text-primary hover:border-primary/40 hover:-translate-y-0.5"
+                className="w-9 h-9 rounded-xl glass flex items-center justify-center text-muted-foreground transition-all duration-200 hover:text-primary-text hover:border-primary/40 hover:-translate-y-0.5"
               >
                 <Youtube className="w-4 h-4" />
               </a>
@@ -126,7 +126,7 @@ export function Footer() {
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row gap-3 items-center justify-between text-xs text-muted-foreground">
           <p>© {year} GPS Gastronômico. {t("footer.derechos")}</p>
           <p className="inline-flex items-center gap-1.5">
-            {t("footer.hechoCon")} <Heart className="w-3 h-3 fill-primary text-primary" /> {t("footer.para")}
+            {t("footer.hechoCon")} <Heart className="w-3 h-3 fill-primary-text text-primary-text" /> {t("footer.para")}
           </p>
         </div>
       </div>

@@ -105,8 +105,8 @@ export function GpsDiagnosticTool() {
             onClick={startNew}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-medium border border-dashed transition-all ${
               isCreating
-                ? "border-primary text-primary bg-primary/10"
-                : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                ? "border-primary text-primary-text bg-primary/10"
+                : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary-text"
             }`}
           >
             <Plus className="w-3.5 h-3.5" /> {t("dashboard.nuevoDiag")}
@@ -125,7 +125,7 @@ export function GpsDiagnosticTool() {
                   onClick={() => setSelectedPeriod(opt.value)}
                   className={`flex items-center justify-center gap-2 px-4 py-3 rounded-xl border text-sm font-medium transition-all ${
                     selectedPeriod === opt.value
-                      ? "border-primary bg-primary/10 text-primary glow-orange"
+                      ? "border-primary bg-primary/10 text-primary-text glow-orange"
                       : "border-border bg-card text-muted-foreground hover:border-primary/40 hover:text-foreground"
                   }`}
                 >

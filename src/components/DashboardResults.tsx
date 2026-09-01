@@ -35,7 +35,7 @@ function KPICard({ title, value, subtitle, icon: Icon, variant }: {
     danger: "border-red-500/30 bg-red-500/5",
   };
   const iconColors = {
-    primary: "text-primary",
+    primary: "text-primary-text",
     success: "text-green-400",
     warning: "text-yellow-400",
     danger: "text-red-400",
@@ -99,7 +99,7 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Revenue by Channel */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary" /> Facturación por Canal
+          <BarChart3 className="w-5 h-5 text-primary-text" /> Facturación por Canal
         </h3>
         <div className="space-y-4">
           {results.revenueByChannel.filter(r => r.value > 0).map((channel) => (
@@ -128,7 +128,7 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Expense Breakdown */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
-          <PieChart className="w-5 h-5 text-primary" /> {t("results.desgloseGastos")}
+          <PieChart className="w-5 h-5 text-primary-text" /> {t("results.desgloseGastos")}
         </h3>
         <div className="space-y-3">
           {results.expensesByCategory.filter(e => e.value > 0).map((expense) => {

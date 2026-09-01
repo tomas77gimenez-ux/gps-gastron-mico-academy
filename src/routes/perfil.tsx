@@ -275,13 +275,13 @@ function PerfilPage() {
           <div className="flex items-center justify-between gap-4 flex-wrap">
             <div className="flex items-center gap-4">
               <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
-                <User className="w-8 h-8 text-primary" />
+                <User className="w-8 h-8 text-primary-text" />
               </div>
               <div>
                 <h2 className="text-xl font-semibold">{initialName || user?.email?.split("@")[0] || "Usuario"}</h2>
                 <p className="text-sm text-muted-foreground">{user?.email ?? "—"}</p>
                 {sub.hasActive && (
-                  <span className="inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary text-xs font-semibold rounded-full">
+                  <span className="inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary-text text-xs font-semibold rounded-full">
                     {sub.status === "trialing" ? t("perfil.prueba") : t("perfil.activa")}
                   </span>
                 )}
@@ -305,7 +305,7 @@ function PerfilPage() {
           <section className="bg-card rounded-xl border border-border p-6 mb-8">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <User className="w-5 h-5 text-primary" />
+                <User className="w-5 h-5 text-primary-text" />
               </div>
               <h2 className="text-xl font-semibold">{t("perfil.datosPersonales")}</h2>
             </div>
@@ -362,7 +362,7 @@ function PerfilPage() {
         <section className="bg-card rounded-xl border border-border p-6 mb-8">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-              <CreditCard className="w-5 h-5 text-primary" />
+              <CreditCard className="w-5 h-5 text-primary-text" />
             </div>
             <h2 className="text-xl font-semibold">{t("perfil.suscripcion")}</h2>
           </div>
@@ -409,7 +409,7 @@ function PerfilPage() {
                     {t("perfil.estado")}
                   </p>
                   <div className="flex items-center gap-2">
-                    <CheckCircle2 className="w-4 h-4 text-primary" />
+                    <CheckCircle2 className="w-4 h-4 text-primary-text" />
                     <span className="font-semibold">
                       {sub.status === "trialing"
                         ? t("perfil.prueba")
@@ -469,7 +469,7 @@ function PerfilPage() {
           <section className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <ClipboardCheck className="w-5 h-5 text-primary" />
+                <ClipboardCheck className="w-5 h-5 text-primary-text" />
               </div>
               <h2 className="text-xl font-semibold">{t("gd.misGerentes")}</h2>
             </div>
@@ -495,13 +495,13 @@ function PerfilPage() {
                     className="flex items-center gap-4 p-3 rounded-lg border border-border bg-background/40 hover:border-primary/40 transition-colors group"
                   >
                     <div className="w-10 h-10 shrink-0 rounded-md bg-primary/10 flex items-center justify-center">
-                      <ClipboardCheck className="w-5 h-5 text-primary" />
+                      <ClipboardCheck className="w-5 h-5 text-primary-text" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-medium truncate group-hover:text-primary transition-colors">{gd.name}</h3>
+                      <h3 className="font-medium truncate group-hover:text-primary-text transition-colors">{gd.name}</h3>
                       <p className="text-xs text-muted-foreground truncate">{gd.description}</p>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
+                    <ArrowRight className="w-5 h-5 text-primary-text opacity-70 group-hover:opacity-100 shrink-0" />
                   </Link>
                 ))}
               </div>
@@ -514,7 +514,7 @@ function PerfilPage() {
           <section className="bg-card rounded-xl border border-border p-6">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-primary" />
+                <BookOpen className="w-5 h-5 text-primary-text" />
               </div>
               <h2 className="text-xl font-semibold">{t("perfil.misCursos")}</h2>
             </div>
@@ -545,11 +545,11 @@ function PerfilPage() {
                         {c.thumbnail_url ? (
                           <img src={c.thumbnail_url} alt={c.title} className="w-full h-full object-cover" loading="lazy" />
                         ) : (
-                          <BookOpen className="w-6 h-6 text-primary/30" />
+                          <BookOpen className="w-6 h-6 text-primary-text/30" />
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h3 className="font-medium truncate group-hover:text-primary transition-colors">{c.title}</h3>
+                        <h3 className="font-medium truncate group-hover:text-primary-text transition-colors">{c.title}</h3>
                         <div className="flex items-center gap-2 mt-1">
                           <div className="flex-1 h-1.5 rounded-full bg-secondary overflow-hidden max-w-[200px]">
                             <div className="h-full bg-primary transition-all" style={{ width: `${pct}%` }} />
@@ -562,7 +562,7 @@ function PerfilPage() {
                           {t("perfil.ultimaVisita")}: {formatDate(c.lastAt, lang)}
                         </p>
                       </div>
-                      <PlayCircle className="w-6 h-6 text-primary opacity-70 group-hover:opacity-100 shrink-0" />
+                      <PlayCircle className="w-6 h-6 text-primary-text opacity-70 group-hover:opacity-100 shrink-0" />
                     </Link>
                   );
                 })}

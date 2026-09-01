@@ -14,7 +14,7 @@ export function ProVideoPlayer({ kind, id, title }: Props) {
   if (loading) {
     return (
       <div className="flex aspect-video w-full items-center justify-center rounded-xl border border-border bg-secondary/40">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <Loader2 className="h-6 w-6 animate-spin text-primary-text" />
       </div>
     );
   }
@@ -22,7 +22,7 @@ export function ProVideoPlayer({ kind, id, title }: Props) {
   if (forbidden) {
     return (
       <div className="flex aspect-video w-full flex-col items-center justify-center gap-2 rounded-xl border border-border bg-secondary/40 text-center">
-        <Lock className="h-6 w-6 text-primary" strokeWidth={1.5} />
+        <Lock className="h-6 w-6 text-primary-text" strokeWidth={1.5} />
         <p className="text-sm text-muted-foreground">Este contenido es exclusivo de Academy Pro.</p>
       </div>
     );

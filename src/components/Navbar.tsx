@@ -99,7 +99,7 @@ export function Navbar() {
                   to={item.to}
                   className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                     isActive
-                      ? "bg-primary/12 text-primary"
+                      ? "bg-primary/12 text-primary-text"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -113,7 +113,7 @@ export function Navbar() {
                 to="/admin"
                 className={`flex items-center gap-2 whitespace-nowrap px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
                   location.pathname.startsWith("/admin")
-                    ? "bg-primary/12 text-primary"
+                    ? "bg-primary/12 text-primary-text"
                     : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                 }`}
               >
@@ -171,7 +171,7 @@ export function Navbar() {
             <Link
               to="/asistente"
               aria-label={t("nav.asistente")}
-              className="p-2 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+              className="p-2 rounded-lg text-muted-foreground hover:text-primary-text hover:bg-primary/10 transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
             </Link>
@@ -233,7 +233,7 @@ export function Navbar() {
                   onClick={() => setMobileOpen(false)}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-colors ${
                     isActive
-                      ? "bg-primary/15 text-primary"
+                      ? "bg-primary/15 text-primary-text"
                       : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                   }`}
                 >
@@ -255,7 +255,7 @@ export function Navbar() {
             <Link
               to="/asistente"
               onClick={() => setMobileOpen(false)}
-              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+              className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-muted-foreground hover:text-primary-text hover:bg-primary/10 transition-colors"
             >
               <MessageCircle className="w-5 h-5" />
               {t("nav.asistente")}
@@ -275,7 +275,7 @@ export function Navbar() {
                 <Link
                   to="/login"
                   onClick={() => setMobileOpen(false)}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-primary hover:bg-primary/10 transition-colors"
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-primary-text hover:bg-primary/10 transition-colors"
                 >
                   <LogIn className="w-5 h-5" />
                   {t("nav.iniciarSesion")}

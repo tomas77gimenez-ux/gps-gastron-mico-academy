@@ -75,7 +75,7 @@ function LoginPage() {
     <div className="min-h-screen pt-20 pb-12 flex items-center justify-center">
       <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary-text text-sm font-medium mb-4">
             <LogIn className="w-4 h-4" /> {t("login.bienvenido")}
           </div>
           <h1 className="text-3xl font-bold font-display">{t("login.titulo")}</h1>
@@ -118,7 +118,7 @@ function LoginPage() {
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="text-sm font-medium">{t("login.contrasena")}</label>
-                <Link to="/forgot-password" className="text-xs text-primary hover:underline">{t("login.olvidaste")}</Link>
+                <Link to="/forgot-password" className="text-xs text-primary-text hover:underline">{t("login.olvidaste")}</Link>
               </div>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -140,7 +140,7 @@ function LoginPage() {
 
           <p className="text-center text-sm text-muted-foreground">
             {t("login.noCuenta")}
-            <Link to="/registro" className="text-primary font-medium hover:underline">{t("login.registrate")}</Link>
+            <Link to="/registro" className="text-primary-text font-medium hover:underline">{t("login.registrate")}</Link>
           </p>
         </div>
       </div>

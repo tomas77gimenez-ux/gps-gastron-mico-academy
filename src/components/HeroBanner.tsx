@@ -35,7 +35,7 @@ export function HeroBanner({ title, description, instructor, category }: HeroBan
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <span className="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4 uppercase tracking-wider border border-primary/20">
+          <span className="inline-block px-3 py-1 rounded-full bg-primary/15 text-primary-text text-xs font-semibold mb-4 uppercase tracking-wider border border-primary/20">
             {category}
           </span>
           <h1 className="text-3xl md:text-5xl font-bold font-display mb-3 leading-tight">
@@ -45,7 +45,7 @@ export function HeroBanner({ title, description, instructor, category }: HeroBan
             {description}
           </p>
           <p className="text-muted-foreground text-sm mb-6">
-            Por <span className="text-primary font-medium">{instructor}</span>
+            Por <span className="text-primary-text font-medium">{instructor}</span>
           </p>
           <div className="flex gap-3">
             <Button className="bg-primary text-primary-foreground hover:bg-primary/90 font-semibold px-6 rounded-xl glow-orange">

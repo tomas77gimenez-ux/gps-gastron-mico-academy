@@ -220,7 +220,7 @@ export function CmvMonitorTool() {
             className="absolute left-0 right-0 border-t border-dashed border-primary/70"
             style={{ bottom: `${(meta / maxCmv) * 100}%` }}
           >
-            <span className="absolute -top-5 right-0 text-[10px] text-primary">Meta {pct(meta, 0)}</span>
+            <span className="absolute -top-5 right-0 text-[10px] text-primary-text">Meta {pct(meta, 0)}</span>
           </div>
           {weekly.map((w) => (
             <div key={w.week} className="flex-1 flex flex-col items-center justify-end h-full gap-2">

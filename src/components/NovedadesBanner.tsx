@@ -67,11 +67,11 @@ export function NovedadesBanner() {
 
   return (
     <div className="mb-6 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-4 py-2.5">
-      <Sparkles className="h-4 w-4 shrink-0 text-primary" strokeWidth={1.75} />
+      <Sparkles className="h-4 w-4 shrink-0 text-primary-text" strokeWidth={1.75} />
       <p className="flex-1 text-sm text-foreground">
         <span className="font-semibold">Nuevo este mes:</span>{" "}
         <span className="text-muted-foreground">{summary}</span>{" "}
-        <Link to="/" hash="novedades" className="font-semibold text-primary underline underline-offset-2">
+        <Link to="/" hash="novedades" className="font-semibold text-primary-text underline underline-offset-2">
           Ver novedades
         </Link>
       </p>

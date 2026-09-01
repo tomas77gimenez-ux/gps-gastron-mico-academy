@@ -100,7 +100,7 @@ export function DreMockupPreview() {
     <div className="p-4 sm:p-5 text-xs sm:text-sm" aria-hidden="true">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-[10px] uppercase tracking-widest text-primary font-semibold">
+          <p className="text-[10px] uppercase tracking-widest text-primary-text font-semibold">
             {t("dreMock.kicker")}
           </p>
           <h3 className="font-display font-semibold text-base sm:text-lg">{t("dreMock.titulo")}</h3>
@@ -141,7 +141,7 @@ export function DreMockupPreview() {
         <div className="space-y-4">
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2 mb-3">
-              <FileSpreadsheet className="w-4 h-4 text-primary" />
+              <FileSpreadsheet className="w-4 h-4 text-primary-text" />
               <span className="font-display font-semibold">{t("dreMock.resultadoMes")}</span>
             </div>
             <div className="space-y-2 text-[11px] sm:text-xs">
@@ -174,7 +174,7 @@ export function DreMockupPreview() {
 
           <div className="rounded-xl border border-border bg-card p-3">
             <div className="flex items-center gap-2 mb-3">
-              <Activity className="w-4 h-4 text-primary" />
+              <Activity className="w-4 h-4 text-primary-text" />
               <span className="font-display font-semibold">{t("dreMock.diagnostico")}</span>
             </div>
             <div className="space-y-3">

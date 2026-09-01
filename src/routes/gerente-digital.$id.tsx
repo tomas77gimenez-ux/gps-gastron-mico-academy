@@ -123,7 +123,7 @@ function GerenteDigitalPage() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
         <div className="rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8">
           <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-            <ClipboardCheck className="w-6 h-6 text-primary" />
+            <ClipboardCheck className="w-6 h-6 text-primary-text" />
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold font-display">{product.name}</h1>
           {product.description && (

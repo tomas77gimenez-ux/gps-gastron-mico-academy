@@ -37,7 +37,7 @@ function BunnySettings() {
   return (
     <div className="rounded-xl border border-border bg-card p-4">
       <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-1">
-        <Radio className="w-4 h-4 text-primary" /> Bunny Library ID
+        <Radio className="w-4 h-4 text-primary-text" /> Bunny Library ID
       </h3>
       <p className="text-xs text-muted-foreground mb-3">
         Configuración global del reproductor. Todas las clases usan este Library ID junto al Video ID de cada lección.
@@ -219,7 +219,7 @@ function CourseForm({ course, onSave, onCancel }: {
                 <img src={form.thumbnail_url} alt="Portada" className="w-full h-full object-cover" />
               ) : (
                 <div className="w-full h-full bg-gradient-to-br from-card to-secondary flex items-center justify-center">
-                  <BookOpen className="w-6 h-6 text-primary/30" />
+                  <BookOpen className="w-6 h-6 text-primary-text/30" />
                 </div>
               )}
             </div>
@@ -353,7 +353,7 @@ export function CourseManager() {
           </button>
         </div>
         <h2 className="text-xl font-bold font-display flex items-center gap-2">
-          <BookOpen className="w-5 h-5 text-primary" /> {filtered.length} {filter === "gps" ? "módulos" : "cursos"}
+          <BookOpen className="w-5 h-5 text-primary-text" /> {filtered.length} {filter === "gps" ? "módulos" : "cursos"}
         </h2>
         {!creating && (
           <Button size="sm" onClick={() => setCreating(true)}>
@@ -376,7 +376,7 @@ export function CourseManager() {
                 <div className="flex items-center gap-3 p-4">
                   <GripVertical className="w-4 h-4 text-muted-foreground shrink-0" />
                   {course.methodology === "gps" && (
-                    <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 text-primary flex flex-col items-center justify-center">
+                    <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/10 text-primary-text flex flex-col items-center justify-center">
                       <span className="text-[9px] leading-none opacity-70">P{course.pillar_order}</span>
                       <span className="text-sm font-bold leading-none">M{course.module_number}</span>
                     </div>

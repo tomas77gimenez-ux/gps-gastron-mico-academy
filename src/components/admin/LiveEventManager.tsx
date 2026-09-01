@@ -101,7 +101,7 @@ export function LiveEventManager() {
 
   return (
     <div className="rounded-xl border border-border bg-card p-6">
-      <div className="mb-1 inline-flex items-center gap-2 text-primary">
+      <div className="mb-1 inline-flex items-center gap-2 text-primary-text">
         <Radio className="h-4 w-4" strokeWidth={1.5} />
         <h2 className="font-display text-lg font-semibold text-foreground">Próximo en vivo</h2>
       </div>
@@ -113,7 +113,7 @@ export function LiveEventManager() {
         <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-2 text-sm text-destructive">{error}</div>
       )}
       {message && (
-        <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary">{message}</div>
+        <div className="mb-4 rounded-lg border border-primary/30 bg-primary/10 px-4 py-2 text-sm text-primary-text">{message}</div>
       )}
 
       <form onSubmit={handleSave} className="space-y-4">

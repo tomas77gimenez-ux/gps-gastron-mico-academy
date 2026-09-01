@@ -115,14 +115,14 @@ function MethodTimeline({ steps }: { steps: { icon: LucideIcon; title: string; d
               <div className="flex items-center gap-3">
                 <span
                   className={`font-display text-4xl font-bold tabular transition-colors duration-300 ${
-                    active ? "text-primary" : "text-transparent"
+                    active ? "text-primary-text" : "text-transparent"
                   }`}
                   style={{ WebkitTextStroke: active ? "0" : "1px var(--border-strong)" }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <step.icon
-                  className={`h-5 w-5 transition-colors duration-300 ${active ? "text-primary" : "text-muted-foreground"}`}
+                  className={`h-5 w-5 transition-colors duration-300 ${active ? "text-primary-text" : "text-muted-foreground"}`}
                   strokeWidth={1.25}
                 />
               </div>
@@ -260,7 +260,7 @@ function HomePage() {
                 className={b.wide ? "md:col-span-2" : "md:col-span-1"}
               >
                 <GlassCard glowFollow className="h-full p-7 hover:scale-[1.01]">
-                  <b.icon className="h-6 w-6 text-primary" strokeWidth={1.25} />
+                  <b.icon className="h-6 w-6 text-primary-text" strokeWidth={1.25} />
                   <h3 className="mt-5 font-display text-lg font-semibold">{b.title}</h3>
                   <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{b.desc}</p>
                   {i === 0 && (
@@ -315,7 +315,7 @@ function HomePage() {
               {["Food Cost", "DRE", "KPIs", lang === "es" ? "Liderazgo" : "Leadership", lang === "es" ? "Escalabilidad" : "Scalability"].map((tag) => (
                 <span
                   key={tag}
-                  className="rounded-full glass px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary"
+                  className="rounded-full glass px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/40 hover:text-primary-text"
                 >
                   {tag}
                 </span>
@@ -357,17 +357,17 @@ function HomePage() {
             {testimonials.map((te, i) => (
               <RevealOnScroll key={te.name} delay={i * 70}>
                 <GlassCard tilt className="h-full p-7">
-                  <Quote className="h-8 w-8 text-primary/40" strokeWidth={1.25} />
+                  <Quote className="h-8 w-8 text-primary-text/40" strokeWidth={1.25} />
                   <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
                     {lang === "en" ? te.textEn : te.text}
                   </p>
                   <div className="mt-6 flex items-center gap-1">
                     {Array.from({ length: te.stars }).map((_, si) => (
-                      <Star key={si} className="h-3.5 w-3.5 fill-primary text-primary" />
+                      <Star key={si} className="h-3.5 w-3.5 fill-primary-text text-primary-text" />
                     ))}
                   </div>
                   <div className="mt-5 flex items-center gap-3">
-                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm font-semibold text-primary ring-1 ring-primary/40">
+                    <span className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-secondary font-display text-sm font-semibold text-primary-text ring-1 ring-primary/40">
                       {te.name.charAt(0)}
                     </span>
                     <div className="min-w-0">
@@ -416,7 +416,7 @@ function HomePage() {
                   {t("home.plans.billingYearly")}
                   <span
                     className={`rounded-full px-1.5 py-0.5 text-[10px] font-bold ${
-                      billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
+                      billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary-text"
                     }`}
                   >
                     −15%
@@ -441,7 +441,7 @@ function HomePage() {
                       {t("home.plans.popular")}
                     </span>
                   )}
-                  <plan.icon className="h-6 w-6 text-primary" strokeWidth={1.25} />
+                  <plan.icon className="h-6 w-6 text-primary-text" strokeWidth={1.25} />
                   <h3 className="mt-5 font-display text-xl font-bold">{plan.name}</h3>
                   <p className="mt-1.5 text-sm text-muted-foreground">{plan.desc}</p>
                   <div className="mt-6 flex items-baseline gap-1">
@@ -453,7 +453,7 @@ function HomePage() {
                   <ul className="mt-6 mb-7 flex-1 space-y-3">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2.5 text-sm">
-                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" strokeWidth={2} />
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary-text" strokeWidth={2} />
                         <span className="text-foreground/90">{f}</span>
                       </li>
                     ))}
@@ -501,7 +501,7 @@ function HomePage() {
           <Accordion type="single" collapsible className="divide-y divide-border border-y border-border">
             {[1, 2, 3, 4, 5, 6, 7].map((i) => (
               <AccordionItem key={i} value={`item-${i}`} className="border-0">
-                <AccordionTrigger className="py-5 text-left font-display font-semibold transition-colors hover:text-primary hover:no-underline">
+                <AccordionTrigger className="py-5 text-left font-display font-semibold transition-colors hover:text-primary-text hover:no-underline">
                   {t(`home.faq.q${i}` as never)}
                 </AccordionTrigger>
                 <AccordionContent className="pb-6 leading-relaxed text-muted-foreground">

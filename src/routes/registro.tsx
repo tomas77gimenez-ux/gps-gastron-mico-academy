@@ -76,7 +76,7 @@ function RegistroPage() {
               Enviamos un enlace de verificación a <strong className="text-foreground">{email}</strong>. 
               Haz clic en el enlace para activar tu cuenta.
             </p>
-            <Link to="/login" className="text-primary text-sm font-medium hover:underline">
+            <Link to="/login" className="text-primary-text text-sm font-medium hover:underline">
               Ir al login
             </Link>
           </div>
@@ -89,7 +89,7 @@ function RegistroPage() {
     <div className="min-h-screen pt-20 pb-12 flex items-center justify-center">
       <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary-text text-sm font-medium mb-4">
             <UserPlus className="w-4 h-4" /> Únete a la comunidad
           </div>
           <h1 className="text-3xl font-bold font-display">Crear Cuenta</h1>
@@ -162,7 +162,7 @@ function RegistroPage() {
 
           <p className="text-center text-sm text-muted-foreground">
             ¿Ya tienes cuenta?{" "}
-            <Link to="/login" className="text-primary font-medium hover:underline">Inicia sesión</Link>
+            <Link to="/login" className="text-primary-text font-medium hover:underline">Inicia sesión</Link>
           </p>
         </div>
       </div>

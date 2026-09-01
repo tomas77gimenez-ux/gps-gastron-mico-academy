@@ -16,7 +16,7 @@ export function ToolSectionTitle({ icon: Icon, children, hint }: { icon?: Lucide
   return (
     <div className="mb-4">
       <h3 className="font-display font-semibold text-lg flex items-center gap-2">
-        {Icon && <Icon className="w-5 h-5 text-primary" />}
+        {Icon && <Icon className="w-5 h-5 text-primary-text" />}
         {children}
       </h3>
       {hint && <p className="text-xs text-muted-foreground mt-1">{hint}</p>}
@@ -71,7 +71,7 @@ const toneClasses: Record<Tone, string> = {
   warning: "bg-warning/15 text-warning border-warning/30",
   danger: "bg-destructive/15 text-destructive border-destructive/30",
   neutral: "bg-secondary text-muted-foreground border-border",
-  primary: "bg-primary/15 text-primary border-primary/30",
+  primary: "bg-primary/15 text-primary-text border-primary/30",
 };
 
 export function Pill({ tone = "neutral", children }: { tone?: Tone; children: ReactNode }) {
@@ -151,7 +151,7 @@ export function KPI({
     neutral: "border-border bg-card",
   };
   const ic: Record<Tone, string> = {
-    primary: "text-primary",
+    primary: "text-primary-text",
     success: "text-success",
     warning: "text-warning",
     danger: "text-destructive",
@@ -178,7 +178,7 @@ export function ToolsFooterNote() {
 export function ToolsPaywall() {
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
-      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center mx-auto mb-4">
+      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <Lock className="w-6 h-6" />
       </div>
       <h2 className="font-display text-xl font-bold mb-2">Caja de Herramientas</h2>
@@ -199,7 +199,7 @@ export function ToolsPaywall() {
 export function ToolsLoginWall() {
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
-      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center mx-auto mb-4">
+      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <LogIn className="w-6 h-6" />
       </div>
       <h2 className="font-display text-xl font-bold mb-2">Iniciá sesión</h2>
@@ -219,7 +219,7 @@ export function ToolsLoginWall() {
 export function PremiumPaywall() {
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
-      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center mx-auto mb-4">
+      <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <Lock className="w-6 h-6" />
       </div>
       <h2 className="font-display text-xl font-bold mb-2">Exclusivo del Plan Premium</h2>
@@ -259,11 +259,11 @@ export function ToolPage({
     <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="mb-8">
-          <Link to="/herramientas" className="text-xs text-muted-foreground hover:text-primary transition-colors">
+          <Link to="/herramientas" className="text-xs text-muted-foreground hover:text-primary-text transition-colors">
             ← Caja de Herramientas
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold font-display mt-2 flex items-center gap-3">
-            <span className="w-10 h-10 rounded-xl bg-primary/15 text-primary flex items-center justify-center shrink-0">
+            <span className="w-10 h-10 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center shrink-0">
               <Icon className="w-5 h-5" />
             </span>
             {title}

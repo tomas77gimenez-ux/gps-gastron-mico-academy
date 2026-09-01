@@ -252,7 +252,7 @@ function LessonForm({ lesson, onSave, onCancel }: {
                 placeholder="Video ID (ej: 8a7b6c5d-1234-...)"
               />
               <p className="text-[10px] text-muted-foreground leading-relaxed">
-                💡 Sube el video en <a href="https://dashboard.pandavideo.com.br" target="_blank" rel="noopener" className="text-primary hover:underline">pandavideo.com.br</a> y pega aquí el Library ID y el Video ID. Encontrás ambos en la URL del player de embed: <code className="text-primary">player-{`{library}`}.tv.pandavideo.com/embed/?v={`{video}`}</code>
+                💡 Sube el video en <a href="https://dashboard.pandavideo.com.br" target="_blank" rel="noopener" className="text-primary-text hover:underline">pandavideo.com.br</a> y pega aquí el Library ID y el Video ID. Encontrás ambos en la URL del player de embed: <code className="text-primary-text">player-{`{library}`}.tv.pandavideo.com/embed/?v={`{video}`}</code>
               </p>
             </div>
           ) : mode === "upload" ? (
@@ -267,7 +267,7 @@ function LessonForm({ lesson, onSave, onCancel }: {
                 <div className="space-y-1.5 rounded-lg border border-border bg-secondary/30 p-3">
                   <div className="flex items-center justify-between text-xs">
                     <span className="flex items-center gap-1 font-medium">
-                      <Loader2 className="w-3 h-3 animate-spin text-primary" /> Subiendo... {progress.toFixed(1)}%
+                      <Loader2 className="w-3 h-3 animate-spin text-primary-text" /> Subiendo... {progress.toFixed(1)}%
                     </span>
                     <button type="button" onClick={cancelUpload} className="text-destructive hover:underline">Cancelar</button>
                   </div>
@@ -419,7 +419,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
     <div>
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-semibold flex items-center gap-1.5">
-          <Video className="w-4 h-4 text-primary" /> Lecciones ({lessons.length})
+          <Video className="w-4 h-4 text-primary-text" /> Lecciones ({lessons.length})
         </h4>
         {!creating && (
           <Button variant="outline" size="sm" onClick={() => setCreating(true)}>
@@ -457,7 +457,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
                 {(() => {
                   const CT = CONTENT_TYPES.find(t => t.value === lesson.content_type);
                   const Icon = CT?.icon ?? FileText;
-                  return <Icon className="w-4 h-4 text-primary shrink-0" />;
+                  return <Icon className="w-4 h-4 text-primary-text shrink-0" />;
                 })()}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{lesson.title}</p>
@@ -470,7 +470,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
                     ) : null}
                     {lesson.is_free && <span className="ml-2 text-green-400">Gratis</span>}
                     {!lesson.is_free && lesson.required_plan === "premium" && (
-                      <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
+                      <span className="ml-2 text-primary-text inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
                     )}
                     {!lesson.is_free && (lesson.required_plan ?? "basico") === "basico" && (
                       <span className="ml-2 text-blue-300 inline-flex items-center gap-0.5"><Star className="w-3 h-3" /> Básico</span>
@@ -478,7 +478,7 @@ export function LessonManager({ courseId }: { courseId: string }) {
                   </p>
                 </div>
                 <button onClick={() => setAttachOpen(attachOpen === lesson.id ? null : lesson.id)}
-                  className={`p-1.5 rounded hover:bg-secondary ${attachOpen === lesson.id ? "text-primary" : ""}`}
+                  className={`p-1.5 rounded hover:bg-secondary ${attachOpen === lesson.id ? "text-primary-text" : ""}`}
                   title="Materiales de apoyo">
                   <Paperclip className="w-3 h-3" />
                 </button>

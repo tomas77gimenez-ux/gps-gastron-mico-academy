@@ -67,7 +67,7 @@ function planBadge(plan: PlanTier | null, env: string | null, status: string | n
     <span
       className={`text-xs px-2 py-0.5 rounded-full inline-flex items-center gap-1 font-medium ${
         isPremium
-          ? "bg-primary/15 text-primary"
+          ? "bg-primary/15 text-primary-text"
           : "bg-blue-500/15 text-blue-300"
       }`}
     >
@@ -247,7 +247,7 @@ export function UserManager() {
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
           <h2 className="text-xl font-bold font-display flex items-center gap-2">
-            <Users className="w-5 h-5 text-primary" /> {users.length} usuarios
+            <Users className="w-5 h-5 text-primary-text" /> {users.length} usuarios
           </h2>
           <p className="text-xs text-muted-foreground mt-1">
             {totalActive} con acceso activo
@@ -286,7 +286,7 @@ export function UserManager() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium truncate max-w-[260px]">{u.email}</span>
                     {u.is_admin && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/15 text-primary inline-flex items-center gap-1">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/15 text-primary-text inline-flex items-center gap-1">
                         <ShieldCheck className="w-3 h-3" /> admin
                       </span>
                     )}
@@ -306,8 +306,8 @@ export function UserManager() {
                     }
                     className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
                       u.tools_free_access || u.is_admin
-                        ? "border-primary/40 bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                        ? "border-primary/40 bg-primary/10 text-primary-text"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary-text"
                     }`}
                   >
                     <Wrench className="w-3 h-3" />
@@ -325,8 +325,8 @@ export function UserManager() {
                     }
                     className={`inline-flex items-center gap-1.5 text-[11px] px-2 py-1 rounded-full border transition-colors disabled:opacity-50 ${
                       u.pro_access || u.is_admin
-                        ? "border-primary/40 bg-primary/10 text-primary"
-                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary"
+                        ? "border-primary/40 bg-primary/10 text-primary-text"
+                        : "border-border text-muted-foreground hover:border-primary/40 hover:text-primary-text"
                     }`}
                   >
                     <Crown className="w-3 h-3" />
@@ -369,7 +369,7 @@ export function UserManager() {
                           notes: "",
                         });
                       }}
-                      className="p-2 rounded hover:bg-primary/10 text-primary transition-colors"
+                      className="p-2 rounded hover:bg-primary/10 text-primary-text transition-colors"
                       title="Conceder / cambiar acceso"
                     >
                       <Gift className="w-4 h-4" />
@@ -403,7 +403,7 @@ export function UserManager() {
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Gift className="w-5 h-5 text-primary" /> Conceder acceso
+              <Gift className="w-5 h-5 text-primary-text" /> Conceder acceso
             </DialogTitle>
             <DialogDescription className="text-xs">
               {grantTarget?.email}

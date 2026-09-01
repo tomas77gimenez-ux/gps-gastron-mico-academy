@@ -355,7 +355,7 @@ function CourseDetailPage() {
     return (
       <div className="min-h-screen pt-24 px-4 text-center">
         <p className="text-muted-foreground mb-4">{t("cursos.vacio")}</p>
-        <Link to="/cursos" className="text-primary hover:underline">{t("cursos.volver")}</Link>
+        <Link to="/cursos" className="text-primary-text hover:underline">{t("cursos.volver")}</Link>
       </div>
     );
   }
@@ -373,7 +373,7 @@ function CourseDetailPage() {
             <div className="mb-5 space-y-4">
               {!activeLesson ? (
                 <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                  <BookOpen className="w-10 h-10 text-primary/40" />
+                  <BookOpen className="w-10 h-10 text-primary-text/40" />
                   <span className="text-sm">{t("cursos.sinAulas")}</span>
                 </div>
               ) : !canPlay(activeLesson) ? (
@@ -383,7 +383,7 @@ function CourseDetailPage() {
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 text-center px-6">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                      {activeNeedsUpgrade ? <Crown className="w-7 h-7 text-primary" /> : <Lock className="w-7 h-7 text-primary" />}
+                      {activeNeedsUpgrade ? <Crown className="w-7 h-7 text-primary-text" /> : <Lock className="w-7 h-7 text-primary-text" />}
                     </div>
                     <p className="text-sm text-foreground/80 max-w-sm">
                       {activeNeedsUpgrade
@@ -422,7 +422,7 @@ function CourseDetailPage() {
                 ))
               ) : hasBunnyVideo && bunnyLoading ? (
                 <div className="aspect-video rounded-xl overflow-hidden bg-black border border-border flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 animate-spin text-primary/70" />
+                  <Loader2 className="w-8 h-8 animate-spin text-primary-text/70" />
                 </div>
               ) : pandaStreamUrl ? (
                 <div className="aspect-video rounded-xl overflow-hidden bg-secondary border border-border">
@@ -453,7 +453,7 @@ function CourseDetailPage() {
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-3 max-w-md mx-auto">
                     <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center">
-                      <FileText className="w-7 h-7 text-primary" />
+                      <FileText className="w-7 h-7 text-primary-text" />
                     </div>
                     <h3 className="text-lg font-semibold">{t("cursos.clasePractica")}</h3>
                     <p className="text-sm text-muted-foreground">
@@ -467,7 +467,7 @@ function CourseDetailPage() {
                     <img src={activeLesson.cover_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-20" />
                   )}
                   <div className="relative z-10 flex flex-col items-center gap-2">
-                    <Clock className="w-10 h-10 text-primary/50" />
+                    <Clock className="w-10 h-10 text-primary-text/50" />
                     <span className="text-sm font-medium">{t("cursos.videoProximamente")}</span>
                   </div>
                 </div>
@@ -475,7 +475,7 @@ function CourseDetailPage() {
             </div>
 
             <div className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
-              <span className="text-primary">{locCategory(course.category, lang)}</span>
+              <span className="text-primary-text">{locCategory(course.category, lang)}</span>
               <span>·</span>
               <span>{locLevel(course.level, lang)}</span>
               {course.estimated_duration && <><span>·</span><span>{course.estimated_duration}</span></>}
@@ -541,7 +541,7 @@ function CourseDetailPage() {
                       >
                         <div className="flex items-center gap-3 min-w-0">
                           <div className="shrink-0 w-9 h-9 rounded-lg bg-primary/20 border border-primary/30 flex items-center justify-center">
-                            <FileText className="w-4 h-4 text-primary" />
+                            <FileText className="w-4 h-4 text-primary-text" />
                           </div>
                           <div className="min-w-0">
                             <p className="text-sm font-semibold truncate">{m.title}</p>
@@ -550,9 +550,9 @@ function CourseDetailPage() {
                             </p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-2 shrink-0 text-primary">
+                        <div className="flex items-center gap-2 shrink-0 text-primary-text">
                           <Download className="w-4 h-4 shrink-0 group-hover:translate-y-0.5 transition-transform" />
-                          <span className="text-[11px] underline underline-offset-2 hover:text-primary/80">
+                          <span className="text-[11px] underline underline-offset-2 hover:text-primary-text/80">
                             {downloadingId === m.id ? "..." : t("cursos.descargar")}
                           </span>
                         </div>
@@ -570,7 +570,7 @@ function CourseDetailPage() {
                             <div className="min-w-0">
                               <p className="text-sm font-semibold truncate flex items-center gap-1.5">
                                 {m.title}
-                                <span className="text-[10px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                <span className="text-[10px] font-semibold uppercase tracking-wide bg-primary/20 text-primary-text px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
                                   <Crown className="w-3 h-3" /> Premium
                                 </span>
                               </p>
@@ -579,7 +579,7 @@ function CourseDetailPage() {
                               </p>
                             </div>
                           </div>
-                          <Crown className="w-4 h-4 shrink-0 text-primary" />
+                          <Crown className="w-4 h-4 shrink-0 text-primary-text" />
                         </Link>
                       )
                     ))}
@@ -613,7 +613,7 @@ function CourseDetailPage() {
                 <div className="px-4 py-3 border-b border-border bg-secondary/20">
                   <div className="flex items-center justify-between text-xs mb-1.5">
                     <span className="text-muted-foreground">{t("cursos.progreso")}</span>
-                    <span className="font-semibold text-primary">{completedCount}/{lessons.length} · {overallPct}%</span>
+                    <span className="font-semibold text-primary-text">{completedCount}/{lessons.length} · {overallPct}%</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
                     <div
@@ -672,16 +672,16 @@ function CourseDetailPage() {
                           </div>
                           <div className="flex-1 min-w-0">
                             <div className="flex items-start gap-2 mb-1">
-                              <span className={`text-sm font-medium line-clamp-2 ${isActive ? "text-primary" : ""}`}>
+                              <span className={`text-sm font-medium line-clamp-2 ${isActive ? "text-primary-text" : ""}`}>
                                 {loc(lesson, "title", lang)}
                               </span>
                               {lesson.is_free && !sub.hasActive && (
-                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary-text px-1.5 py-0.5 rounded">
                                   {t("cursos.gratis")}
                                 </span>
                               )}
                               {!lesson.is_free && (lesson.required_plan ?? "basico") === "premium" && !hasPlanAccess(sub.planTier, "premium") && (
-                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
+                                <span className="text-[9px] font-semibold uppercase tracking-wide bg-primary/20 text-primary-text px-1.5 py-0.5 rounded inline-flex items-center gap-0.5">
                                   <Crown className="w-2.5 h-2.5" /> Premium
                                 </span>
                               )}

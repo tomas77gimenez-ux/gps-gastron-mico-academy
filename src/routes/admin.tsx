@@ -97,7 +97,7 @@ function AdminPage() {
       <div className="min-h-screen pt-20 pb-12">
         <div className="max-w-md mx-auto px-4 sm:px-6">
           <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary-text text-sm font-medium mb-4">
               <Shield className="w-4 h-4" /> Panel de Administración
             </div>
             <h1 className="text-2xl font-bold font-display">{isSignup ? "Crear Cuenta" : "Acceso Admin"}</h1>
@@ -125,7 +125,7 @@ function AdminPage() {
               <LogIn className="w-4 h-4 mr-2" /> {loginLoading ? (isSignup ? "Registrando..." : "Iniciando...") : (isSignup ? "Crear Cuenta" : "Iniciar Sesión")}
             </Button>
             <button type="button" onClick={() => { setIsSignup(!isSignup); setLoginError(null); }}
-              className="w-full text-center text-xs text-muted-foreground hover:text-primary transition-colors">
+              className="w-full text-center text-xs text-muted-foreground hover:text-primary-text transition-colors">
               {isSignup ? "¿Ya tienes cuenta? Inicia sesión" : "¿Primera vez? Crea tu cuenta"}
             </button>
           </form>
@@ -156,7 +156,7 @@ function AdminPage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-2">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary-text text-xs font-medium mb-2">
               <Shield className="w-3.5 h-3.5" /> Admin
             </div>
             <h1 className="text-2xl font-bold font-display">Panel de Administración</h1>
