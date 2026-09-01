@@ -116,7 +116,15 @@ function DashboardPage() {
         {dre.loading ? (
           <div className="h-40 animate-pulse rounded-xl bg-secondary/30" />
         ) : selected ? (
-          <MetricsStrip months={dre.months} selected={selected} />
+          <>
+            {hasSignals && (
+              <div className="mb-5">
+                <DataQualityNotice signals={selected.signals} />
+              </div>
+            )}
+            <MetricsStrip months={dre.months} selected={selected} />
+          </>
+
         ) : (
           <EmptyDreBlock />
         )}
