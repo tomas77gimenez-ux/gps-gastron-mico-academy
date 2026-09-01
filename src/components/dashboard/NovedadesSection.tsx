@@ -39,7 +39,7 @@ export function NovedadesSection() {
     async function load() {
       const [lessons, materials, courses] = await Promise.all([
         supabase.from("lessons").select("id, title, title_en, title_pt, created_at, course_id").gte("created_at", since).order("created_at", { ascending: false }).limit(12),
-        supabase.from("course_materials").select("id, title, title_en, title_pt, created_at, course_id").gte("created_at", since).order("created_at", { ascending: false }).limit(12),
+        supabase.from("course_materials").select("id, title, created_at, course_id").gte("created_at", since).order("created_at", { ascending: false }).limit(12),
         supabase.from("courses").select("id, title, title_en, title_pt, created_at").eq("status", "published").gte("created_at", since).order("created_at", { ascending: false }).limit(12),
       ]);
 
@@ -47,7 +47,7 @@ export function NovedadesSection() {
 
       const merged: Novedad[] = [
         ...(lessons.data ?? []).map((l) => ({ id: `lesson-${l.id}`, kind: "lesson" as const, title: l.title, title_en: l.title_en, title_pt: l.title_pt, createdAt: l.created_at, courseId: l.course_id })),
-        ...(materials.data ?? []).map((m) => ({ id: `material-${m.id}`, kind: "material" as const, title: m.title, title_en: m.title_en, title_pt: m.title_pt, createdAt: m.created_at, courseId: m.course_id })),
+        ...(materials.data ?? []).map((m) => ({ id: `material-${m.id}`, kind: "material" as const, title: m.title, title_en: null, title_pt: null, createdAt: m.created_at, courseId: m.course_id })),
         ...(courses.data ?? []).map((c) => ({ id: `course-${c.id}`, kind: "course" as const, title: c.title, title_en: c.title_en, title_pt: c.title_pt, createdAt: c.created_at, courseId: c.id })),
       ]
         .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

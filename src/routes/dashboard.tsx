@@ -5,7 +5,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useProAccess } from "@/hooks/useProAccess";
 import {
-  TOOL_STATUS_LABEL,
   useDreMetrics,
   useMemberProgress,
   useToolsStatus,
@@ -284,7 +283,7 @@ function ToolsBlock() {
               <div className="flex flex-wrap items-center gap-2">
                 <p className="font-medium text-foreground">{r.name}</p>
                 <span className={`inline-flex rounded-md px-2 py-0.5 text-[0.7rem] font-semibold ${PILL_CLASS[r.status]}`}>
-                  {TOOL_STATUS_LABEL[r.status]}
+                  {toolStatusLabel(r.status, t)}
                 </span>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{r.detail}</p>

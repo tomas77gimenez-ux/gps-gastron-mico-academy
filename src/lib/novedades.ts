@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import type { Lang } from "@/lib/i18n";
+import type { Lang, TranslationKey } from "@/lib/i18n";
 
 export type NovedadKind = "lesson" | "material" | "recording" | "case";
 
@@ -38,10 +38,10 @@ export async function fetchUnannouncedNovedades(): Promise<PendingNovedad[]> {
 }
 
 /** Localized summary like "1 real case · 2 recordings · 1 worksheet". */
-export function summarizeNovedades(counts: Record<NovedadKind, number>, t: (key: string) => string): string {
+export function summarizeNovedades(counts: Record<NovedadKind, number>, t: (key: TranslationKey) => string): string {
   const parts: string[] = [];
   const push = (n: number, kind: NovedadKind) => {
-    if (n > 0) parts.push(`${n} ${t(`nov.count.${kind}.${n === 1 ? "one" : "many"}`)}`);
+    if (n > 0) parts.push(`${n} ${t(`nov.count.${kind}.${n === 1 ? "one" : "many"}` as TranslationKey)}`);
   };
   push(counts.case, "case");
   push(counts.lesson, "lesson");
