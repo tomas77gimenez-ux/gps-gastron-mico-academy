@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import { useSubscription } from "@/hooks/useSubscription";
 import { Lock, Play, BookOpen, CheckCircle2, Sparkles, Compass, ChevronRight, Crown, Star } from "lucide-react";
 import { hasPlanAccess } from "@/lib/plan-access";
@@ -11,16 +12,19 @@ import type { PlanTier } from "@/lib/admin-types";
 
 export const Route = createFileRoute("/cursos")({
   component: CursosPage,
-  head: () => ({
+  head: () => {
+    const tt = tFor(readPrefs().lang);
+    return {
     meta: [
-      { title: "Mentoría · Método GPS — GPS Gastronômico" },
-      { name: "description", content: "Método GPS: 3 Pilares y 9 Módulos para transformar la gestión de tu restaurante." },
-      { property: "og:title", content: "Mentoría · Método GPS" },
-      { property: "og:description", content: "Método GPS: 3 Pilares y 9 Módulos para transformar la gestión de tu restaurante." },
+      { title: tt("crs2.head.title") },
+      { name: "description", content: tt("crs2.head.desc") },
+      { property: "og:title", content: tt("crs2.head.ogTitle") },
+      { property: "og:description", content: tt("crs2.head.desc") },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/cursos" },
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/cursos" }],
-  }),
+    };
+  },
 });
 
 interface CourseRow {
