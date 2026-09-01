@@ -125,11 +125,11 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
   ];
 
   return (
-    <div className="grid grid-cols-1 border-t border-border sm:grid-cols-2 lg:grid-cols-4">
+    <div className="metric-strip grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
       {metrics.map((m) => (
-        <div key={m.name} className="border-b border-border px-5 py-6 sm:border-r last:sm:border-r-0">
-          <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">{m.name}</p>
-          <p className="tabular mt-1.5 font-display text-3xl font-bold text-foreground">{m.value}</p>
+        <div key={m.name} className="metric-cell metric-divider border-b px-5 py-6 sm:border-r last:sm:border-r-0">
+          <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-primary-text">{m.name}</p>
+          <p className="tabular text-gradient-brand mt-1.5 font-display text-3xl font-bold">{m.value}</p>
           <div className="mt-2">
             <VariationTag deltaPoints={m.deltaPoints} lowerIsBetter={m.lowerIsBetter} />
           </div>
@@ -147,7 +147,7 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
 export function EmptyDreBlock() {
   const { t } = useI18n();
   return (
-    <div className="border-y border-border px-5 py-10 text-center">
+    <div className="metric-strip metric-divider border-b px-5 py-10 text-center">
       <FileSpreadsheet className="mx-auto h-6 w-6 text-primary-text" strokeWidth={1.5} />
       <h2 className="mt-3 font-display text-xl font-semibold">{t("dash.emptyDreTitulo")}</h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{t("dash.emptyDreDesc")}</p>

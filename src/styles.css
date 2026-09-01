@@ -315,6 +315,27 @@ body::before {
   box-shadow: var(--glow-gold-soft);
 }
 
+/* MetricsStrip: elevated gold band — surface + soft gold halo behind */
+@utility metric-strip {
+  background: var(--surface);
+  border-top: 1px solid color-mix(in oklab, var(--primary) 28%, transparent);
+  box-shadow: var(--glow-gold-soft);
+}
+
+/* MetricsStrip cell hover: faint lift — tint + inner gold glow, no movement */
+@utility metric-cell {
+  transition: background-color 200ms ease-out, box-shadow 200ms ease-out;
+  &:hover {
+    background: color-mix(in oklab, var(--primary) 5%, transparent);
+    box-shadow: inset 0 0 44px -26px color-mix(in oklab, var(--primary) 55%, transparent);
+  }
+}
+
+/* MetricsStrip separators: very faint gold instead of --border */
+@utility metric-divider {
+  border-color: color-mix(in oklab, var(--primary) 15%, transparent);
+}
+
 /* Linear-style faint grid */
 .grid-lines {
   background-image:
