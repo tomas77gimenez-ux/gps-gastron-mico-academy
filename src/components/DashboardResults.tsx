@@ -99,13 +99,13 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
       {/* Revenue by Channel */}
       <div className="rounded-xl border border-border bg-card p-6">
         <h3 className="font-display font-semibold text-lg mb-4 flex items-center gap-2">
-          <BarChart3 className="w-5 h-5 text-primary-text" /> Facturación por Canal
+          <BarChart3 className="w-5 h-5 text-primary-text" /> {t("results.facturacionCanal")}
         </h3>
         <div className="space-y-4">
           {results.revenueByChannel.filter(r => r.value > 0).map((channel) => (
             <div key={channel.name}>
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-sm font-medium">{channel.name}</span>
+                <span className="text-sm font-medium">{tChannel(channel.name, lang)}</span>
                 <div className="flex items-center gap-3 text-sm">
                   <span className="text-muted-foreground">CMV: {pctFmt(channel.cmvPercent)}</span>
                   <span className="font-semibold">{fmt(channel.value)}</span>
@@ -120,7 +120,7 @@ export function DashboardResults({ results, onReset }: { results: DREResults; on
             </div>
           ))}
           {results.revenueByChannel.every(r => r.value === 0) && (
-            <p className="text-muted-foreground text-sm">No se registraron ventas.</p>
+            <p className="text-muted-foreground text-sm">{t("results.sinVentas")}</p>
           )}
         </div>
       </div>

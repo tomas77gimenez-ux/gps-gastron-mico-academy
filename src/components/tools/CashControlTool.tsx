@@ -5,6 +5,9 @@ import { toast } from "sonner";
 import { Wallet, Plus, Trash2, Loader2, ArrowDownRight, ArrowUpRight, Lock, History } from "lucide-react";
 import { money, num } from "@/lib/tools-format";
 import { Callout, Field, KPI, NumberInput, Pill, ToolCard, ToolSectionTitle, inputClass } from "./ToolUI";
+import { useI18n, type Lang } from "@/lib/i18n";
+
+const LOCALE: Record<Lang, string> = { es: "es-MX", en: "en-US", pt: "pt-BR" };
 
 interface Session {
   id: string;
@@ -29,15 +32,16 @@ function today() {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-function fmtDate(iso: string) {
-  return new Date(`${iso}T12:00:00`).toLocaleDateString("es-MX", { day: "2-digit", month: "short", year: "numeric" });
+function fmtDate(iso: string, lang: Lang) {
+  return new Date(`${iso}T12:00:00`).toLocaleDateString(LOCALE[lang], { day: "2-digit", month: "short", year: "numeric" });
 }
 
-function fmtTime(iso: string) {
-  return new Date(iso).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
+function fmtTime(iso: string, lang: Lang) {
+  return new Date(iso).toLocaleTimeString(LOCALE[lang], { hour: "2-digit", minute: "2-digit" });
 }
 
 export function CashControlTool() {
+  const { t, lang } = useI18n();
   const { user, isReady } = useAuthSession();
   const [loading, setLoading] = useState(true);
   const [sessions, setSessions] = useState<Session[]>([]);
@@ -87,7 +91,7 @@ export function CashControlTool() {
   async function openSession() {
     if (!user) return;
     if (!openForm.responsible.trim()) {
-      toast.error("Indicá el responsable de la caja.");
+      toast.error(t("caja.errResponsable"));
       return;
     }
     setBusy(true);
@@ -100,18 +104,18 @@ export function CashControlTool() {
     });
     setBusy(false);
     if (error) {
-      toast.error("No se pudo abrir la caja", { description: error.message });
+      toast.error(t("caja.errAbrir"), { description: error.message });
       return;
     }
     setOpenForm({ date: today(), responsible: "", fund: "" });
-    toast.success("Caja abierta");
+    toast.success(t("caja.abierta"));
     void loadAll();
   }
 
   async function addMovement() {
     if (!user || !active) return;
     if (num(movForm.amount) <= 0) {
-      toast.error("El monto debe ser mayor a cero.");
+      toast.error(t("caja.errMonto"));
       return;
     }
     setBusy(true);
@@ -124,7 +128,7 @@ export function CashControlTool() {
     });
     setBusy(false);
     if (error) {
-      toast.error("No se pudo registrar", { description: error.message });
+      toast.error(t("caja.errRegistrar"), { description: error.message });
       return;
     }
     setMovForm({ type: movForm.type, description: "", amount: "" });
@@ -149,10 +153,10 @@ export function CashControlTool() {
       .eq("id", active.id);
     setBusy(false);
     if (error) {
-      toast.error("No se pudo cerrar la caja", { description: error.message });
+      toast.error(t("caja.errCerrar"), { description: error.message });
       return;
     }
-    toast.success("Caja cerrada");
+    toast.success(t("caja.cerrada"));
     void loadAll();
   }
 
@@ -169,7 +173,7 @@ export function CashControlTool() {
   if (loading) {
     return (
       <div className="text-center py-16 text-muted-foreground text-sm">
-        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando caja...
+        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> {t("caja.cargando")}
       </div>
     );
   }
@@ -178,11 +182,11 @@ export function CashControlTool() {
     <div className="space-y-6">
       {!active ? (
         <ToolCard className="max-w-xl">
-          <ToolSectionTitle icon={Wallet} hint="Abrí la caja del día para empezar a registrar movimientos.">
-            Abrir caja
+          <ToolSectionTitle icon={Wallet} hint={t("caja.abrirHint")}>
+            {t("caja.abrir")}
           </ToolSectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Fecha">
+            <Field label={t("caja.fecha")}>
               <input
                 type="date"
                 value={openForm.date}
@@ -190,16 +194,16 @@ export function CashControlTool() {
                 className={inputClass}
               />
             </Field>
-            <Field label="Responsable">
+            <Field label={t("caja.responsable")}>
               <input
                 type="text"
                 value={openForm.responsible}
                 onChange={(e) => setOpenForm((f) => ({ ...f, responsible: e.target.value }))}
-                placeholder="Nombre"
+                placeholder={t("caja.nombre")}
                 className={inputClass}
               />
             </Field>
-            <Field label="Fondo de apertura">
+            <Field label={t("caja.fondo")}>
               <NumberInput value={openForm.fund} onChange={(v) => setOpenForm((f) => ({ ...f, fund: v }))} placeholder="0" min={0} />
             </Field>
           </div>
@@ -208,7 +212,7 @@ export function CashControlTool() {
             disabled={busy}
             className="mt-5 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
           >
-            {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />} Abrir caja
+            {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Wallet className="w-4 h-4" />} {t("caja.abrir")}
           </button>
         </ToolCard>
       ) : (
@@ -217,35 +221,35 @@ export function CashControlTool() {
             <ToolCard>
               <div className="flex items-center justify-between flex-wrap gap-2 mb-4">
                 <div>
-                  <h3 className="font-display font-semibold text-lg">Caja del {fmtDate(active.session_date)}</h3>
+                  <h3 className="font-display font-semibold text-lg">{t("caja.tituloDia").replace("{date}", fmtDate(active.session_date, lang))}</h3>
                   <p className="text-xs text-muted-foreground mt-0.5">
-                    Responsable: {active.responsible} · Fondo de apertura {money(Number(active.opening_fund))}
+                    {t("caja.responsableLinea").replace("{name}", active.responsible).replace("{amount}", money(Number(active.opening_fund)))}
                   </p>
                 </div>
-                <Pill tone="primary">Abierta</Pill>
+                <Pill tone="primary">{t("caja.pillAbierta")}</Pill>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-[auto_1fr_8rem_auto] gap-2 items-end">
-                <Field label="Tipo">
+                <Field label={t("caja.tipo")}>
                   <select
                     value={movForm.type}
                     onChange={(e) => setMovForm((f) => ({ ...f, type: e.target.value as "entrada" | "salida" }))}
                     className={inputClass}
                   >
-                    <option value="entrada">Entrada</option>
-                    <option value="salida">Salida</option>
+                    <option value="entrada">{t("caja.entrada")}</option>
+                    <option value="salida">{t("caja.salida")}</option>
                   </select>
                 </Field>
-                <Field label="Descripción">
+                <Field label={t("caja.descripcion")}>
                   <input
                     type="text"
                     value={movForm.description}
                     onChange={(e) => setMovForm((f) => ({ ...f, description: e.target.value }))}
-                    placeholder="ej: venta mesa 4 / compra de hielo"
+                    placeholder={t("caja.descripcionPh")}
                     className={inputClass}
                   />
                 </Field>
-                <Field label="Monto">
+                <Field label={t("caja.monto")}>
                   <NumberInput value={movForm.amount} onChange={(v) => setMovForm((f) => ({ ...f, amount: v }))} placeholder="0" min={0} />
                 </Field>
                 <button
@@ -253,7 +257,7 @@ export function CashControlTool() {
                   disabled={busy}
                   className="h-[38px] inline-flex items-center justify-center gap-1.5 px-4 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
                 >
-                  <Plus className="w-4 h-4" /> Registrar
+                  <Plus className="w-4 h-4" /> {t("caja.registrar")}
                 </button>
               </div>
 
@@ -262,10 +266,10 @@ export function CashControlTool() {
                   const isIn = m.type === "entrada";
                   return (
                     <div key={m.id} className="flex items-center gap-3 py-2.5">
-                      <span className="text-xs text-muted-foreground w-12 shrink-0">{fmtTime(m.occurred_at)}</span>
+                      <span className="text-xs text-muted-foreground w-12 shrink-0">{fmtTime(m.occurred_at, lang)}</span>
                       <Pill tone={isIn ? "success" : "danger"}>
                         {isIn ? <ArrowDownRight className="w-3 h-3" /> : <ArrowUpRight className="w-3 h-3" />}
-                        {isIn ? "Entrada" : "Salida"}
+                        {isIn ? t("caja.entrada") : t("caja.salida")}
                       </Pill>
                       <span className="flex-1 text-sm truncate">{m.description || "—"}</span>
                       <span className={`text-sm font-semibold ${isIn ? "text-success" : "text-destructive"}`}>
@@ -274,7 +278,7 @@ export function CashControlTool() {
                       <button
                         onClick={() => deleteMovement(m.id)}
                         className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
-                        aria-label="Eliminar movimiento"
+                        aria-label={t("caja.eliminarMov")}
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -282,58 +286,58 @@ export function CashControlTool() {
                   );
                 })}
                 {movements.length === 0 && (
-                  <p className="py-8 text-center text-sm text-muted-foreground">Todavía no registraste movimientos.</p>
+                  <p className="py-8 text-center text-sm text-muted-foreground">{t("caja.sinMovimientos")}</p>
                 )}
               </div>
             </ToolCard>
 
             <ToolCard>
-              <ToolSectionTitle icon={History}>Historial de cajas</ToolSectionTitle>
+              <ToolSectionTitle icon={History}>{t("caja.historial")}</ToolSectionTitle>
               <div className="divide-y divide-border">
                 {sessions.filter((s) => s.status === "closed").map((s) => {
                   const diff =
                     s.physical_count === null || s.physical_count === undefined ? null : Number(s.physical_count);
                   return (
                     <div key={s.id} className="flex items-center justify-between gap-3 py-2.5 text-sm">
-                      <span>{fmtDate(s.session_date)}</span>
+                      <span>{fmtDate(s.session_date, lang)}</span>
                       <span className="text-muted-foreground text-xs truncate flex-1">{s.responsible}</span>
                       <span className="text-muted-foreground text-xs">
-                        {diff === null ? "Sin conteo" : `Conteo ${money(diff)}`}
+                        {diff === null ? t("caja.sinConteo") : t("caja.conteoAmount").replace("{amount}", money(diff))}
                       </span>
                     </div>
                   );
                 })}
                 {sessions.filter((s) => s.status === "closed").length === 0 && (
-                  <p className="py-6 text-center text-sm text-muted-foreground">Aún no cerraste ninguna caja.</p>
+                  <p className="py-6 text-center text-sm text-muted-foreground">{t("caja.sinCierres")}</p>
                 )}
               </div>
             </ToolCard>
           </div>
 
           <div className="space-y-4 lg:sticky lg:top-24 self-start">
-            <KPI title="Caja teórica" value={money(totals.theoretical)} subtitle="Apertura + entradas − salidas" icon={Wallet} tone="primary" />
+            <KPI title={t("caja.teorica")} value={money(totals.theoretical)} subtitle={t("caja.teoricaSub")} icon={Wallet} tone="primary" />
             <div className="grid grid-cols-2 gap-4">
-              <KPI title="Entradas" value={money(totals.entradas)} tone="success" />
-              <KPI title="Salidas" value={money(totals.salidas)} tone="danger" />
+              <KPI title={t("caja.entradas")} value={money(totals.entradas)} tone="success" />
+              <KPI title={t("caja.salidas")} value={money(totals.salidas)} tone="danger" />
             </div>
 
             <ToolCard>
-              <ToolSectionTitle>Conciliación</ToolSectionTitle>
-              <Field label="Conteo físico">
+              <ToolSectionTitle>{t("caja.conciliacion")}</ToolSectionTitle>
+              <Field label={t("caja.conteoFisico")}>
                 <NumberInput value={count} onChange={setCount} placeholder="0" min={0} />
               </Field>
               <div className="mt-4">
                 {totals.diff === null ? (
-                  <Callout tone="neutral">Ingresá el conteo físico para conciliar.</Callout>
+                  <Callout tone="neutral">{t("caja.ingresaConteo")}</Callout>
                 ) : Math.abs(totals.diff) < 0.005 ? (
-                  <Callout tone="success">✓ Caja conciliada perfectamente</Callout>
+                  <Callout tone="success">{t("caja.conciliada")}</Callout>
                 ) : totals.diff > 0 ? (
                   <Callout tone="warning">
-                    ⚠ Sobrante de {money(totals.diff)}. Revise si algún ingreso no fue registrado.
+                    {t("caja.sobrante").replace("{amount}", money(totals.diff))}
                   </Callout>
                 ) : (
                   <Callout tone="danger">
-                    ✗ Faltante de {money(Math.abs(totals.diff))}. Revise las salidas del día — cada faltante recurrente es margen que se escapa.
+                    {t("caja.faltante").replace("{amount}", money(Math.abs(totals.diff)))}
                   </Callout>
                 )}
               </div>
@@ -342,7 +346,7 @@ export function CashControlTool() {
                 disabled={busy}
                 className="mt-4 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-secondary text-foreground text-sm font-semibold hover:bg-secondary/70 transition-colors disabled:opacity-60"
               >
-                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />} Cerrar caja
+                {busy ? <Loader2 className="w-4 h-4 animate-spin" /> : <Lock className="w-4 h-4" />} {t("caja.cerrar")}
               </button>
             </ToolCard>
           </div>

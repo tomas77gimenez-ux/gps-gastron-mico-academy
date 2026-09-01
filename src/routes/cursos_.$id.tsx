@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Hls from "hls.js";
 import { supabase } from "@/integrations/supabase/client";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useCourseProgress, usePandaProgressTracker, useLessonCompletion } from "@/hooks/useLessonProgress";
 import { useLessonEmbedUrls } from "@/lib/bunny";
@@ -34,19 +35,20 @@ export const Route = createFileRoute("/cursos_/$id")({
     return { course, lessons: lessons ?? [], materials: materials ?? [] };
   },
   head: ({ loaderData, params }) => {
+    const tt = tFor(readPrefs().lang);
     const course = (loaderData as { course?: { title?: string; description?: string | null; thumbnail_url?: string | null; instructor?: string } } | undefined)?.course;
     const title = course?.title
       ? `${course.title} — GPS Gastronômico`
-      : "Mentoría — GPS Gastronômico";
+      : tt("crs2.head.fallbackTitle");
     const description =
       (course?.description?.slice(0, 160)) ||
-      "Mentoría del Método GPS Gastronômico con clases en video y materiales complementarios.";
+      tt("crs2.head.fallbackDesc");
     const canonical = `https://plataforma-test1.lovable.app/cursos/${params?.id ?? ""}`;
     return {
       meta: [
         { title },
         { name: "description", content: description },
-        { property: "og:title", content: course?.title ?? "Mentoría" },
+        { property: "og:title", content: course?.title ?? tt("crs2.head.fallbackTitle") },
         { property: "og:description", content: description },
         { property: "og:url", content: canonical },
         { property: "og:type", content: "article" },

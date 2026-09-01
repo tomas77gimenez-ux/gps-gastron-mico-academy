@@ -67,6 +67,9 @@ export const storeDict = {
   "gd2.noSePudoDescargar": { es: "No se pudo descargar el archivo", en: "Could not download the file", pt: "Não foi possível baixar o arquivo" },
 
   // ---- Herramientas (tools index/wrapper) ----
+  "hpage.index.headTitle": { es: "Caja de Herramientas — GPS Gastronômico", en: "Toolbox — GPS Gastronômico", pt: "Caixa de Ferramentas — GPS Gastronômico" },
+  "hpage.index.headDesc": { es: "Herramientas de gestión para restaurantes: punto de equilibrio, fichas técnicas, DRE mensual, control de caja y monitor de CMV.", en: "Management tools for restaurants: break-even point, recipe cards, monthly P&L, cash control and COGS monitor.", pt: "Ferramentas de gestão para restaurantes: ponto de equilíbrio, fichas técnicas, DRE mensal, controle de caixa e monitor de CMV." },
+  "hpage.index.ogDesc": { es: "Punto de equilibrio, fichas técnicas, DRE mensual, control de caja y monitor de CMV en un solo lugar.", en: "Break-even point, recipe cards, monthly P&L, cash control and COGS monitor in one place.", pt: "Ponto de equilíbrio, fichas técnicas, DRE mensal, controle de caixa e monitor de CMV em um só lugar." },
   "hpage.badge": { es: "Caja de Herramientas", en: "Toolbox", pt: "Caixa de Ferramentas" },
   "hpage.tituloPre": { es: "Todo lo que necesitás para ", en: "Everything you need to ", pt: "Tudo o que você precisa para " },
   "hpage.tituloGradient": { es: "gestionar con números", en: "manage with numbers", pt: "gerenciar com números" },

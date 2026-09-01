@@ -6,6 +6,9 @@ import { DREQuestionnaire } from "./DREQuestionnaire";
 import { DashboardResults } from "./DashboardResults";
 import { Calendar, CheckCircle2, Lock, Pencil, Plus, BarChart3, ArrowLeft, History } from "lucide-react";
 import { Link } from "@tanstack/react-router";
+import { useI18n, type Lang, type TranslationKey } from "@/lib/i18n";
+
+const LOCALE: Record<Lang, string> = { es: "es-MX", en: "en-US", pt: "pt-BR" };
 
 interface Cycle {
   id: string;
@@ -33,6 +36,7 @@ function sumData(entries: Entry[]): DREData {
 }
 
 export function DRERealtimeTracker() {
+  const { t, lang } = useI18n();
   const { user, isReady } = useAuthSession();
   const [loading, setLoading] = useState(true);
   const [cycle, setCycle] = useState<Cycle | null>(null);
@@ -103,7 +107,7 @@ export function DRERealtimeTracker() {
 
   async function startCycle() {
     if (!user) return;
-    const label = `${new Date().toLocaleDateString("es-MX", { month: "long", year: "numeric" })}`;
+    const label = `${new Date().toLocaleDateString(LOCALE[lang], { month: "long", year: "numeric" })}`;
     const { data, error } = await supabase
       .from("dre_realtime_cycles")
       .insert({ user_id: user.id, label, status: "open" })
@@ -140,7 +144,7 @@ export function DRERealtimeTracker() {
 
   async function closeCycle() {
     if (!cycle) return;
-    if (!confirm("¿Cerrar el mes actual? Podrás iniciar un nuevo ciclo después.")) return;
+    if (!confirm(t("rt.confirmCerrar"))) return;
     await supabase
       .from("dre_realtime_cycles")
       .update({ status: "closed", closed_at: new Date().toISOString() })
@@ -152,19 +156,19 @@ export function DRERealtimeTracker() {
   }
 
   if (!isReady || loading) {
-    return <div className="text-center py-12 text-muted-foreground text-sm">Cargando…</div>;
+    return <div className="text-center py-12 text-muted-foreground text-sm">{t("rt.cargando")}</div>;
   }
 
   if (!user) {
     return (
       <div className="max-w-md mx-auto text-center rounded-2xl border border-border bg-card p-8">
         <Lock className="w-10 h-10 mx-auto text-primary-text mb-3" />
-        <h3 className="font-semibold mb-2">Inicia sesión para usar Tiempo Real</h3>
+        <h3 className="font-semibold mb-2">{t("rt.loginTitulo")}</h3>
         <p className="text-sm text-muted-foreground mb-4">
-          Tus datos semanales se guardan de forma segura en tu cuenta.
+          {t("rt.loginTexto")}
         </p>
         <Link to="/login" className="inline-block px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors">
-          Iniciar sesión
+          {t("rt.iniciarSesion")}
         </Link>
       </div>
     );
@@ -175,18 +179,18 @@ export function DRERealtimeTracker() {
       <div className="max-w-3xl mx-auto">
         <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
           <Calendar className="w-10 h-10 mx-auto text-primary-text mb-3" />
-          <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
+          <h3 className="font-semibold mb-2">{t("rt.empezarTitulo")}</h3>
           <p className="text-sm text-muted-foreground mb-5">
-            Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
+            {t("rt.empezarTexto")}
           </p>
           <button
             onClick={startCycle}
             className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors glow-orange"
           >
-            <Plus className="w-4 h-4" /> Iniciar ciclo de Tiempo Real
+            <Plus className="w-4 h-4" /> {t("rt.iniciarCiclo")}
           </button>
         </div>
-        <HistoryList history={history} onView={setViewingHistoryId} />
+        <HistoryList history={history} onView={setViewingHistoryId} t={t} lang={lang} />
       </div>
     );
   }
@@ -202,12 +206,12 @@ export function DRERealtimeTracker() {
           onClick={() => setEditingWeek(null)}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Volver al ciclo
+          <ArrowLeft className="w-4 h-4" /> {t("rt.volverCiclo")}
         </button>
         <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold font-display">Semana {editingWeek}</h2>
+          <h2 className="text-2xl font-bold font-display">{t("rt.semanaN").replace("{n}", String(editingWeek))}</h2>
           <p className="text-sm text-muted-foreground mt-1">
-            {existing ? "Edita los números de esta semana" : "Carga los números de esta semana"}
+            {existing ? t("rt.editaSemana") : t("rt.cargaSemana")}
           </p>
         </div>
         <DREQuestionnaire
@@ -215,7 +219,7 @@ export function DRERealtimeTracker() {
           submitLabelKey="dre.verDashboard"
           onComplete={(data) => void saveWeek(editingWeek, data)}
         />
-        {saving && <p className="text-center text-xs text-muted-foreground mt-4">Guardando…</p>}
+        {saving && <p className="text-center text-xs text-muted-foreground mt-4">{t("rt.guardando")}</p>}
       </div>
     );
   }
@@ -232,10 +236,10 @@ export function DRERealtimeTracker() {
           onClick={() => setViewingHistoryId(null)}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Volver al histórico
+          <ArrowLeft className="w-4 h-4" /> {t("rt.volverHistorico")}
         </button>
         <div className="text-center mb-6">
-          <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-1">Mes cerrado</div>
+          <div className="text-xs uppercase tracking-wide text-muted-foreground font-semibold mb-1">{t("rt.mesCerrado")}</div>
           <h2 className="text-2xl font-bold font-display capitalize">{item.cycle.label}</h2>
         </div>
         <DashboardResults
@@ -253,7 +257,7 @@ export function DRERealtimeTracker() {
           onClick={() => setShowResults(false)}
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
-          <ArrowLeft className="w-4 h-4" /> Volver al ciclo
+          <ArrowLeft className="w-4 h-4" /> {t("rt.volverCiclo")}
         </button>
         <DashboardResults results={calculateDRE(accumulated)} onReset={() => setShowResults(false)} />
       </div>
@@ -264,10 +268,10 @@ export function DRERealtimeTracker() {
     <div className="max-w-3xl mx-auto">
       <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 mb-6 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <div className="text-xs uppercase tracking-wide text-primary-text font-semibold mb-1">Ciclo en curso</div>
+          <div className="text-xs uppercase tracking-wide text-primary-text font-semibold mb-1">{t("rt.cicloEnCurso")}</div>
           <div className="font-semibold capitalize">{cycle.label}</div>
           <div className="text-xs text-muted-foreground mt-1">
-            {completedWeeks} de 4 semanas cargadas
+            {t("rt.semanasCargadas").replace("{n}", String(completedWeeks))}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -276,14 +280,14 @@ export function DRERealtimeTracker() {
               onClick={() => setShowResults(true)}
               className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
             >
-              <BarChart3 className="w-4 h-4" /> Ver acumulado
+              <BarChart3 className="w-4 h-4" /> {t("rt.verAcumulado")}
             </button>
           )}
           <button
             onClick={closeCycle}
             className="px-4 py-2 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/40 transition-colors"
           >
-            Cerrar mes
+            {t("rt.cerrarMes")}
           </button>
         </div>
       </div>
@@ -293,15 +297,17 @@ export function DRERealtimeTracker() {
           <Calendar className="w-4 h-4 text-primary-text shrink-0" />
           <span className="text-foreground">
             {completedWeeks === 0
-              ? "Aún no cargas ninguna semana. Comienza por la Semana 1 para ver tu acumulado."
-              : `Falta${4 - completedWeeks === 1 ? "" : "n"} ${4 - completedWeeks} semana${4 - completedWeeks === 1 ? "" : "s"} para cerrar el ciclo del mes.`}
+              ? t("rt.sinSemanas")
+              : t("rt.faltanSemanas")
+                  .replace(/\{plural\}/g, 4 - completedWeeks === 1 ? "" : lang === "en" ? "s" : lang === "pt" ? "m" : "n")
+                  .replace("{n}", String(4 - completedWeeks))}
           </span>
         </div>
       ) : (
         <div className="rounded-xl border border-primary/40 bg-primary/10 p-3 mb-6 flex items-center gap-3 text-sm">
           <CheckCircle2 className="w-4 h-4 text-primary-text shrink-0" />
           <span className="text-foreground font-medium">
-            ¡Mes completo! Ya puedes cerrar el ciclo y archivarlo en tu histórico.
+            {t("rt.mesCompleto")}
           </span>
         </div>
       )}
@@ -321,7 +327,7 @@ export function DRERealtimeTracker() {
               }`}
             >
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Semana {week}</span>
+                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t("rt.semanaN").replace("{n}", String(week))}</span>
                 {filled ? (
                   <CheckCircle2 className="w-4 h-4 text-primary-text" />
                 ) : (
@@ -329,11 +335,11 @@ export function DRERealtimeTracker() {
                 )}
               </div>
               <div className="font-semibold text-sm mb-1">
-                {filled ? "Datos cargados" : "Pendiente"}
+                {filled ? t("rt.datosCargados") : t("rt.pendiente")}
               </div>
               <div className="text-xs text-muted-foreground flex items-center gap-1">
                 <Pencil className="w-3 h-3" />
-                {filled ? "Editar semana" : "Cargar números"}
+                {filled ? t("rt.editarSemana") : t("rt.cargarNumeros")}
               </div>
             </button>
           );
@@ -343,37 +349,37 @@ export function DRERealtimeTracker() {
       {completedWeeks > 0 && (
         <div className="rounded-xl border border-border bg-card p-5">
           <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2 font-semibold">
-            Acumulado del mes
+            {t("rt.acumuladoMes")}
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-sm">
-            <Stat label="Facturación" value={
+            <Stat lang={lang} label={t("rt.facturacion")} value={
               (accumulated.kitchen_gross_sales ?? 0) +
               (accumulated.bar_gross_sales ?? 0) +
               (accumulated.cafeteria_gross_sales ?? 0) +
               (accumulated.events_gross_sales ?? 0)
             } />
-            <Stat label="CMV" value={
+            <Stat lang={lang} label={t("rt.cmv")} value={
               (accumulated.kitchen_cmv ?? 0) +
               (accumulated.bar_cmv ?? 0) +
               (accumulated.cafeteria_cmv ?? 0) +
               (accumulated.events_cmv ?? 0)
             } />
-            <Stat label="Semanas" value={completedWeeks} suffix=" / 4" plain />
+            <Stat label={t("rt.semanas")} value={completedWeeks} suffix=" / 4" plain />
           </div>
         </div>
       )}
 
-      <HistoryList history={history} onView={setViewingHistoryId} />
+      <HistoryList history={history} onView={setViewingHistoryId} t={t} lang={lang} />
     </div>
   );
 }
 
-function Stat({ label, value, suffix = "", plain = false }: { label: string; value: number; suffix?: string; plain?: boolean }) {
+function Stat({ label, value, suffix = "", plain = false, lang = "es" }: { label: string; value: number; suffix?: string; plain?: boolean; lang?: Lang }) {
   return (
     <div>
       <div className="text-xs text-muted-foreground mb-1">{label}</div>
       <div className="font-semibold text-foreground">
-        {plain ? value : `$${value.toLocaleString("es-MX", { maximumFractionDigits: 0 })}`}{suffix}
+        {plain ? value : `$${value.toLocaleString(LOCALE[lang], { maximumFractionDigits: 0 })}`}{suffix}
       </div>
     </div>
   );
@@ -382,9 +388,13 @@ function Stat({ label, value, suffix = "", plain = false }: { label: string; val
 function HistoryList({
   history,
   onView,
+  t,
+  lang,
 }: {
   history: Array<{ cycle: Cycle; entries: Entry[] }>;
   onView: (id: string) => void;
+  t: (key: TranslationKey) => string;
+  lang: Lang;
 }) {
   if (history.length === 0) return null;
   return (
@@ -392,7 +402,7 @@ function HistoryList({
       <div className="flex items-center gap-2 mb-3">
         <History className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Meses anteriores
+          {t("rt.mesesAnteriores")}
         </h3>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -416,13 +426,13 @@ function HistoryList({
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="font-semibold capitalize">{cycle.label}</span>
-                <span className="text-xs text-muted-foreground">{entries.length}/4 sem</span>
+                <span className="text-xs text-muted-foreground">{entries.length}/4 {t("rt.semAbbr")}</span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-xs">
-                <Stat label="Facturación" value={facturacion} />
-                <Stat label="CMV" value={cmv} />
+                <Stat label={t("rt.facturacion")} value={facturacion} lang={lang} />
+                <Stat label={t("rt.cmv")} value={cmv} lang={lang} />
               </div>
-              <div className="text-xs text-primary-text mt-3 font-medium">Ver dashboard →</div>
+              <div className="text-xs text-primary-text mt-3 font-medium">{t("rt.verDashboard")}</div>
             </button>
           );
         })}

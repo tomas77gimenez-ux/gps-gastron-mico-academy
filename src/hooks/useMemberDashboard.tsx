@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useI18n } from "@/lib/i18n";
+import type { TranslationKey } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------ */
@@ -230,8 +231,8 @@ export interface ToolStatusRow {
   detail: string;
 }
 
-export function toolStatusLabel(status: ToolStatusKind, t: (key: string) => string): string {
-  return t(`dash.status.${status}`);
+export function toolStatusLabel(status: ToolStatusKind, t: (key: TranslationKey) => string): string {
+  return t(`dash.status.${status}` as TranslationKey);
 }
 
 function currentMonthKey(offset = 0): string {

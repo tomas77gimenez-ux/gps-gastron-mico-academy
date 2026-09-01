@@ -279,6 +279,7 @@ const baseTranslations = {
   "results.puntoEquilibrio": { es: "Punto de Equilibrio", en: "Break-Even Point", pt: "Ponto de Equilíbrio" },
   "results.ventaMinima": { es: "Venta mínima mensual", en: "Minimum monthly revenue", pt: "Venda mínima mensal" },
   "results.facturacionCanal": { es: "Facturación por Canal", en: "Revenue by Channel", pt: "Faturamento por Canal" },
+  "results.sinVentas": { es: "No se registraron ventas.", en: "No sales were recorded.", pt: "Não foram registradas vendas." },
   "results.desgloseGastos": { es: "Desglose de Gastos Operativos", en: "Operating Expense Breakdown", pt: "Detalhamento de Despesas Operacionais" },
   "results.totalOpex": { es: "Total OPEX", en: "Total OPEX", pt: "Total OPEX" },
   "results.resultadoNeto": { es: "Resultado Neto", en: "Net Result", pt: "Resultado Líquido" },

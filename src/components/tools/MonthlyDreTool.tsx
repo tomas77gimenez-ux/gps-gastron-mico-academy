@@ -5,13 +5,16 @@ import { toast } from "sonner";
 import { Calendar, Plus, Trash2, Save, Loader2, Activity, FileSpreadsheet } from "lucide-react";
 import { money, num, pct } from "@/lib/tools-format";
 import { Bar, Field, NumberInput, ToolCard, ToolSectionTitle, inputClass } from "./ToolUI";
+import { useI18n, type Lang, type TranslationKey } from "@/lib/i18n";
+
+const LOCALE: Record<Lang, string> = { es: "es-MX", en: "en-US", pt: "pt-BR" };
 
 type Category = "personal" | "fijos" | "otros";
 
-const CATEGORIES: { key: Category; label: string }[] = [
-  { key: "personal", label: "Personal" },
-  { key: "fijos", label: "Fijos" },
-  { key: "otros", label: "Variables y otros" },
+const CATEGORIES: { key: Category; labelKey: TranslationKey }[] = [
+  { key: "personal", labelKey: "dre.catPersonal" },
+  { key: "fijos", labelKey: "dre.catFijos" },
+  { key: "otros", labelKey: "dre.catOtros" },
 ];
 
 interface Line {
@@ -19,7 +22,7 @@ interface Line {
   amount: string;
 }
 
-function monthOptions(): { value: string; label: string }[] {
+function monthOptions(lang: Lang): { value: string; label: string }[] {
   const out: { value: string; label: string }[] = [];
   const now = new Date();
   for (let i = 0; i < 12; i++) {
@@ -27,15 +30,16 @@ function monthOptions(): { value: string; label: string }[] {
     const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
     out.push({
       value,
-      label: d.toLocaleDateString("es-MX", { month: "long", year: "numeric" }),
+      label: d.toLocaleDateString(LOCALE[lang], { month: "long", year: "numeric" }),
     });
   }
   return out;
 }
 
 export function MonthlyDreTool() {
+  const { t, lang } = useI18n();
   const { user, isReady } = useAuthSession();
-  const months = useMemo(monthOptions, []);
+  const months = useMemo(() => monthOptions(lang), [lang]);
   const [month, setMonth] = useState(months[0].value);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -95,7 +99,7 @@ export function MonthlyDreTool() {
       .single();
     if (error || !saved) {
       setSaving(false);
-      toast.error("No se pudo guardar", { description: error?.message });
+      toast.error(t("dre.errGuardar"), { description: error?.message });
       return;
     }
     await supabase.from("dre_expenses").delete().eq("dre_month_id", saved.id);
@@ -112,7 +116,7 @@ export function MonthlyDreTool() {
     );
     if (rows.length > 0) await supabase.from("dre_expenses").insert(rows);
     setSaving(false);
-    toast.success("Mes guardado");
+    toast.success(t("dre.guardado"));
   }
 
   const subtotal = (c: Category) => lines[c].reduce((a, l) => a + num(l.amount), 0);
@@ -145,38 +149,38 @@ export function MonthlyDreTool() {
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-6">
         <ToolCard>
-          <ToolSectionTitle icon={Calendar}>Mes de referencia</ToolSectionTitle>
+          <ToolSectionTitle icon={Calendar}>{t("dre.mesReferencia")}</ToolSectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Field label="Mes">
+            <Field label={t("dre.mes")}>
               <select value={month} onChange={(e) => setMonth(e.target.value)} className={inputClass}>
                 {months.map((m) => (
                   <option key={m.value} value={m.value}>{m.label}</option>
                 ))}
               </select>
             </Field>
-            <Field label="Ventas del mes">
+            <Field label={t("dre.ventasMes")}>
               <NumberInput value={sales} onChange={setSales} placeholder="0" min={0} />
             </Field>
-            <Field label="CMV — compras del mes">
+            <Field label={t("dre.cmvCompras")}>
               <NumberInput value={cmv} onChange={setCmv} placeholder="0" min={0} />
             </Field>
           </div>
           {loading && (
             <p className="text-xs text-muted-foreground mt-3 flex items-center gap-1.5">
-              <Loader2 className="w-3 h-3 animate-spin" /> Cargando mes...
+              <Loader2 className="w-3 h-3 animate-spin" /> {t("dre.cargandoMes")}
             </p>
           )}
         </ToolCard>
 
-        {CATEGORIES.map(({ key, label }) => (
+        {CATEGORIES.map(({ key, labelKey }) => (
           <ToolCard key={key}>
             <div className="flex items-center justify-between mb-4">
-              <h3 className="font-display font-semibold text-lg">{label}</h3>
+              <h3 className="font-display font-semibold text-lg">{t(labelKey)}</h3>
               <button
                 onClick={() => setLines((l) => ({ ...l, [key]: [...l[key], { description: "", amount: "" }] }))}
                 className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors"
               >
-                <Plus className="w-3.5 h-3.5" /> Agregar línea
+                <Plus className="w-3.5 h-3.5" /> {t("dre.agregarLinea")}
               </button>
             </div>
             <div className="space-y-2">
@@ -191,7 +195,7 @@ export function MonthlyDreTool() {
                         [key]: ls[key].map((x, i) => (i === idx ? { ...x, description: e.target.value } : x)),
                       }))
                     }
-                    placeholder="Concepto"
+                    placeholder={t("dre.concepto")}
                     className={`${inputClass} flex-1`}
                   />
                   <div className="w-32">
@@ -210,18 +214,18 @@ export function MonthlyDreTool() {
                   <button
                     onClick={() => setLines((ls) => ({ ...ls, [key]: ls[key].filter((_, i) => i !== idx) }))}
                     className="p-2 rounded hover:bg-destructive/10 text-destructive transition-colors"
-                    aria-label="Quitar línea"
+                    aria-label={t("dre.quitarLinea")}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
               ))}
               {lines[key].length === 0 && (
-                <p className="text-sm text-muted-foreground">Sin líneas cargadas.</p>
+                <p className="text-sm text-muted-foreground">{t("dre.sinLineas")}</p>
               )}
             </div>
             <div className="mt-4 pt-3 border-t border-border flex items-center justify-between text-sm">
-              <span className="text-muted-foreground">Subtotal {label.toLowerCase()}</span>
+              <span className="text-muted-foreground">{t("dre.subtotal").replace("{cat}", t(labelKey).toLowerCase())}</span>
               <span className="font-semibold">
                 {money(subtotal(key))}
                 {r.s > 0 && <span className="text-muted-foreground text-xs ml-2">({pct((subtotal(key) / r.s) * 100)})</span>}
@@ -236,33 +240,33 @@ export function MonthlyDreTool() {
           className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
         >
           {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-          Guardar mes
+          {t("dre.guardarMes")}
         </button>
       </div>
 
       <div className="lg:sticky lg:top-24 self-start space-y-4">
         <ToolCard>
-          <ToolSectionTitle icon={FileSpreadsheet}>Resultado del mes</ToolSectionTitle>
+          <ToolSectionTitle icon={FileSpreadsheet}>{t("dre.resultadoMes")}</ToolSectionTitle>
           <dl className="space-y-2.5 text-sm">
-            <Row label="Ventas" value={money(r.s)} strong />
-            <Row label={`− CMV (${pct(r.cmvPct)})`} value={`− ${money(r.c)}`} />
-            <Row label={`= Margen de contribución (${pct(r.contributionPct)})`} value={money(r.contribution)} strong />
-            {CATEGORIES.map(({ key, label }) => (
-              <Row key={key} label={`− ${label}`} value={`− ${money(subtotal(key))}`} />
+            <Row label={t("dre.ventas")} value={money(r.s)} strong />
+            <Row label={t("dre.cmvLinea").replace("{pct}", pct(r.cmvPct))} value={`− ${money(r.c)}`} />
+            <Row label={t("dre.margenContrib").replace("{pct}", pct(r.contributionPct))} value={money(r.contribution)} strong />
+            {CATEGORIES.map(({ key, labelKey }) => (
+              <Row key={key} label={`− ${t(labelKey)}`} value={`− ${money(subtotal(key))}`} />
             ))}
             <div className="pt-3 border-t border-border">
               <div className="flex items-center justify-between">
-                <span className="font-semibold">Resultado operativo</span>
+                <span className="font-semibold">{t("dre.resultadoOperativo")}</span>
                 <span className={`font-bold text-lg ${r.operating >= 0 ? "text-success" : "text-destructive"}`}>
                   {money(r.operating)}
                 </span>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-                <span>Margen neto</span>
+                <span>{t("dre.margenNeto")}</span>
                 <span>{pct(r.netPct)}</span>
               </div>
               <div className="flex items-center justify-between text-xs text-muted-foreground mt-1">
-                <span>Punto de equilibrio</span>
+                <span>{t("dre.puntoEquilibrio")}</span>
                 <span>{money(r.breakEven)}</span>
               </div>
             </div>
@@ -270,13 +274,13 @@ export function MonthlyDreTool() {
         </ToolCard>
 
         <ToolCard>
-          <ToolSectionTitle icon={Activity} hint="Comparación con los rangos saludables del método.">
-            Diagnóstico GPS
+          <ToolSectionTitle icon={Activity} hint={t("dre.diagHint")}>
+            {t("dre.diagTitulo")}
           </ToolSectionTitle>
           <div className="space-y-4">
-            <HealthRow label="CMV" value={r.cmvPct} reference="ideal 28–35%" tone={cmvTone} max={50} />
-            <HealthRow label="Personal" value={r.personalPct} reference="ideal 25–32%" tone={personalTone} max={50} />
-            <HealthRow label="Margen neto" value={r.netPct} reference="ideal ≥ 10%" tone={netTone} max={25} />
+            <HealthRow label={t("dre.cmv")} value={r.cmvPct} reference={t("dre.idealCmv")} tone={cmvTone} max={50} />
+            <HealthRow label={t("dre.personal")} value={r.personalPct} reference={t("dre.idealPersonal")} tone={personalTone} max={50} />
+            <HealthRow label={t("dre.margenNeto")} value={r.netPct} reference={t("dre.idealNeto")} tone={netTone} max={25} />
           </div>
         </ToolCard>
       </div>

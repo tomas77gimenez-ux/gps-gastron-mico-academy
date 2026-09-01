@@ -4,6 +4,7 @@ import { useAuthSession } from "@/hooks/useAuthSession";
 import { Calculator, Users, Percent, Target, TrendingUp, Check, Loader2 } from "lucide-react";
 import { money, num, pct } from "@/lib/tools-format";
 import { Bar, Callout, Field, KPI, NumberInput, ToolCard, ToolSectionTitle } from "./ToolUI";
+import { useI18n } from "@/lib/i18n";
 
 interface Inputs {
   fixed: string;
@@ -13,9 +14,12 @@ interface Inputs {
   sales: string;
 }
 
+const localeOf = (lang: "es" | "en" | "pt") => (lang === "en" ? "en-US" : lang === "pt" ? "pt-BR" : "es-MX");
+
 const EMPTY: Inputs = { fixed: "", cv: "", ticket: "", days: "30", sales: "" };
 
 export function BreakEvenTool() {
+  const { t, lang } = useI18n();
   const { user, isReady } = useAuthSession();
   const [inputs, setInputs] = useState<Inputs>(EMPTY);
   const [loaded, setLoaded] = useState(false);
@@ -116,22 +120,22 @@ export function BreakEvenTool() {
     <div className="space-y-6">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <ToolCard>
-          <ToolSectionTitle icon={Calculator}>Tus números</ToolSectionTitle>
+          <ToolSectionTitle icon={Calculator}>{t("pe.tusNumeros")}</ToolSectionTitle>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Field label="Gastos fijos mensuales">
+            <Field label={t("pe.gastosFijos")}>
               <NumberInput value={inputs.fixed} onChange={set("fixed")} placeholder="0" min={0} />
             </Field>
-            <Field label="Costo variable %" hint="CMV + comisiones + delivery + impuestos sobre la venta.">
+            <Field label={t("pe.costoVariable")} hint={t("pe.costoVariableHint")}>
               <NumberInput value={inputs.cv} onChange={set("cv")} placeholder="0" min={0} />
             </Field>
-            <Field label="Ticket medio">
+            <Field label={t("pe.ticketMedio")}>
               <NumberInput value={inputs.ticket} onChange={set("ticket")} placeholder="0" min={0} />
             </Field>
-            <Field label="Días de operación">
+            <Field label={t("pe.diasOperacion")}>
               <NumberInput value={inputs.days} onChange={set("days")} placeholder="30" min={1} />
             </Field>
             <div className="sm:col-span-2">
-              <Field label="Ventas actuales (opcional)">
+              <Field label={t("pe.ventasActuales")}>
                 <NumberInput value={inputs.sales} onChange={set("sales")} placeholder="0" min={0} />
               </Field>
             </div>
@@ -139,37 +143,37 @@ export function BreakEvenTool() {
           <p className="text-[11px] text-muted-foreground mt-4 flex items-center gap-1.5">
             {saving ? (
               <>
-                <Loader2 className="w-3 h-3 animate-spin" /> Guardando...
+                <Loader2 className="w-3 h-3 animate-spin" /> {t("pe.guardando")}
               </>
             ) : savedAt ? (
               <>
-                <Check className="w-3 h-3 text-success" /> Guardado automáticamente
+                <Check className="w-3 h-3 text-success" /> {t("pe.guardadoAuto")}
               </>
             ) : (
-              "Los datos se guardan solos mientras escribís."
+              t("pe.guardanSolos")
             )}
           </p>
         </ToolCard>
 
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <KPI title="Punto de equilibrio" value={money(r.pe)} subtitle="Venta mínima del mes" icon={Target} tone="primary" />
-            <KPI title="Margen de contribución" value={pct(r.cmPct)} subtitle="Lo que queda de cada venta" icon={Percent} tone={r.cmPct >= 60 ? "success" : r.cmPct >= 45 ? "warning" : "danger"} />
-            <KPI title="Clientes / mes" value={Math.ceil(r.clientsMonth).toLocaleString("es-MX")} icon={Users} tone="neutral" />
-            <KPI title="Clientes / día" value={Math.ceil(r.clientsDay).toLocaleString("es-MX")} icon={Users} tone="neutral" />
+            <KPI title={t("pe.kpiPe")} value={money(r.pe)} subtitle={t("pe.kpiPeSub")} icon={Target} tone="primary" />
+            <KPI title={t("pe.kpiCm")} value={pct(r.cmPct)} subtitle={t("pe.kpiCmSub")} icon={Percent} tone={r.cmPct >= 60 ? "success" : r.cmPct >= 45 ? "warning" : "danger"} />
+            <KPI title={t("pe.clientesMes")} value={Math.ceil(r.clientsMonth).toLocaleString(localeOf(lang))} icon={Users} tone="neutral" />
+            <KPI title={t("pe.clientesDia")} value={Math.ceil(r.clientsDay).toLocaleString(localeOf(lang))} icon={Users} tone="neutral" />
           </div>
 
           <ToolCard>
-            <ToolSectionTitle>Ventas vs punto de equilibrio</ToolSectionTitle>
+            <ToolSectionTitle>{t("pe.ventasVsPe")}</ToolSectionTitle>
             <Bar value={r.progress} tone={above ? "success" : "danger"} />
             <div className="flex items-center justify-between mt-3 text-sm">
               <span className="text-muted-foreground">{money(r.sales)} de {money(r.pe)}</span>
               <span className={above ? "text-success font-semibold" : "text-destructive font-semibold"}>
                 {r.pe <= 0
-                  ? "Completá tus datos"
+                  ? t("pe.completaDatos")
                   : above
-                    ? `Está ${pct(r.progress - 100)} sobre el punto de equilibrio`
-                    : `Le faltan ${money(Math.max(0, r.gap))}`}
+                    ? t("pe.sobrePe").replace("{pct}", pct(r.progress - 100))
+                    : t("pe.faltan").replace("{amount}", money(Math.max(0, r.gap)))}
               </span>
             </div>
           </ToolCard>
@@ -177,14 +181,14 @@ export function BreakEvenTool() {
       </div>
 
       <ToolCard>
-        <ToolSectionTitle icon={TrendingUp} hint="Movés las palancas y ves cuánto baja tu punto de equilibrio.">
-          Simulador
+        <ToolSectionTitle icon={TrendingUp} hint={t("pe.simuladorHint")}>
+          {t("pe.simulador")}
         </ToolSectionTitle>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="space-y-5">
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="font-medium">Aumento de ticket medio</span>
+                <span className="font-medium">{t("pe.aumentoTicket")}</span>
                 <span className="text-primary-text font-semibold">+{ticketUp}%</span>
               </div>
               <input
@@ -195,14 +199,14 @@ export function BreakEvenTool() {
                 value={ticketUp}
                 onChange={(e) => setTicketUp(Number(e.target.value))}
                 className="w-full accent-primary"
-                aria-label="Aumento de ticket medio"
+                aria-label={t("pe.aumentoTicket")}
               />
-              <p className="text-xs text-muted-foreground mt-1">Nuevo ticket: {money(r.newTicket)}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("pe.nuevoTicket").replace("{amount}", money(r.newTicket))}</p>
             </div>
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
-                <span className="font-medium">Reducción de costo variable</span>
-                <span className="text-primary-text font-semibold">−{cvDown} pts</span>
+                <span className="font-medium">{t("pe.reduccionCv")}</span>
+                <span className="text-primary-text font-semibold">−{cvDown} {t("pe.pts")}</span>
               </div>
               <input
                 type="range"
@@ -212,20 +216,20 @@ export function BreakEvenTool() {
                 value={cvDown}
                 onChange={(e) => setCvDown(Number(e.target.value))}
                 className="w-full accent-primary"
-                aria-label="Reducción de costo variable"
+                aria-label={t("pe.reduccionCv")}
               />
-              <p className="text-xs text-muted-foreground mt-1">Nuevo costo variable: {pct(r.newCv)}</p>
+              <p className="text-xs text-muted-foreground mt-1">{t("pe.nuevoCv").replace("{pct}", pct(r.newCv))}</p>
             </div>
           </div>
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <KPI title="Nuevo punto de equilibrio" value={money(r.newPe)} tone="success" />
-              <KPI title="Clientes / mes" value={Math.ceil(r.newClientsMonth).toLocaleString("es-MX")} tone="neutral" />
+              <KPI title={t("pe.nuevoPe")} value={money(r.newPe)} tone="success" />
+              <KPI title={t("pe.clientesMes")} value={Math.ceil(r.newClientsMonth).toLocaleString(localeOf(lang))} tone="neutral" />
             </div>
             <Callout tone={r.savings > 0 ? "success" : "neutral"}>
               {r.savings > 0
-                ? `Con estos ajustes necesitás vender ${money(r.savings)} menos por mes para no perder plata.`
-                : "Mové las palancas para ver el impacto."}
+                ? t("pe.ahorro").replace("{amount}", money(r.savings))
+                : t("pe.movePalancas")}
             </Callout>
           </div>
         </div>
