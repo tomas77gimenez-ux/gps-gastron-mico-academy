@@ -5,6 +5,8 @@ import { useProAccess } from "@/hooks/useProAccess";
 import { ProVideoPlayer } from "@/components/pro/ProVideoPlayer";
 import { monthLabel, parseMetrics, type ProCase, type ProRecording, type ProSession } from "@/lib/pro";
 import { Button } from "@/components/ui/button";
+import { useI18n, tFor, type Lang } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import {
   ArrowRight, CalendarClock, Crown, FileText, Loader2, Lock, MessageSquare,
   PlayCircle, Sparkles, TrendingUp, Video,
@@ -12,23 +14,28 @@ import {
 
 export const Route = createFileRoute("/sala-pro")({
   component: SalaProPage,
-  head: () => ({
+  head: () => {
+    const th = tFor(readPrefs().lang);
+    return {
     meta: [
-      { title: "Sala Pro — GPS Gastronômico" },
-      { name: "description", content: "Reunión semanal de implementación en vivo, grabaciones y el Caso Real del Mes para miembros Academy Pro." },
-      { property: "og:title", content: "Sala Pro — GPS Gastronômico" },
-      { property: "og:description", content: "Acompañamiento en vivo cada semana y casos reales con números antes/después." },
+      { title: th("pro.head.title") },
+      { name: "description", content: th("pro.head.desc") },
+      { property: "og:title", content: th("pro.head.title") },
+      { property: "og:description", content: th("pro.head.ogDesc") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/sala-pro" },
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/sala-pro" }],
-  }),
+    };
+  },
 });
 
-function formatDateTimeET(iso: string) {
+const LOCALE_MAP: Record<Lang, string> = { es: "es-AR", en: "en-US", pt: "pt-BR" };
+
+function formatDateTimeET(iso: string, lang: Lang) {
   try {
-    return new Intl.DateTimeFormat("es-AR", {
+    return new Intl.DateTimeFormat(LOCALE_MAP[lang], {
       weekday: "long", day: "2-digit", month: "long",
       hour: "2-digit", minute: "2-digit", timeZone: "America/New_York",
     }).format(new Date(iso));
@@ -55,11 +62,12 @@ function SalaProPage() {
 /* ------------------------------- Teaser ------------------------------- */
 
 function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
+  const { t } = useI18n();
   const perks = [
-    { icon: Video, title: "Reunión semanal en vivo", desc: "Implementamos juntos, en vivo, lo que mueve la aguja en tu restaurante." },
-    { icon: TrendingUp, title: "Caso Real del Mes", desc: "Un caso real con números antes y después: CMV, ticket promedio y margen." },
-    { icon: PlayCircle, title: "Archivo de grabaciones", desc: "Todas las reuniones anteriores disponibles cuando las necesites." },
-    { icon: MessageSquare, title: "Soporte prioritario", desc: "Tus dudas van primero en la fila del equipo de Daniel." },
+    { icon: Video, title: t("pro.perk1Title"), desc: t("pro.perk1Desc") },
+    { icon: TrendingUp, title: t("pro.perk2Title"), desc: t("pro.perk2Desc") },
+    { icon: PlayCircle, title: t("pro.perk3Title"), desc: t("pro.perk3Desc") },
+    { icon: MessageSquare, title: t("pro.perk4Title"), desc: t("pro.perk4Desc") },
   ];
 
   return (
@@ -67,11 +75,11 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary-text text-xs font-medium mb-4">
-            <Lock className="w-3.5 h-3.5" /> Exclusivo Academy Pro
+            <Lock className="w-3.5 h-3.5" /> {t("pro.exclusivo")}
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold font-display mb-3">Sala Pro</h1>
+          <h1 className="text-3xl sm:text-4xl font-bold font-display mb-3">{t("pro.titulo")}</h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            El espacio donde el método deja de ser teoría: acompañamiento en vivo cada semana y casos reales analizados con números.
+            {t("pro.teaserDesc")}
           </p>
         </div>
 
@@ -88,18 +96,18 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center">
           <Crown className="w-6 h-6 text-primary-text mx-auto mb-3" strokeWidth={1.6} />
           <h2 className="text-xl font-semibold font-display mb-2">
-            {isAuthenticated ? "Tu plan actual no incluye la Sala Pro" : "Ingresá con tu cuenta Academy Pro"}
+            {isAuthenticated ? t("pro.planNoIncluye") : t("pro.ingresaConCuenta")}
           </h2>
           <p className="text-sm text-muted-foreground mb-5">
-            Pasate a Academy Pro y sumate a la próxima reunión de implementación.
+            {t("pro.pasateDesc")}
           </p>
           <div className="flex flex-wrap gap-3 justify-center">
             <Button asChild>
-              <Link to="/planes">Pasate a Academy Pro <ArrowRight className="w-4 h-4 ml-1" /></Link>
+              <Link to="/planes">{t("pro.pasateCta")} <ArrowRight className="w-4 h-4 ml-1" /></Link>
             </Button>
             {!isAuthenticated && (
               <Button variant="outline" asChild>
-                <Link to="/login">Iniciar sesión</Link>
+                <Link to="/login">{t("pro.iniciarSesion")}</Link>
               </Button>
             )}
           </div>
@@ -112,6 +120,7 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
 /* ------------------------------ Contenido ----------------------------- */
 
 function ProContent() {
+  const { t, lang } = useI18n();
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<ProSession | null>(null);
   const [recordings, setRecordings] = useState<ProRecording[]>([]);
@@ -156,27 +165,27 @@ function ProContent() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-12">
         <header>
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary-text text-xs font-medium mb-3">
-            <Crown className="w-3.5 h-3.5" /> Academy Pro
+            <Crown className="w-3.5 h-3.5" /> {t("pro.academyPro")}
           </div>
-          <h1 className="text-3xl font-bold font-display">Sala Pro</h1>
+          <h1 className="text-3xl font-bold font-display">{t("pro.titulo")}</h1>
           <p className="text-muted-foreground mt-1">
-            Reunión semanal de implementación, grabaciones y el Caso Real del Mes.
+            {t("pro.reunionGrabDesc")}
           </p>
         </header>
 
         {/* Reunión semanal */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <CalendarClock className="w-5 h-5 text-primary-text" /> Reunión semanal de implementación
+            <CalendarClock className="w-5 h-5 text-primary-text" /> {t("pro.reunionSemanal")}
           </h2>
           {session ? (
             <div className="rounded-2xl border border-primary/30 bg-card p-6">
               <p className="text-xs uppercase tracking-wide text-primary-text mb-2">
-                {nextIsUpcoming ? "Próxima sesión" : "Última sesión"}
+                {nextIsUpcoming ? t("pro.proximaSesion") : t("pro.ultimaSesion")}
               </p>
               <h3 className="text-lg font-semibold mb-1">{session.title}</h3>
               <p className="text-sm text-muted-foreground capitalize mb-3">
-                {formatDateTimeET(session.starts_at)} (ET)
+                {formatDateTimeET(session.starts_at, lang)} (ET)
               </p>
               {session.description && (
                 <p className="text-sm text-muted-foreground mb-4 whitespace-pre-line">{session.description}</p>
@@ -184,23 +193,23 @@ function ProContent() {
               {session.meeting_url && (
                 <Button asChild>
                   <a href={session.meeting_url} target="_blank" rel="noopener noreferrer">
-                    Entrar a la reunión <ArrowRight className="w-4 h-4 ml-1" />
+                    {t("pro.entrarReunion")} <ArrowRight className="w-4 h-4 ml-1" />
                   </a>
                 </Button>
               )}
             </div>
           ) : (
-            <EmptyBox text="La próxima reunión se anuncia pronto." />
+            <EmptyBox text={t("pro.proximaAnuncia")} />
           )}
         </section>
 
         {/* Grabaciones */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-primary-text" /> Grabaciones anteriores
+            <PlayCircle className="w-5 h-5 text-primary-text" /> {t("pro.grabacionesAnteriores")}
           </h2>
           {recordings.length === 0 ? (
-            <EmptyBox text="Todavía no hay grabaciones publicadas." />
+            <EmptyBox text={t("pro.sinGrabaciones")} />
           ) : (
             <div className="space-y-3">
               {recordings.map((rec) => {
@@ -214,7 +223,7 @@ function ProContent() {
                       <span>
                         <span className="block font-medium">{rec.title}</span>
                         <span className="block text-xs text-muted-foreground">
-                          {new Date(`${rec.session_date}T12:00:00`).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" })}
+                          {new Date(`${rec.session_date}T12:00:00`).toLocaleDateString(LOCALE_MAP[lang], { day: "2-digit", month: "long", year: "numeric" })}
                         </span>
                       </span>
                       <PlayCircle className={`w-5 h-5 shrink-0 ${open ? "text-primary-text" : "text-muted-foreground"}`} />
@@ -226,7 +235,7 @@ function ProContent() {
                         {rec.attachment_url && (
                           <Button variant="outline" size="sm" asChild>
                             <a href={rec.attachment_url} target="_blank" rel="noopener noreferrer">
-                              <FileText className="w-4 h-4 mr-1" /> {rec.attachment_name || "Material adjunto"}
+                              <FileText className="w-4 h-4 mr-1" /> {rec.attachment_name || t("pro.materialAdjunto")}
                             </a>
                           </Button>
                         )}
@@ -242,10 +251,10 @@ function ProContent() {
         {/* Caso Real del Mes */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary-text" /> Caso Real del Mes
+            <Sparkles className="w-5 h-5 text-primary-text" /> {t("pro.casoDelMes")}
           </h2>
           {!featured ? (
-            <EmptyBox text="El primer caso llega este mes." />
+            <EmptyBox text={t("pro.primerCaso")} />
           ) : (
             <div className="space-y-6">
               <article className="rounded-2xl border border-primary/30 bg-card p-6">
@@ -276,7 +285,7 @@ function ProContent() {
                 {featured.attachment_url && (
                   <Button variant="outline" size="sm" asChild>
                     <a href={featured.attachment_url} target="_blank" rel="noopener noreferrer">
-                      <FileText className="w-4 h-4 mr-1" /> {featured.attachment_name || "Descargar PDF"}
+                      <FileText className="w-4 h-4 mr-1" /> {featured.attachment_name || t("pro.descargarPdf")}
                     </a>
                   </Button>
                 )}
