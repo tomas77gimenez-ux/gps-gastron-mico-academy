@@ -38,6 +38,36 @@ export function monthLabel(month: string, withYear = false, lang: Lang = "es"): 
   const d = new Date(y, (m ?? 1) - 1, 1);
   return d.toLocaleDateString(LOCALE_MAP[lang], withYear ? { month: "long", year: "numeric" } : { month: "long" });
 }
+/**
+ * Señales de carga incompleta sobre un mes. Conservador: sin ventas no se evalúa nada.
+ * Orden del array = gravedad, de mayor a menor.
+ */
+function detectSignals(input: {
+  sales: number;
+  cmvPct: number;
+  netPct: number;
+  personal: number;
+  fijos: number;
+  otros: number;
+}): DataQualitySignal[] {
+  const { sales, cmvPct, netPct, personal, fijos, otros } = input;
+  if (sales <= 0) return [];
+
+  const signals: DataQualitySignal[] = [];
+  const expensesTotal = personal + fijos + otros;
+
+  if (expensesTotal <= 0) {
+    signals.push({ id: "noExpenses" });
+  } else {
+    if (personal <= 0) signals.push({ id: "noPersonal" });
+    if (fijos <= 0) signals.push({ id: "noFijos" });
+  }
+  if (cmvPct < 20) signals.push({ id: "lowCmv", value: Math.round(cmvPct) });
+  if (netPct > 35) signals.push({ id: "highNet", value: Math.round(netPct) });
+
+  return signals;
+}
+
 
 interface DreState {
   loading: boolean;
