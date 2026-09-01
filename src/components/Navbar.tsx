@@ -21,7 +21,7 @@ export function Navbar() {
   const { t, lang, toggleLang } = useI18n();
 
   const allNavItems = [
-    { to: "/", label: t("nav.inicio"), icon: Home },
+    { to: user ? "/dashboard" : "/", label: t("nav.inicio"), icon: Home },
     { to: "/herramientas", label: t("nav.herramientas"), icon: Wrench },
     { to: "/cursos", label: t("nav.mentoria"), icon: Film },
     { to: "/sala-pro", label: t("nav.salaPro"), icon: pro.hasPro ? Crown : Lock },
@@ -70,8 +70,8 @@ export function Navbar() {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 border-b transition-colors duration-300 ${
         scrolled
-          ? "bg-background/95 backdrop-blur-2xl border-border-strong"
-          : "bg-background/70 backdrop-blur-xl border-border"
+          ? "bg-nav/95 backdrop-blur-2xl border-nav-border"
+          : "bg-nav/80 backdrop-blur-xl border-nav-border"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
@@ -133,7 +133,7 @@ export function Navbar() {
                     ? "Mudar para Português"
                     : "Cambiar a Español"
               }
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors uppercase"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-nav-control transition-colors uppercase"
               title={
                 lang === "es"
                   ? "Switch to English"
@@ -149,7 +149,7 @@ export function Navbar() {
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label={t("nav.buscar")}
-              className="p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground bg-nav-control/60 hover:bg-nav-control transition-colors"
             >
               <Search className="w-5 h-5" />
             </button>
@@ -165,7 +165,7 @@ export function Navbar() {
             {user ? (
               <button
                 onClick={handleLogout}
-                className="hidden min-[1100px]:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                className="hidden min-[1100px]:flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm text-muted-foreground bg-nav-control/60 hover:text-foreground hover:bg-nav-control transition-colors"
                 title={t("nav.cerrarSesion")}
               >
                 <LogOut className="w-4 h-4" />
@@ -184,7 +184,7 @@ export function Navbar() {
               onClick={() => setMobileOpen(!mobileOpen)}
               aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={mobileOpen}
-              className="min-[1100px]:hidden p-2 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              className="min-[1100px]:hidden p-2 rounded-lg text-muted-foreground bg-nav-control/60 hover:text-foreground hover:bg-nav-control transition-colors"
             >
               {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
