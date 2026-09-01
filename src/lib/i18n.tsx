@@ -1,9 +1,13 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { LANG_COOKIE, readPrefs, writePrefCookie } from "@/lib/prefs";
+import { studentDict } from "@/lib/i18n-dicts/student";
+import { toolsDict } from "@/lib/i18n-dicts/tools";
+import { authDict } from "@/lib/i18n-dicts/auth";
 
 export type Lang = "es" | "en" | "pt";
 
-const translations = {
+const baseTranslations = {
+
   // Navbar
   "nav.inicio": { es: "Inicio", en: "Home", pt: "Início" },
   "nav.dre": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
