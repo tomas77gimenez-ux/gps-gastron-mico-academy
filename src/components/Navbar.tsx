@@ -1,8 +1,9 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, Crown, Lock } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, Crown, Lock, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useProAccess } from "@/hooks/useProAccess";
@@ -19,6 +20,7 @@ export function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { t, lang, toggleLang } = useI18n();
+  const { toggleTheme } = useTheme();
 
   const allNavItems = [
     { to: user ? "/dashboard" : "/", label: t("nav.inicio"), icon: Home },
@@ -81,7 +83,7 @@ export function Navbar() {
             <img
               src={logoGps}
               alt="Método GPS · GPS Gastronômico"
-              className="h-9 sm:h-10 w-auto shrink-0 mix-blend-screen"
+              className="h-9 sm:h-10 w-auto shrink-0 rounded-md bg-foreground p-0.5 dark:bg-transparent dark:p-0 dark:mix-blend-screen"
             />
             <span className="sr-only">GPS Gastronômico</span>
           </Link>
@@ -146,6 +148,17 @@ export function Navbar() {
               {lang === "es" ? "EN" : lang === "en" ? "PT" : "ES"}
             </button>
 
+            {/* Theme toggle — icons are CSS-driven so SSR and hydration agree */}
+            <button
+              onClick={toggleTheme}
+              aria-label={t("nav.cambiarTema")}
+              title={t("nav.cambiarTema")}
+              className="p-2 rounded-lg text-muted-foreground hover:text-foreground bg-nav-control/60 hover:bg-nav-control transition-colors"
+            >
+              <Sun className="w-5 h-5 hidden dark:block" />
+              <Moon className="w-5 h-5 dark:hidden" />
+            </button>
+
             <button
               onClick={() => setSearchOpen(!searchOpen)}
               aria-label={t("nav.buscar")}
@@ -182,7 +195,7 @@ export function Navbar() {
 
             <button
               onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label={mobileOpen ? "Cerrar menú" : "Abrir menú"}
+              aria-label={mobileOpen ? t("nav.cerrarMenu") : t("nav.abrirMenu")}
               aria-expanded={mobileOpen}
               className="min-[1100px]:hidden p-2 rounded-lg text-muted-foreground bg-nav-control/60 hover:text-foreground hover:bg-nav-control transition-colors"
             >

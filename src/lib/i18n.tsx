@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
+import { LANG_COOKIE, readPrefs, writePrefCookie } from "@/lib/prefs";
 
 export type Lang = "es" | "en" | "pt";
 
@@ -17,6 +18,11 @@ const translations = {
   "nav.iniciarSesion": { es: "Iniciar Sesión", en: "Log In", pt: "Entrar" },
   "nav.entrar": { es: "Entrar", en: "Sign In", pt: "Entrar" },
   "nav.buscar": { es: "Buscar cursos, productos...", en: "Search courses, products...", pt: "Buscar cursos, produtos..." },
+  "nav.cambiarTema": { es: "Cambiar tema", en: "Toggle theme", pt: "Alternar tema" },
+  "nav.temaClaro": { es: "Cambiar a modo claro", en: "Switch to light mode", pt: "Mudar para modo claro" },
+  "nav.temaOscuro": { es: "Cambiar a modo oscuro", en: "Switch to dark mode", pt: "Mudar para modo escuro" },
+  "nav.abrirMenu": { es: "Abrir menú", en: "Open menu", pt: "Abrir menu" },
+  "nav.cerrarMenu": { es: "Cerrar menú", en: "Close menu", pt: "Fechar menu" },
 
   // Home page
   "home.badge": { es: "Gestión · Procesos · Sustentabilidad", en: "Management · Processes · Sustainability", pt: "Gestão · Processos · Sustentabilidade" },
@@ -489,22 +495,29 @@ interface I18nContextType {
 const I18nContext = createContext<I18nContextType | null>(null);
 
 export function I18nProvider({ children }: { children: ReactNode }) {
-  const [lang, setLang] = useState<Lang>("es");
+  // Read from the cookie on both sides of the render, so the server already
+  // emits the right language and there is no flash after hydration.
+  const [lang, setLang] = useState<Lang>(() => readPrefs().lang);
 
+  // One-time migration for users whose language was stored in localStorage.
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = localStorage.getItem("gps-lang") as Lang;
-      if (saved === "en" || saved === "es" || saved === "pt") {
-        setLang(saved);
-      }
+    if (typeof window === "undefined") return;
+    if (document.cookie.includes(`${LANG_COOKIE}=`)) return;
+    const saved = localStorage.getItem(LANG_COOKIE) as Lang | null;
+    if (saved === "en" || saved === "es" || saved === "pt") {
+      setLang(saved);
+      writePrefCookie(LANG_COOKIE, saved);
+      document.documentElement.lang = saved;
     }
   }, []);
 
+  useEffect(() => {
+    if (typeof document !== "undefined") document.documentElement.lang = lang;
+  }, [lang]);
+
   const changeLang = useCallback((newLang: Lang) => {
     setLang(newLang);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("gps-lang", newLang);
-    }
+    writePrefCookie(LANG_COOKIE, newLang);
   }, []);
 
   const toggleLang = useCallback(() => {

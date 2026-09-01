@@ -269,7 +269,7 @@ function TiendaPage() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: i * 0.05 }}
-                    className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 hover:shadow-[0_0_30px_oklch(0.70_0.18_45/8%)] transition-all duration-300"
+                    className="bg-card rounded-xl border border-border p-6 flex flex-col hover:border-primary/30 hover:shadow-[0_0_30px_color-mix(in_oklab,var(--primary)_10%,transparent)] transition-all duration-300"
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">

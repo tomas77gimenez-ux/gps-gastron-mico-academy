@@ -64,10 +64,83 @@
   --color-info-foreground: var(--info-foreground);
 }
 
+/* ------------------------------------------------------------------ *
+ * LIGHT THEME (default when no `.dark` class is present on <html>)
+ * ------------------------------------------------------------------ */
 :root {
   --radius: 0.75rem;
   --font-display: 'Outfit', sans-serif;
   --font-body: 'Figtree', sans-serif;
+  color-scheme: light;
+
+  --background: #FAF8F3;
+  --foreground: #17140E;
+  --surface: #F2EDE3;
+  /* Barra superior: tono cálido propio, más claro que la página */
+  --nav: #FFFCF4;
+  --nav-border: #E5D8BB;
+  --nav-control: #F3E9D2;
+  --card: #FFFFFF;
+  --card-foreground: #17140E;
+  --popover: #FFFFFF;
+  --popover-foreground: #17140E;
+  --primary: #9A6C05;
+  --primary-hover: #7E5703;
+  --primary-soft: #C79A20;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EFEADF;
+  --secondary-foreground: #2A2419;
+  --muted: #E8E1D3;
+  --muted-foreground: #5D5748;
+  --accent: #9A6C05;
+  --accent-foreground: #FFFFFF;
+  --destructive: oklch(0.55 0.22 27.3);
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(23, 20, 14, 0.12);
+  --border-strong: rgba(23, 20, 14, 0.26);
+  --input: rgba(23, 20, 14, 0.16);
+  --ring: #9A6C05;
+  --chart-1: #9A6C05;
+  --chart-2: oklch(0.55 0.11 184.7);
+  --chart-3: oklch(0.45 0.09 227.4);
+  --chart-4: oklch(0.68 0.16 84.4);
+  --chart-5: oklch(0.62 0.17 70.1);
+  --sidebar: #F7F2E8;
+  --sidebar-foreground: #2A2419;
+  --sidebar-primary: #9A6C05;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EFE8DA;
+  --sidebar-accent-foreground: #2A2419;
+  --sidebar-border: rgba(23, 20, 14, 0.12);
+  --sidebar-ring: #9A6C05;
+
+  /* Brand gradient + glow */
+  --brand-1: #9A6C05;
+  --brand-2: #C79A20;
+  --gradient-brand: linear-gradient(100deg, var(--brand-1), var(--brand-2));
+  --glow-gold: 0 0 0 1px rgba(154, 108, 5, 0.18), 0 12px 40px -16px rgba(154, 108, 5, 0.28);
+  --glow-gold-soft: 0 18px 60px -26px rgba(154, 108, 5, 0.22);
+
+  /* Theme-dependent decorative effects */
+  --grid-line: rgba(23, 20, 14, 0.055);
+  --noise-opacity: 0.018;
+  --shine-color: rgba(255, 255, 255, 0.5);
+  --glass-mix: 82%;
+
+  /* Semantic status tokens (rebrand-safe) */
+  --success: oklch(0.52 0.14 150);
+  --success-foreground: #FFFFFF;
+  --warning: oklch(0.60 0.14 75);
+  --warning-foreground: #FFFFFF;
+  --info: oklch(0.52 0.13 240);
+  --info-foreground: #FFFFFF;
+}
+
+/* ------------------------------------------------------------------ *
+ * DARK THEME (brand default)
+ * ------------------------------------------------------------------ */
+.dark {
+  color-scheme: dark;
 
   /* Vibrant amber high-contrast: near-black foundation + luminous gold */
   --background: #050505;
@@ -112,9 +185,17 @@
   --sidebar-ring: #D4A017;
 
   /* Brand gradient + glow */
-  --gradient-brand: linear-gradient(100deg, #D4A017, #F0D080);
+  --brand-1: #D4A017;
+  --brand-2: #F0D080;
+  --gradient-brand: linear-gradient(100deg, var(--brand-1), var(--brand-2));
   --glow-gold: 0 0 0 1px rgba(212, 160, 23, 0.20), 0 12px 48px -12px rgba(212, 160, 23, 0.40);
   --glow-gold-soft: 0 18px 70px -20px rgba(212, 160, 23, 0.32);
+
+  /* Theme-dependent decorative effects */
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --noise-opacity: 0.03;
+  --shine-color: rgba(255, 255, 255, 0.35);
+  --glass-mix: 62%;
 
   /* Semantic status tokens (rebrand-safe) */
   --success: oklch(0.72 0.17 150);
@@ -166,13 +247,13 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: var(--noise-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Gold gradient text with slow shimmer */
 .text-gradient-brand {
-  background: linear-gradient(100deg, #D4A017 0%, #F0D080 35%, #D4A017 70%);
+  background: linear-gradient(100deg, var(--brand-1) 0%, var(--brand-2) 35%, var(--brand-1) 70%);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -190,7 +271,7 @@ body::before {
 }
 
 @utility glass {
-  background: color-mix(in oklab, var(--card) 62%, transparent);
+  background: color-mix(in oklab, var(--card) var(--glass-mix), transparent);
   backdrop-filter: blur(14px);
   border: 1px solid var(--border);
 }
@@ -209,7 +290,7 @@ body::before {
     position: absolute;
     inset: 0;
     transform: translateX(-120%);
-    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+    background: linear-gradient(100deg, transparent 20%, var(--shine-color) 50%, transparent 80%);
     transition: transform 0.7s ease-out;
   }
   &:hover::after {
@@ -233,8 +314,8 @@ body::before {
 /* Linear-style faint grid */
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 75%);
 }
@@ -265,7 +346,7 @@ body::before {
   border: 1px solid transparent;
   background:
     linear-gradient(var(--card), var(--card)) padding-box,
-    linear-gradient(140deg, #D4A017, rgba(240, 208, 128, 0.15) 55%, #D4A017) border-box;
+    linear-gradient(140deg, var(--brand-1), color-mix(in oklab, var(--brand-2) 30%, transparent) 55%, var(--brand-1)) border-box;
 }
 
 /* Reveal-on-scroll: visible by default, JS opts in */
