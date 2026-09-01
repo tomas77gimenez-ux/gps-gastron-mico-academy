@@ -217,10 +217,6 @@ function HomePage() {
         </div>
       </section>
 
-      {/* ---------------- PRÓXIMO EN VIVO ---------------- */}
-
-      {/* ---------------- NOVEDADES ---------------- */}
-
       {/* ---------------- STATS ---------------- */}
       <section className="border-y border-border">
         <div className="mx-auto max-w-7xl px-4 sm:px-6">
