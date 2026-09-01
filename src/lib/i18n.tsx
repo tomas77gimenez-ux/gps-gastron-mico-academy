@@ -557,12 +557,8 @@ export function I18nProvider({
     changeLang(next);
   }, [lang, changeLang]);
 
-  const t = useCallback((key: TranslationKey): string => {
-    const entry = translations[key] as Record<Lang, string> | undefined;
-    if (!entry) return key;
-    // Fallback: pt -> es when a pt translation isn't provided yet
-    return entry[lang] ?? entry.es ?? entry.en ?? key;
-  }, [lang]);
+  const t = useCallback((key: TranslationKey): string => translate(lang, key), [lang]);
+
 
   return (
     <I18nContext.Provider value={{ lang, setLang: changeLang, t, toggleLang }}>
