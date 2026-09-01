@@ -1,5 +1,6 @@
 import { Compass, Calculator, ClipboardList, Wallet, LineChart } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import type { TranslationKey } from "@/lib/i18n";
 
 export interface ToolMeta {
   to:
@@ -8,53 +9,48 @@ export interface ToolMeta {
     | "/herramientas/fichas-tecnicas"
     | "/herramientas/control-caja"
     | "/herramientas/monitor-cmv";
-  name: string;
-  description: string;
+  nameKey: TranslationKey;
+  descKey: TranslationKey;
   icon: LucideIcon;
-  status: string;
+  statusKey: TranslationKey;
   requiresPremium?: boolean;
 }
 
 export const TOOLS: ToolMeta[] = [
   {
     to: "/herramientas/dre",
-    name: "DRE",
-    description:
-      "El resultado de tu restaurante en tiempo real, mensual línea por línea o por trimestre/semestre/año.",
+    nameKey: "tgrid.dre.name",
+    descKey: "tgrid.dre.desc",
     icon: Compass,
-    status: "Punto de partida",
+    statusKey: "tgrid.status.puntoPartida",
   },
   {
     to: "/herramientas/punto-equilibrio",
-    name: "Calculadora de Punto de Equilibrio",
-    description:
-      "Cuánto tenés que vender para no perder plata, y qué pasa si subís el ticket.",
+    nameKey: "tgrid.pe.name",
+    descKey: "tgrid.pe.desc",
     icon: Calculator,
-    status: "Disponible",
+    statusKey: "tgrid.status.disponible",
   },
   {
     to: "/herramientas/fichas-tecnicas",
-    name: "SUP",
-    description:
-      "Banco de ingredientes con costo real y precio sugerido por plato según tu CMV objetivo.",
+    nameKey: "tgrid.sup.name",
+    descKey: "tgrid.sup.desc",
     icon: ClipboardList,
-    status: "Disponible",
+    statusKey: "tgrid.status.disponible",
   },
   {
     to: "/herramientas/control-caja",
-    name: "Control de Caja Diario",
-    description:
-      "Apertura, entradas, salidas y conciliación con el conteo físico del día.",
+    nameKey: "tgrid.caja.name",
+    descKey: "tgrid.caja.desc",
     icon: Wallet,
-    status: "Disponible",
+    statusKey: "tgrid.status.disponible",
   },
   {
     to: "/herramientas/monitor-cmv",
-    name: "Monitor de CMV",
-    description:
-      "Seguimiento semanal del costo de mercadería con alerta del dinero que se escapa.",
+    nameKey: "tgrid.cmv.name",
+    descKey: "tgrid.cmv.desc",
     icon: LineChart,
-    status: "Disponible",
+    statusKey: "tgrid.status.disponible",
   },
 ];
 

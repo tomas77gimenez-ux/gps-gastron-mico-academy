@@ -5,6 +5,7 @@ import type { LucideIcon } from "lucide-react";
 import { useToolsAccess } from "@/hooks/useToolsAccess";
 import { useSubscription } from "@/hooks/useSubscription";
 import { METODO_GPS_NOTE } from "@/lib/tools-catalog";
+import { useI18n } from "@/lib/i18n";
 
 export function ToolCard({ children, className = "" }: { children: ReactNode; className?: string }) {
   return (
@@ -176,62 +177,57 @@ export function ToolsFooterNote() {
 }
 
 export function ToolsPaywall() {
+  const { t } = useI18n();
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
       <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <Lock className="w-6 h-6" />
       </div>
-      <h2 className="font-display text-xl font-bold mb-2">Caja de Herramientas</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Las herramientas de gestión están incluidas en cualquier plan activo (Básico o Premium).
-        Activá tu suscripción para usarlas con tus datos reales.
-      </p>
+      <h2 className="font-display text-xl font-bold mb-2">{t("tool.paywall.titulo")}</h2>
+      <p className="text-sm text-muted-foreground mb-6">{t("tool.paywall.desc")}</p>
       <Link
         to="/planes"
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
       >
-        <Sparkles className="w-4 h-4" /> Ver planes
+        <Sparkles className="w-4 h-4" /> {t("tool.paywall.verPlanes")}
       </Link>
     </ToolCard>
   );
 }
 
 export function ToolsLoginWall() {
+  const { t } = useI18n();
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
       <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <LogIn className="w-6 h-6" />
       </div>
-      <h2 className="font-display text-xl font-bold mb-2">Iniciá sesión</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        Necesitás una cuenta para guardar los datos de tus herramientas.
-      </p>
+      <h2 className="font-display text-xl font-bold mb-2">{t("tool.login.titulo")}</h2>
+      <p className="text-sm text-muted-foreground mb-6">{t("tool.login.desc")}</p>
       <Link
         to="/login"
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
       >
-        <LogIn className="w-4 h-4" /> Entrar
+        <LogIn className="w-4 h-4" /> {t("tool.login.entrar")}
       </Link>
     </ToolCard>
   );
 }
 
 export function PremiumPaywall() {
+  const { t } = useI18n();
   return (
     <ToolCard className="max-w-xl mx-auto text-center">
       <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center mx-auto mb-4">
         <Lock className="w-6 h-6" />
       </div>
-      <h2 className="font-display text-xl font-bold mb-2">Exclusivo del Plan Premium</h2>
-      <p className="text-sm text-muted-foreground mb-6">
-        La planilla SUP (fichas técnicas) está incluida solo en el Plan Premium. Hacé el upgrade para
-        costear cada plato con rendimiento real y definir tu precio de venta.
-      </p>
+      <h2 className="font-display text-xl font-bold mb-2">{t("tool.premium.titulo")}</h2>
+      <p className="text-sm text-muted-foreground mb-6">{t("tool.premium.desc")}</p>
       <Link
         to="/planes"
         className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors"
       >
-        <Sparkles className="w-4 h-4" /> Pasar a Premium
+        <Sparkles className="w-4 h-4" /> {t("tool.premium.cta")}
       </Link>
     </ToolCard>
   );
@@ -251,6 +247,7 @@ export function ToolPage({
   requiresPremium?: boolean;
   children: ReactNode;
 }) {
+  const { t } = useI18n();
   const access = useToolsAccess();
   const subscription = useSubscription();
   const premiumBlocked = requiresPremium && !subscription.loading && subscription.planTier !== "premium";
@@ -260,7 +257,7 @@ export function ToolPage({
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="mb-8">
           <Link to="/herramientas" className="text-xs text-muted-foreground hover:text-primary-text transition-colors">
-            ← Caja de Herramientas
+            {t("tool.volverCaja")}
           </Link>
           <h1 className="text-2xl sm:text-3xl font-bold font-display mt-2 flex items-center gap-3">
             <span className="w-10 h-10 rounded-xl bg-primary/15 text-primary-text flex items-center justify-center shrink-0">
@@ -273,7 +270,7 @@ export function ToolPage({
 
         {access.loading || (requiresPremium && subscription.loading) ? (
           <div className="text-center py-16 text-muted-foreground text-sm">
-            <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando...
+            <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> {t("tool.cargando")}
           </div>
         ) : !access.isAuthenticated ? (
           <ToolsLoginWall />

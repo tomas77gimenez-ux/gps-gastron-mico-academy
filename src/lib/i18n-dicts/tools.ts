@@ -1,2 +1,31 @@
 export const toolsDict = {
+  // ---- Catálogo de herramientas ----
+  "tgrid.dre.name": { es: "DRE", en: "P&L", pt: "DRE" },
+  "tgrid.dre.desc": { es: "El resultado de tu restaurante en tiempo real, mensual línea por línea o por trimestre/semestre/año.", en: "Your restaurant's result in real time, monthly line by line or by quarter/semester/year.", pt: "O resultado do seu restaurante em tempo real, mensal linha por linha ou por trimestre/semestre/ano." },
+  "tgrid.pe.name": { es: "Calculadora de Punto de Equilibrio", en: "Break-Even Calculator", pt: "Calculadora de Ponto de Equilíbrio" },
+  "tgrid.pe.desc": { es: "Cuánto tenés que vender para no perder plata, y qué pasa si subís el ticket.", en: "How much you need to sell to avoid losing money, and what happens if you raise the ticket.", pt: "Quanto você precisa vender para não perder dinheiro, e o que acontece se aumentar o ticket." },
+  "tgrid.sup.name": { es: "SUP", en: "SUP", pt: "SUP" },
+  "tgrid.sup.desc": { es: "Banco de ingredientes con costo real y precio sugerido por plato según tu CMV objetivo.", en: "Ingredient bank with real cost and a suggested price per dish based on your target COGS.", pt: "Banco de ingredientes com custo real e preço sugerido por prato conforme seu CMV alvo." },
+  "tgrid.caja.name": { es: "Control de Caja Diario", en: "Daily Cash Control", pt: "Controle de Caixa Diário" },
+  "tgrid.caja.desc": { es: "Apertura, entradas, salidas y conciliación con el conteo físico del día.", en: "Opening, inflows, outflows and reconciliation with the day's physical count.", pt: "Abertura, entradas, saídas e conciliação com a contagem física do dia." },
+  "tgrid.cmv.name": { es: "Monitor de CMV", en: "COGS Monitor", pt: "Monitor de CMV" },
+  "tgrid.cmv.desc": { es: "Seguimiento semanal del costo de mercadería con alerta del dinero que se escapa.", en: "Weekly tracking of goods cost with an alert for the money slipping away.", pt: "Acompanhamento semanal do custo de mercadoria com alerta do dinheiro que escapa." },
+  "tgrid.status.puntoPartida": { es: "Punto de partida", en: "Starting point", pt: "Ponto de partida" },
+  "tgrid.status.disponible": { es: "Disponible", en: "Available", pt: "Disponível" },
+  "tgrid.soloPremium": { es: "Solo Premium", en: "Premium only", pt: "Só Premium" },
+  "tgrid.requierePlan": { es: "Requiere plan", en: "Plan required", pt: "Requer plano" },
+  "tgrid.abrir": { es: "Abrir", en: "Open", pt: "Abrir" },
+
+  // ---- ToolUI ----
+  "tool.volverCaja": { es: "← Caja de Herramientas", en: "← Toolbox", pt: "← Caixa de Ferramentas" },
+  "tool.cargando": { es: "Cargando...", en: "Loading...", pt: "Carregando..." },
+  "tool.paywall.titulo": { es: "Caja de Herramientas", en: "Toolbox", pt: "Caixa de Ferramentas" },
+  "tool.paywall.desc": { es: "Las herramientas de gestión están incluidas en cualquier plan activo (Básico o Premium). Activá tu suscripción para usarlas con tus datos reales.", en: "The management tools are included in any active plan (Basic or Premium). Activate your subscription to use them with your real data.", pt: "As ferramentas de gestão estão incluídas em qualquer plano ativo (Básico ou Premium). Ative sua assinatura para usá-las com seus dados reais." },
+  "tool.paywall.verPlanes": { es: "Ver planes", en: "See plans", pt: "Ver planos" },
+  "tool.login.titulo": { es: "Iniciá sesión", en: "Log in", pt: "Faça login" },
+  "tool.login.desc": { es: "Necesitás una cuenta para guardar los datos de tus herramientas.", en: "You need an account to save your tool data.", pt: "Você precisa de uma conta para salvar os dados das suas ferramentas." },
+  "tool.login.entrar": { es: "Entrar", en: "Sign in", pt: "Entrar" },
+  "tool.premium.titulo": { es: "Exclusivo del Plan Premium", en: "Premium Plan exclusive", pt: "Exclusivo do Plano Premium" },
+  "tool.premium.desc": { es: "La planilla SUP (fichas técnicas) está incluida solo en el Plan Premium. Hacé el upgrade para costear cada plato con rendimiento real y definir tu precio de venta.", en: "The SUP sheet (recipe cards) is included only in the Premium Plan. Upgrade to cost each dish with real yield and set your selling price.", pt: "A planilha SUP (fichas técnicas) está incluída somente no Plano Premium. Faça o upgrade para custear cada prato com rendimento real e definir seu preço de venda." },
+  "tool.premium.cta": { es: "Pasar a Premium", en: "Upgrade to Premium", pt: "Mudar para Premium" },
 } as const;
