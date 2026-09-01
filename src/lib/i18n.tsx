@@ -489,7 +489,27 @@ const baseTranslations = {
   "gd.verTienda": { es: "Ver en la Tienda", en: "View in Store", pt: "Ver na Loja" },
 } as const;
 
-type TranslationKey = keyof typeof translations;
+const translations = {
+  ...baseTranslations,
+  ...studentDict,
+  ...toolsDict,
+  ...authDict,
+} as const;
+
+export type TranslationKey = keyof typeof translations;
+
+/** Lang-aware translator for non-React contexts (route head(), loaders). */
+export function translate(lang: Lang, key: TranslationKey): string {
+  const entry = translations[key] as Record<Lang, string> | undefined;
+  if (!entry) return String(key);
+  return entry[lang] ?? entry.es ?? entry.en ?? String(key);
+}
+
+/** Bound translator: `const t = tFor(readPrefs().lang)`. */
+export function tFor(lang: Lang) {
+  return (key: TranslationKey) => translate(lang, key);
+}
+
 
 interface I18nContextType {
   lang: Lang;
