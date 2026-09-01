@@ -3,23 +3,29 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPasswordPage,
-  head: () => ({
-    meta: [
-      { title: "Recuperar Contraseña — GPS Gastronômico" },
-      { name: "description", content: "Recupera tu contraseña de GPS Gastronômico." },
-      { property: "og:title", content: 'Recuperar Contraseña — GPS Gastronômico' },
-      { property: "og:description", content: 'Recupera el acceso a tu cuenta GPS Gastronômico.' },
-      { property: "og:url", content: "https://plataforma-test1.lovable.app/forgot-password" },
-      { name: "robots", content: "noindex,nofollow" }
-    ],
-    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/forgot-password" }],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("fp.headTitle") },
+        { name: "description", content: t("fp.headDesc") },
+        { property: "og:title", content: t("fp.headTitle") },
+        { property: "og:description", content: t("fp.headOgDesc") },
+        { property: "og:url", content: "https://plataforma-test1.lovable.app/forgot-password" },
+        { name: "robots", content: "noindex,nofollow" }
+      ],
+      links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/forgot-password" }],
+    };
+  },
 });
 
 function ForgotPasswordPage() {
+  const { t } = useI18n();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -50,13 +56,13 @@ function ForgotPasswordPage() {
         <div className="w-full max-w-md px-4 text-center">
           <div className="rounded-xl border border-border bg-card p-8">
             <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold font-display mb-2">Email enviado</h1>
+            <h1 className="text-2xl font-bold font-display mb-2">{t("fp.emailSent")}</h1>
             <p className="text-muted-foreground text-sm mb-6">
-              Si existe una cuenta con <strong className="text-foreground">{email}</strong>, 
-              recibirás un enlace para restablecer tu contraseña.
+              {t("fp.emailSentDesc1")} <strong className="text-foreground">{email}</strong>, 
+              {t("fp.emailSentDesc2")}
             </p>
             <Link to="/login" className="text-primary-text text-sm font-medium hover:underline">
-              Volver al login
+              {t("fp.backToLogin")}
             </Link>
           </div>
         </div>
@@ -68,8 +74,8 @@ function ForgotPasswordPage() {
     <div className="min-h-screen pt-20 pb-12 flex items-center justify-center">
       <div className="w-full max-w-md px-4">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold font-display">Recuperar Contraseña</h1>
-          <p className="text-muted-foreground text-sm mt-2">Ingresa tu email y te enviaremos un enlace</p>
+          <h1 className="text-3xl font-bold font-display">{t("fp.title")}</h1>
+          <p className="text-muted-foreground text-sm mt-2">{t("fp.desc")}</p>
         </div>
 
         <div className="rounded-xl border border-border bg-card p-6 space-y-5">
@@ -81,7 +87,7 @@ function ForgotPasswordPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium mb-1.5">Email</label>
+              <label className="block text-sm font-medium mb-1.5">{t("fp.email")}</label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <input
@@ -92,12 +98,12 @@ function ForgotPasswordPage() {
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Enviando..." : "Enviar enlace de recuperación"}
+              {loading ? t("fp.sending") : t("fp.sendLink")}
             </Button>
           </form>
 
           <Link to="/login" className="flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="w-4 h-4" /> Volver al login
+            <ArrowLeft className="w-4 h-4" /> {t("fp.backToLogin")}
           </Link>
         </div>
       </div>

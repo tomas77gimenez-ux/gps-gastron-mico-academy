@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Radio, CalendarClock, ExternalLink } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 
 interface LiveEvent {
   id: string;
@@ -10,8 +11,10 @@ interface LiveEvent {
   url: string | null;
 }
 
-export const formatLiveDate = (iso: string) =>
-  new Date(iso).toLocaleString("es-AR", {
+const LOCALE_MAP = { es: "es-AR", en: "en-US", pt: "pt-BR" } as const;
+
+export const formatLiveDate = (iso: string, lang: "es" | "en" | "pt" = "es") =>
+  new Date(iso).toLocaleString(LOCALE_MAP[lang], {
     day: "2-digit",
     month: "long",
     hour: "2-digit",
@@ -19,6 +22,7 @@ export const formatLiveDate = (iso: string) =>
   });
 
 export function ProximoEnVivoCard() {
+  const { t, lang } = useI18n();
   const [event, setEvent] = useState<LiveEvent | null>(null);
 
   useEffect(() => {
@@ -46,7 +50,7 @@ export function ProximoEnVivoCard() {
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary-text">
-                <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> Próximo en vivo
+                <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> {t("dash.proximoEnVivo")}
               </span>
               <h2 className="font-display text-2xl font-bold text-foreground">{event.title}</h2>
               {event.description && (
@@ -54,7 +58,7 @@ export function ProximoEnVivoCard() {
               )}
               <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary-text">
                 <CalendarClock className="h-4 w-4" strokeWidth={1.5} />
-                {formatLiveDate(event.starts_at)} <span className="text-muted-foreground">(hora ET)</span>
+                {formatLiveDate(event.starts_at, lang)} <span className="text-muted-foreground">{t("dash.horaEt")}</span>
               </p>
             </div>
             {event.url && (
@@ -64,7 +68,7 @@ export function ProximoEnVivoCard() {
                 rel="noopener noreferrer"
                 className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Acceder a la clase <ExternalLink className="h-4 w-4" strokeWidth={1.5} />
+                {t("dash.accederClase")} <ExternalLink className="h-4 w-4" strokeWidth={1.5} />
               </a>
             )}
           </div>

@@ -4,21 +4,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { Button } from "@/components/ui/button";
 import { LogIn, Mail, Lock, Eye, EyeOff } from "lucide-react";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import { useAuthSession } from "@/hooks/useAuthSession";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
-  head: () => ({
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
     meta: [
-      { title: "Iniciar Sesión — GPS Gastronômico" },
-      { name: "description", content: "Accede a tu cuenta de GPS Gastronômico." },
-      { property: "og:title", content: 'Iniciar Sesión — GPS Gastronômico' },
-      { property: "og:description", content: 'Inicia sesión en tu cuenta de GPS Gastronômico.' },
+      { title: t("auth2.login.headTitle") },
+      { name: "description", content: t("auth2.login.headDesc") },
+      { property: "og:title", content: t("auth2.login.headTitle") },
+      { property: "og:description", content: t("auth2.login.headOgDesc") },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/login" }
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/login" }],
-  }),
+  };
+  },
 });
 
 function LoginPage() {

@@ -4,21 +4,27 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { trackEvent, trackFunnelStep } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
+import { useI18n } from "@/lib/i18n";
 import { getStripeEnvironment } from "@/lib/stripe";
+import { readPrefs } from "@/lib/prefs";
+import { tFor } from "@/lib/i18n";
 
 export const Route = createFileRoute("/checkout/return")({
   component: CheckoutReturnPage,
-  head: () => ({
-    meta: [
-      { title: "Resultado del Pago — GPS Gastronômico" },
-      { name: "description", content: "Resultado de tu intento de pago." },
-      { property: "og:title", content: 'Resultado del Pago — GPS Gastronômico' },
-      { property: "og:description", content: 'Confirmación del resultado del pago.' },
-      { property: "og:url", content: "https://plataforma-test1.lovable.app/checkout/return" },
-      { name: "robots", content: "noindex,nofollow" }
-    ],
-    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/checkout/return" }],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("chk.headTitle") },
+        { name: "description", content: t("chk.headDesc") },
+        { property: "og:title", content: t("chk.headTitle") },
+        { property: "og:description", content: t("chk.ogDesc") },
+        { property: "og:url", content: "https://plataforma-test1.lovable.app/checkout/return" },
+        { name: "robots", content: "noindex,nofollow" }
+      ],
+      links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/checkout/return" }],
+    };
+  },
 });
 
 type PaymentResult =
@@ -27,6 +33,7 @@ type PaymentResult =
   | { state: "failed"; plan?: string; period?: string };
 
 function CheckoutReturnPage() {
+  const { t } = useI18n();
   const sessionId = typeof window !== "undefined"
     ? new URLSearchParams(window.location.search).get("session_id")
     : null;
@@ -131,7 +138,7 @@ function CheckoutReturnPage() {
   if (result.state === "loading") {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
-        <p className="text-muted-foreground">Procesando…</p>
+        <p className="text-muted-foreground">{t("chk.procesando")}</p>
       </div>
     );
   }
@@ -143,13 +150,13 @@ function CheckoutReturnPage() {
           <div className="w-16 h-16 rounded-full bg-destructive/10 flex items-center justify-center mx-auto mb-6">
             <XCircle className="w-8 h-8 text-destructive" />
           </div>
-          <h1 className="text-2xl font-bold font-display mb-2">El pago no se completó</h1>
+          <h1 className="text-2xl font-bold font-display mb-2">{t("chk.noCompletado")}</h1>
           <p className="text-muted-foreground mb-6">
-            Tu pago no fue procesado. Podés volver a intentarlo con el mismo plan o cambiar de método de pago.
+            {t("chk.noProcesado")}
           </p>
           {sessionId && (
             <p className="text-xs text-muted-foreground/60 mb-6 break-all">
-              Referencia: {sessionId}
+              {t("chk.referencia")}: {sessionId}
             </p>
           )}
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -157,11 +164,11 @@ function CheckoutReturnPage() {
               onClick={handleRetry}
               className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl"
             >
-              Intentar de nuevo
+              {t("chk.intentarNuevo")}
             </Button>
             <Link to="/planes">
               <Button variant="outline" className="rounded-xl w-full sm:w-auto">
-                Volver a Planes
+                {t("chk.volverPlanes")}
               </Button>
             </Link>
           </div>
@@ -176,18 +183,18 @@ function CheckoutReturnPage() {
         <div className="w-16 h-16 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-6">
           <CheckCircle className="w-8 h-8 text-green-500" />
         </div>
-        <h1 className="text-2xl font-bold font-display mb-2">¡Pago completado!</h1>
+        <h1 className="text-2xl font-bold font-display mb-2">{t("chk.pagoCompleto")}</h1>
         <p className="text-muted-foreground mb-6">
-          Tu compra ha sido procesada exitosamente. Recibirás un email con los detalles.
+          {t("chk.compraExitosa")}
         </p>
         {sessionId && (
           <p className="text-xs text-muted-foreground/60 mb-6 break-all">
-            Referencia: {sessionId}
+            {t("chk.referencia")}: {sessionId}
           </p>
         )}
         <Link to="/tienda">
           <Button className="bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl">
-            Volver a Productos
+            {t("chk.volverProductos")}
           </Button>
         </Link>
       </div>

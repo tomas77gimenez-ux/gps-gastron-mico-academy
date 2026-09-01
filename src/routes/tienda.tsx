@@ -7,7 +7,8 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import {
   formatGdPrice,
   listGerentesDigitales,
@@ -103,10 +104,10 @@ export const Route = createFileRoute("/tienda")({
   component: TiendaPage,
   head: () => ({
     meta: [
-      { title: "Tienda — GPS Gastronômico" },
-      { name: "description", content: "Servicios premium y productos exclusivos para profesionales gastronómicos." },
-      { property: "og:title", content: "Tienda — GPS Gastronômico" },
-      { property: "og:description", content: "Servicios premium y productos exclusivos para profesionales gastronómicos." },
+      { title: tFor(readPrefs().lang)("shop.headTitle") },
+      { name: "description", content: tFor(readPrefs().lang)("tienda.desc") },
+      { property: "og:title", content: tFor(readPrefs().lang)("shop.headTitle") },
+      { property: "og:description", content: tFor(readPrefs().lang)("tienda.desc") },
       { property: "og:url", content: "https://plataforma-test1.lovable.app/tienda" },
     ],
     links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/tienda" }],
@@ -190,7 +191,7 @@ function TiendaPage() {
     }
     if (!product.priceId) {
       const message = product.whatsappMessage
-        ?? `Hola, tengo interés en el servicio "${product.title}" de la Tienda GPS Gastronómico. ¿Podrían darme más información? ¡Gracias!`;
+        ?? t("shop.consultaGenerica").replace("{title}", product.title);
       const url = buildWhatsappUrl(message);
       // Usar <a> con target=_blank evita el bloqueo COOP de Safari con window.open
       const a = document.createElement("a");
@@ -211,7 +212,7 @@ function TiendaPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary-text text-xs font-semibold mb-4">
-            <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 5 ÁREAS
+            <ShoppingCart className="w-3.5 h-3.5" /> {t("shop.badgeAreas")}
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display leading-tight">{t("tienda.titulo")}</h1>
           <p className="text-muted-foreground mt-3 max-w-2xl">{t("tienda.desc")}</p>
@@ -233,7 +234,7 @@ function TiendaPage() {
                     <div className="flex-1">
                       <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-accent text-accent-foreground text-xs font-semibold mb-4">
                         <Users className="w-3.5 h-3.5" />
-                        {lang === "en" ? "High-ticket program" : "Programa high-ticket"}
+                        {t("shop.highTicket")}
                       </div>
                       <h2 className="text-2xl sm:text-3xl font-bold font-display text-foreground mb-2">
                         {lang === "en" ? featured.titleEn : featured.title}
@@ -314,7 +315,7 @@ function TiendaPage() {
                         >
                           <a href={product.externalUrl} target="_blank" rel="noopener noreferrer">
                             <ExternalLink className="w-4 h-4 mr-1.5" />
-                            {lang === "en" ? "Buy on Amazon" : "Comprar en Amazon"}
+                            {t("shop.comprarAmazon")}
                           </a>
                         </Button>
                       ) : (

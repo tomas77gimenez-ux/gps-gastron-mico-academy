@@ -1,9 +1,14 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from "react";
 import { LANG_COOKIE, readPrefs, writePrefCookie } from "@/lib/prefs";
+import { studentDict } from "@/lib/i18n-dicts/student";
+import { toolsDict } from "@/lib/i18n-dicts/tools";
+import { authDict } from "@/lib/i18n-dicts/auth";
+import { storeDict } from "@/lib/i18n-dicts/store";
 
 export type Lang = "es" | "en" | "pt";
 
-const translations = {
+const baseTranslations = {
+
   // Navbar
   "nav.inicio": { es: "Inicio", en: "Home", pt: "Início" },
   "nav.dre": { es: "Diagnóstico GPS", en: "GPS Diagnosis", pt: "Diagnóstico GPS" },
@@ -485,7 +490,28 @@ const translations = {
   "gd.verTienda": { es: "Ver en la Tienda", en: "View in Store", pt: "Ver na Loja" },
 } as const;
 
-type TranslationKey = keyof typeof translations;
+const translations = {
+  ...baseTranslations,
+  ...studentDict,
+  ...toolsDict,
+  ...authDict,
+  ...storeDict,
+} as const;
+
+export type TranslationKey = keyof typeof translations;
+
+/** Lang-aware translator for non-React contexts (route head(), loaders). */
+export function translate(lang: Lang, key: TranslationKey): string {
+  const entry = translations[key] as Record<Lang, string> | undefined;
+  if (!entry) return String(key);
+  return entry[lang] ?? entry.es ?? entry.en ?? String(key);
+}
+
+/** Bound translator: `const t = tFor(readPrefs().lang)`. */
+export function tFor(lang: Lang) {
+  return (key: TranslationKey) => translate(lang, key);
+}
+
 
 interface I18nContextType {
   lang: Lang;
@@ -533,12 +559,8 @@ export function I18nProvider({
     changeLang(next);
   }, [lang, changeLang]);
 
-  const t = useCallback((key: TranslationKey): string => {
-    const entry = translations[key] as Record<Lang, string> | undefined;
-    if (!entry) return key;
-    // Fallback: pt -> es when a pt translation isn't provided yet
-    return entry[lang] ?? entry.es ?? entry.en ?? key;
-  }, [lang]);
+  const t = useCallback((key: TranslationKey): string => translate(lang, key), [lang]);
+
 
   return (
     <I18nContext.Provider value={{ lang, setLang: changeLang, t, toggleLang }}>

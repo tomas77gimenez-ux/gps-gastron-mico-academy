@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Lang } from "@/lib/i18n";
 
 export type NovedadKind = "lesson" | "material" | "recording" | "case";
 
@@ -36,15 +37,15 @@ export async function fetchUnannouncedNovedades(): Promise<PendingNovedad[]> {
   return items.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
-/** Spanish summary like "1 caso real · 2 grabaciones · 1 planilla". */
-export function summarizeNovedades(counts: Record<NovedadKind, number>): string {
+/** Localized summary like "1 real case · 2 recordings · 1 worksheet". */
+export function summarizeNovedades(counts: Record<NovedadKind, number>, t: (key: string) => string): string {
   const parts: string[] = [];
-  const push = (n: number, one: string, many: string) => {
-    if (n > 0) parts.push(`${n} ${n === 1 ? one : many}`);
+  const push = (n: number, kind: NovedadKind) => {
+    if (n > 0) parts.push(`${n} ${t(`nov.count.${kind}.${n === 1 ? "one" : "many"}`)}`);
   };
-  push(counts.case, "caso real", "casos reales");
-  push(counts.lesson, "clase nueva", "clases nuevas");
-  push(counts.recording, "grabación", "grabaciones");
-  push(counts.material, "planilla", "planillas");
+  push(counts.case, "case");
+  push(counts.lesson, "lesson");
+  push(counts.recording, "recording");
+  push(counts.material, "material");
   return parts.join(" · ");
 }

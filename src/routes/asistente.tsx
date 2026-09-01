@@ -4,6 +4,8 @@ import { Send, Bot, User, Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { motion, AnimatePresence } from "framer-motion";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
@@ -35,7 +37,7 @@ async function streamChat({
     return;
   }
 
-  if (!resp.body) { onError("Sin respuesta"); return; }
+  if (!resp.body) { onError("No response"); return; }
 
   const reader = resp.body.getReader();
   const decoder = new TextDecoder();
@@ -68,29 +70,28 @@ async function streamChat({
   onDone();
 }
 
-const quickQuestions = [
-  "¿Cómo calculo mi food cost ideal?",
-  "¿Qué KPIs debo monitorear?",
-  "Tips para reducir rotación de personal",
-  "¿Cómo armar un DRE básico?",
-];
+const quickQuestionKeys = ["ia.q1", "ia.q2", "ia.q3", "ia.q4"] as const;
 
 export const Route = createFileRoute("/asistente")({
   component: AsistentePage,
-  head: () => ({
-    meta: [
-      { title: "Asistente IA — GPS Gastronômico" },
-      { name: "description", content: "Asistente inteligente para resolver tus dudas de gestión gastronómica." },
-      { property: "og:title", content: 'Asistente IA — GPS Gastronômico' },
-      { property: "og:description", content: 'Asistente inteligente para tu restaurante.' },
-      { property: "og:url", content: "https://plataforma-test1.lovable.app/asistente" },
-      { name: "robots", content: "noindex,nofollow" }
-    ],
-    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/asistente" }],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("ia.headTitle") },
+        { name: "description", content: t("ia.headDesc") },
+        { property: "og:title", content: t("ia.headTitle") },
+        { property: "og:description", content: t("ia.ogDesc") },
+        { property: "og:url", content: "https://plataforma-test1.lovable.app/asistente" },
+        { name: "robots", content: "noindex,nofollow" }
+      ],
+      links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/asistente" }],
+    };
+  },
 });
 
 function AsistentePage() {
+  const { t } = useI18n();
   const [messages, setMessages] = useState<Msg[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -100,6 +101,7 @@ function AsistentePage() {
     endRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const errConexion = t("ia.errorConexion").replace("⚠️ ", "");
   const send = async (text: string) => {
     if (!text.trim() || isLoading) return;
     const userMsg: Msg = { role: "user", content: text.trim() };
@@ -130,7 +132,7 @@ function AsistentePage() {
         },
       });
     } catch {
-      upsert("⚠️ Error de conexión. Intenta de nuevo.");
+      upsert(`⚠️ ${errConexion}`);
       setIsLoading(false);
     }
   };
@@ -148,18 +150,18 @@ function AsistentePage() {
             >
               <Sparkles className="w-8 h-8 text-primary-text" />
             </motion.div>
-            <h1 className="text-2xl font-bold font-display mb-2 text-center">Asistente GPS Gastronômico</h1>
+            <h1 className="text-2xl font-bold font-display mb-2 text-center">{t("ia.titulo")}</h1>
             <p className="text-muted-foreground text-center mb-8 max-w-md">
-              Tu experto en gestión gastronómica. Pregunta sobre food cost, KPIs, operaciones, marketing y más.
+              {t("ia.subtitulo")}
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-lg">
-              {quickQuestions.map((q) => (
+              {quickQuestionKeys.map((k) => (
                 <button
-                  key={q}
-                  onClick={() => send(q)}
+                  key={k}
+                  onClick={() => send(t(k))}
                   className="text-left p-3 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-secondary transition-all text-sm text-muted-foreground hover:text-foreground"
                 >
-                  {q}
+                  {t(k)}
                 </button>
               ))}
             </div>
@@ -228,7 +230,7 @@ function AsistentePage() {
             <input
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Escribe tu pregunta..."
+              placeholder={t("ia.placeholder")}
               className="flex-1 bg-transparent px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none"
               disabled={isLoading}
             />

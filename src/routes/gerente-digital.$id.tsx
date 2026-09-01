@@ -3,28 +3,26 @@ import { useEffect, useState } from "react";
 import { ClipboardCheck, Download, Loader2, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import { toast } from "sonner";
 import type { GdFile, GerenteDigital } from "@/lib/gerentes-digitales";
 
 export const Route = createFileRoute("/gerente-digital/$id")({
   component: GerenteDigitalPage,
-  head: () => ({
-    meta: [
-      { title: "Gerente Digital — GPS Gastronômico" },
-      {
-        name: "description",
-        content: "Accedé a los checklists de auditoría operativa de tu Gerente Digital.",
-      },
-      { property: "og:title", content: "Gerente Digital — GPS Gastronômico" },
-      {
-        property: "og:description",
-        content: "Accedé a los checklists de auditoría operativa de tu Gerente Digital.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("gd2.headTitle") },
+        { name: "description", content: t("gd2.headDesc") },
+        { property: "og:title", content: t("gd2.headTitle") },
+        { property: "og:description", content: t("gd2.headDesc") },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary" },
+      ],
+    };
+  },
 });
 
 function GerenteDigitalPage() {
@@ -78,7 +76,7 @@ function GerenteDigitalPage() {
     try {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
-      if (!token) throw new Error("Sesión expirada");
+      if (!token) throw new Error(t("gd2.sesionExpirada"));
       const res = await fetch(`/api/public/gd-download?file_id=${encodeURIComponent(file.id)}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -93,7 +91,7 @@ function GerenteDigitalPage() {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     } catch (e) {
-      toast.error((e as Error).message || "No se pudo descargar el archivo");
+      toast.error((e as Error).message || t("gd2.noSePudoDescargar"));
     } finally {
       setDownloading(null);
     }
@@ -102,7 +100,7 @@ function GerenteDigitalPage() {
   if (loading) {
     return (
       <div className="min-h-screen pt-24 text-center text-muted-foreground text-sm">
-        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando...
+        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> {t("gd2.cargando")}
       </div>
     );
   }

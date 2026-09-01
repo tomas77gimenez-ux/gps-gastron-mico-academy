@@ -7,7 +7,8 @@ import { StripeEmbeddedCheckout } from "@/components/StripeEmbeddedCheckout";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { useI18n, type Lang } from "@/lib/i18n";
+import { useI18n, tFor, type Lang } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 import { useSubscription } from "@/hooks/useSubscription";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -44,16 +45,19 @@ const faqs = [
 
 export const Route = createFileRoute("/planes")({
   component: PlanesPage,
-  head: () => ({
-    meta: [
-      { title: "Planes de Membresía — GPS Gastronômico" },
-      { name: "description", content: "Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite." },
-      { property: "og:title", content: 'Planes de Membresía — GPS Gastronômico' },
-      { property: "og:description", content: 'Elegí el plan que mejor se adapte a tu restaurante: Academy, Academy Pro o Academy Élite.' },
-      { property: "og:url", content: "https://plataforma-test1.lovable.app/planes" }
-    ],
-    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/planes" }],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("plan2.headTitle") },
+        { name: "description", content: t("plan2.headDesc") },
+        { property: "og:title", content: t("plan2.headTitle") },
+        { property: "og:description", content: t("plan2.headDesc") },
+        { property: "og:url", content: "https://plataforma-test1.lovable.app/planes" }
+      ],
+      links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/planes" }],
+    };
+  },
 });
 
 function PlanesPage() {
@@ -205,7 +209,7 @@ function PlanesPage() {
       const { data: session } = await supabase.auth.getSession();
       const token = session.session?.access_token;
       if (!token) {
-        toast.error(lang === "es" ? "Iniciá sesión primero" : "Sign in first");
+        toast.error(t("plan2.iniciaSesionPrimero"));
         return;
       }
       const { data, error } = await supabase.functions.invoke("create-portal-session", {
@@ -217,7 +221,7 @@ function PlanesPage() {
       if (error || !data?.url) throw new Error(error?.message || "No URL");
       window.location.href = data.url;
     } catch (e) {
-      toast.error((e as Error).message || (lang === "es" ? "Error al abrir el portal" : "Failed to open portal"));
+      toast.error((e as Error).message || t("plan2.errorAbrirPortal"));
     } finally {
       setPortalLoading(false);
     }
@@ -408,9 +412,7 @@ function PlanesPage() {
 
         {/* Aviso legal */}
         <p className="mt-4 text-center text-[11px] leading-relaxed text-muted-foreground">
-          {lang === "es"
-            ? "5 días de prueba gratis. Se renueva automáticamente; cancelás en un clic desde tu cuenta. Al suscribirte aceptás los "
-            : "5-day free trial. Renews automatically; cancel in one click from your account. By subscribing you accept the "}
+          {t("plan2.avisoLegal1")}
           <Link to="/terminos" className="underline hover:text-primary-text">
             {t("footer.terminos")}
           </Link>
@@ -418,7 +420,7 @@ function PlanesPage() {
           <Link to="/privacidad" className="underline hover:text-primary-text">
             {t("footer.privacidad")}
           </Link>
-          {lang === "es" ? " y la " : " and the "}
+          {t("plan2.avisoLegalY")}
           <Link to="/reembolsos" className="underline hover:text-primary-text">
             {t("footer.reembolsos")}
           </Link>
