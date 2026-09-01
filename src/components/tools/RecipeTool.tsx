@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { money2, num, pct, realCost, UNITS } from "@/lib/tools-format";
 import { Callout, Field, KPI, NumberInput, Pill, ToolCard, ToolSectionTitle, inputClass } from "./ToolUI";
+import { useI18n } from "@/lib/i18n";
 
 interface Ingredient {
   id: string;
@@ -31,6 +32,7 @@ interface DishIngredient {
 type DraftLine = { ingredient_id: string; quantity: string };
 
 export function RecipeTool() {
+  const { t } = useI18n();
   const { user, isReady } = useAuthSession();
   const [tab, setTab] = useState<"banco" | "ficha">("banco");
   const [loading, setLoading] = useState(true);
@@ -87,7 +89,7 @@ export function RecipeTool() {
 
   async function saveIngredient() {
     if (!user || !ingForm.name.trim()) {
-      toast.error("Poné un nombre al ingrediente.");
+      toast.error(t("ficha.errNombreIng"));
       return;
     }
     setSavingIng(true);
@@ -103,10 +105,10 @@ export function RecipeTool() {
       : await supabase.from("ingredients").insert(payload);
     setSavingIng(false);
     if (error) {
-      toast.error("No se pudo guardar", { description: error.message });
+      toast.error(t("ficha.errGuardar"), { description: error.message });
       return;
     }
-    toast.success(ingForm.id ? "Ingrediente actualizado" : "Ingrediente agregado");
+    toast.success(ingForm.id ? t("ficha.ingActualizado") : t("ficha.ingAgregado"));
     setIngForm({ id: "", name: "", unit: "kg", price: "", yield: "100" });
     void loadAll();
   }
@@ -114,7 +116,7 @@ export function RecipeTool() {
   async function deleteIngredient(id: string) {
     const { error } = await supabase.from("ingredients").delete().eq("id", id);
     if (error) {
-      toast.error("No se pudo eliminar", { description: error.message });
+      toast.error(t("ficha.errEliminar"), { description: error.message });
       return;
     }
     void loadAll();
@@ -161,7 +163,7 @@ export function RecipeTool() {
 
   async function saveDish() {
     if (!user || !dishName.trim()) {
-      toast.error("Poné un nombre al plato.");
+      toast.error(t("ficha.errNombrePlato"));
       return;
     }
     setSavingDish(true);
@@ -176,7 +178,7 @@ export function RecipeTool() {
       const { error } = await supabase.from("dishes").update(payload).eq("id", id);
       if (error) {
         setSavingDish(false);
-        toast.error("No se pudo guardar", { description: error.message });
+        toast.error(t("ficha.errGuardar"), { description: error.message });
         return;
       }
       await supabase.from("dish_ingredients").delete().eq("dish_id", id);
@@ -184,7 +186,7 @@ export function RecipeTool() {
       const { data, error } = await supabase.from("dishes").insert(payload).select("id").single();
       if (error || !data) {
         setSavingDish(false);
-        toast.error("No se pudo guardar", { description: error?.message });
+        toast.error(t("ficha.errGuardar"), { description: error?.message });
         return;
       }
       id = data.id;
@@ -202,14 +204,14 @@ export function RecipeTool() {
     }
     setSavingDish(false);
     setDishId(id);
-    toast.success("Ficha guardada");
+    toast.success(t("ficha.guardada"));
     void loadAll();
   }
 
   async function deleteDish(id: string) {
     const { error } = await supabase.from("dishes").delete().eq("id", id);
     if (error) {
-      toast.error("No se pudo eliminar", { description: error.message });
+      toast.error(t("ficha.errEliminar"), { description: error.message });
       return;
     }
     if (dishId === id) newDish();
@@ -219,7 +221,7 @@ export function RecipeTool() {
   if (loading) {
     return (
       <div className="text-center py-16 text-muted-foreground text-sm">
-        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> Cargando datos...
+        <Loader2 className="w-4 h-4 animate-spin inline mr-2" /> {t("ficha.cargando")}
       </div>
     );
   }
@@ -228,17 +230,17 @@ export function RecipeTool() {
     <div className="space-y-6">
       <div className="flex gap-2">
         {([
-          { k: "banco", label: "Banco de Ingredientes", icon: Package },
-          { k: "ficha", label: "Ficha del Plato", icon: ChefHat },
-        ] as const).map((t) => (
+          { k: "banco", labelKey: "ficha.tabBanco", icon: Package },
+          { k: "ficha", labelKey: "ficha.tabFicha", icon: ChefHat },
+        ] as const).map((tb) => (
           <button
-            key={t.k}
-            onClick={() => setTab(t.k)}
+            key={tb.k}
+            onClick={() => setTab(tb.k)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-              tab === t.k ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+              tab === tb.k ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
             }`}
           >
-            <t.icon className="w-4 h-4" /> {t.label}
+            <tb.icon className="w-4 h-4" /> {t(tb.labelKey)}
           </button>
         ))}
       </div>
@@ -246,18 +248,18 @@ export function RecipeTool() {
       {tab === "banco" ? (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <ToolCard>
-            <ToolSectionTitle icon={Package}>{ingForm.id ? "Editar ingrediente" : "Nuevo ingrediente"}</ToolSectionTitle>
+            <ToolSectionTitle icon={Package}>{ingForm.id ? t("ficha.editarIng") : t("ficha.nuevoIng")}</ToolSectionTitle>
             <div className="space-y-4">
-              <Field label="Nombre">
+              <Field label={t("ficha.nombre")}>
                 <input
                   type="text"
                   value={ingForm.name}
                   onChange={(e) => setIngForm((f) => ({ ...f, name: e.target.value }))}
-                  placeholder="ej: Lomo de res"
+                  placeholder={t("ficha.nombrePh")}
                   className={inputClass}
                 />
               </Field>
-              <Field label="Unidad de compra">
+              <Field label={t("ficha.unidad")}>
                 <select
                   value={ingForm.unit}
                   onChange={(e) => setIngForm((f) => ({ ...f, unit: e.target.value }))}
@@ -268,19 +270,17 @@ export function RecipeTool() {
                   ))}
                 </select>
               </Field>
-              <Field label="Precio de compra" hint={`Precio pagado por 1 ${ingForm.unit}.`}>
+              <Field label={t("ficha.precio")} hint={t("ficha.precioHint").replace("{unit}", ingForm.unit)}>
                 <NumberInput value={ingForm.price} onChange={(v) => setIngForm((f) => ({ ...f, price: v }))} placeholder="0" min={0} />
               </Field>
-              <Field label="Factor de rendimiento %">
+              <Field label={t("ficha.rendimiento")}>
                 <NumberInput value={ingForm.yield} onChange={(v) => setIngForm((f) => ({ ...f, yield: v }))} placeholder="100" min={1} />
               </Field>
               <Callout tone="primary">
                 <span className="flex gap-2">
                   <Info className="w-4 h-4 shrink-0 mt-0.5" />
                   <span className="text-xs">
-                    El factor de rendimiento es cuánto queda del producto después de limpiar, pelar o cocinar.
-                    Si de 1 kg de lomo usás 800 g, el rendimiento es 80% y el costo real sube:
-                    costo real = precio ÷ (rendimiento ÷ 100).
+                    {t("ficha.rendInfo")}
                   </span>
                 </span>
               </Callout>
@@ -291,7 +291,7 @@ export function RecipeTool() {
                   className="flex-1 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
                 >
                   {savingIng ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
-                  {ingForm.id ? "Actualizar" : "Agregar"}
+                  {ingForm.id ? t("ficha.actualizar") : t("ficha.agregar")}
                 </button>
                 {ingForm.id && (
                   <button
@@ -310,11 +310,11 @@ export function RecipeTool() {
               <table className="w-full text-sm">
                 <thead className="bg-secondary/40 text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
-                    <th className="text-left px-4 py-3 font-medium">Ingrediente</th>
-                    <th className="text-left px-4 py-3 font-medium">Un.</th>
-                    <th className="text-right px-4 py-3 font-medium">Precio</th>
-                    <th className="text-right px-4 py-3 font-medium">Rend.</th>
-                    <th className="text-right px-4 py-3 font-medium">Costo real</th>
+                    <th className="text-left px-4 py-3 font-medium">{t("ficha.thIngrediente")}</th>
+                    <th className="text-left px-4 py-3 font-medium">{t("ficha.thUn")}</th>
+                    <th className="text-right px-4 py-3 font-medium">{t("ficha.thPrecio")}</th>
+                    <th className="text-right px-4 py-3 font-medium">{t("ficha.thRend")}</th>
+                    <th className="text-right px-4 py-3 font-medium">{t("ficha.thCostoReal")}</th>
                     <th className="px-4 py-3" />
                   </tr>
                 </thead>
@@ -342,14 +342,14 @@ export function RecipeTool() {
                               })
                             }
                             className="p-1.5 rounded hover:bg-primary/10 text-primary-text transition-colors"
-                            aria-label="Editar"
+                            aria-label={t("ficha.editar")}
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
                           <button
                             onClick={() => deleteIngredient(i.id)}
                             className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors"
-                            aria-label="Eliminar"
+                            aria-label={t("ficha.eliminar")}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -360,7 +360,7 @@ export function RecipeTool() {
                   {ingredients.length === 0 && (
                     <tr>
                       <td colSpan={6} className="px-4 py-10 text-center text-muted-foreground text-sm">
-                        Todavía no cargaste ingredientes. Empezá por los 10 que más usás.
+                        {t("ficha.sinIngredientes")}
                       </td>
                     </tr>
                   )}
@@ -374,42 +374,42 @@ export function RecipeTool() {
           <div className="lg:col-span-2 space-y-6">
             <ToolCard>
               <div className="flex items-center justify-between mb-4">
-                <ToolSectionTitle icon={ClipboardList}>{dishId ? "Editar ficha" : "Nueva ficha"}</ToolSectionTitle>
-                <button onClick={newDish} className="text-xs text-primary-text hover:underline">Nuevo plato</button>
+                <ToolSectionTitle icon={ClipboardList}>{dishId ? t("ficha.editarFicha") : t("ficha.nuevaFicha")}</ToolSectionTitle>
+                <button onClick={newDish} className="text-xs text-primary-text hover:underline">{t("ficha.nuevoPlato")}</button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="sm:col-span-3">
-                  <Field label="Nombre del plato">
+                  <Field label={t("ficha.nombrePlato")}>
                     <input
                       type="text"
                       value={dishName}
                       onChange={(e) => setDishName(e.target.value)}
-                      placeholder="ej: Milanesa napolitana"
+                      placeholder={t("ficha.nombrePlatoPh")}
                       className={inputClass}
                     />
                   </Field>
                 </div>
-                <Field label="CMV objetivo %">
+                <Field label={t("ficha.cmvObjetivo")}>
                   <NumberInput value={targetCmv} onChange={setTargetCmv} placeholder="32" min={1} />
                 </Field>
-                <Field label="Precio actual (opcional)">
+                <Field label={t("ficha.precioActual")}>
                   <NumberInput value={menuPrice} onChange={setMenuPrice} placeholder="0" min={0} />
                 </Field>
               </div>
 
               <div className="mt-6">
                 <div className="flex items-center justify-between mb-3">
-                  <h4 className="text-sm font-semibold">Ingredientes de la receta</h4>
+                  <h4 className="text-sm font-semibold">{t("ficha.ingredientesReceta")}</h4>
                   <button
                     onClick={() => setLines((l) => [...l, { ingredient_id: "", quantity: "" }])}
                     disabled={ingredients.length === 0}
                     className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg bg-secondary hover:bg-secondary/70 transition-colors disabled:opacity-50"
                   >
-                    <Plus className="w-3.5 h-3.5" /> Agregar
+                    <Plus className="w-3.5 h-3.5" /> {t("ficha.agregar")}
                   </button>
                 </div>
                 {ingredients.length === 0 && (
-                  <Callout tone="warning">Primero cargá ingredientes en el Banco de Ingredientes.</Callout>
+                  <Callout tone="warning">{t("ficha.cargaPrimero")}</Callout>
                 )}
                 <div className="space-y-2">
                   {lines.map((l, idx) => {
@@ -426,7 +426,7 @@ export function RecipeTool() {
                           }
                           className={`${inputClass} flex-1`}
                         >
-                          <option value="">Elegí un ingrediente</option>
+                          <option value="">{t("ficha.elegiIngrediente")}</option>
                           {ingredients.map((i) => (
                             <option key={i.id} value={i.id}>{i.name} ({i.unit})</option>
                           ))}
@@ -435,7 +435,7 @@ export function RecipeTool() {
                           <NumberInput
                             value={l.quantity}
                             onChange={(v) => setLines((ls) => ls.map((x, i) => (i === idx ? { ...x, quantity: v } : x)))}
-                            placeholder={ing ? ing.unit : "cant."}
+                            placeholder={ing ? ing.unit : t("ficha.cant")}
                             min={0}
                           />
                         </div>
@@ -443,7 +443,7 @@ export function RecipeTool() {
                         <button
                           onClick={() => setLines((ls) => ls.filter((_, i) => i !== idx))}
                           className="p-2 rounded hover:bg-destructive/10 text-destructive transition-colors"
-                          aria-label="Quitar ingrediente"
+                          aria-label={t("ficha.quitarIngrediente")}
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -452,7 +452,7 @@ export function RecipeTool() {
                   })}
                 </div>
                 <p className="text-[11px] text-muted-foreground mt-3">
-                  La cantidad se expresa en la misma unidad de compra del ingrediente.
+                  {t("ficha.notaUnidad")}
                 </p>
               </div>
 
@@ -462,13 +462,13 @@ export function RecipeTool() {
                 className="mt-6 w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-primary text-primary-foreground text-sm font-semibold hover:bg-primary/90 transition-colors disabled:opacity-60"
               >
                 {savingDish ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                Guardar ficha
+                {t("ficha.guardarFicha")}
               </button>
             </ToolCard>
 
             <ToolCard className="p-0 overflow-hidden">
               <div className="px-5 py-4 border-b border-border">
-                <h4 className="font-display font-semibold">Fichas guardadas</h4>
+                <h4 className="font-display font-semibold">{t("ficha.fichasGuardadas")}</h4>
               </div>
               <div className="divide-y divide-border">
                 {dishes.map((d) => {
@@ -481,15 +481,15 @@ export function RecipeTool() {
                       <div className="min-w-0">
                         <p className="font-medium truncate">{d.name}</p>
                         <p className="text-xs text-muted-foreground">
-                          Costo {money2(cost)} · {p > 0 ? `Precio ${money2(p)} · CMV ${pct(cmv)}` : "Sin precio definido"}
+                          {t("ficha.costoLinea").replace("{cost}", money2(cost))}{p > 0 ? t("ficha.precioCmv").replace("{price}", money2(p)).replace("{cmv}", pct(cmv)) : t("ficha.sinPrecio")}
                         </p>
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
-                        {p > 0 && <Pill tone={ok ? "success" : "danger"}>{ok ? "Plato rentable" : "CMV alto"}</Pill>}
-                        <button onClick={() => editDish(d)} className="p-1.5 rounded hover:bg-primary/10 text-primary-text transition-colors" aria-label="Editar ficha">
+                        {p > 0 && <Pill tone={ok ? "success" : "danger"}>{ok ? t("ficha.platoRentable") : t("ficha.cmvAlto")}</Pill>}
+                        <button onClick={() => editDish(d)} className="p-1.5 rounded hover:bg-primary/10 text-primary-text transition-colors" aria-label={t("ficha.editarFicha")}>
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => deleteDish(d.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors" aria-label="Eliminar ficha">
+                        <button onClick={() => deleteDish(d.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors" aria-label={t("ficha.eliminarFicha")}>
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
@@ -497,21 +497,21 @@ export function RecipeTool() {
                   );
                 })}
                 {dishes.length === 0 && (
-                  <p className="px-5 py-10 text-center text-muted-foreground text-sm">Todavía no guardaste fichas.</p>
+                  <p className="px-5 py-10 text-center text-muted-foreground text-sm">{t("ficha.sinFichas")}</p>
                 )}
               </div>
             </ToolCard>
           </div>
 
           <div className="space-y-4">
-            <KPI title="Costo total del plato" value={money2(draftCost)} tone="primary" />
-            <KPI title="Precio sugerido" value={money2(suggested)} subtitle={`Con CMV objetivo de ${pct(target)}`} tone="success" />
+            <KPI title={t("ficha.costoTotal")} value={money2(draftCost)} tone="primary" />
+            <KPI title={t("ficha.precioSugerido")} value={money2(suggested)} subtitle={t("ficha.conCmvObjetivo").replace("{pct}", pct(target))} tone="success" />
             {price > 0 && (
               <>
-                <KPI title="CMV real" value={pct(realCmv)} tone={profitable ? "success" : "danger"} />
-                <KPI title="Margen por plato" value={money2(margin)} tone={margin > 0 ? "success" : "danger"} />
+                <KPI title={t("ficha.cmvReal")} value={pct(realCmv)} tone={profitable ? "success" : "danger"} />
+                <KPI title={t("ficha.margenPlato")} value={money2(margin)} tone={margin > 0 ? "success" : "danger"} />
                 <Callout tone={profitable ? "success" : "danger"}>
-                  {profitable ? "Plato rentable" : "CMV alto — revise el precio o los costos"}
+                  {profitable ? t("ficha.platoRentable") : t("ficha.cmvAltoRevisa")}
                 </Callout>
               </>
             )}
