@@ -61,6 +61,7 @@ function DashboardPage() {
   const idx = selected ? dre.months.findIndex((m) => m.month === selected.month) : -1;
   const prev = idx > 0 ? dre.months[idx - 1] : null;
   const deltaNet = selected && prev ? selected.netPct - prev.netPct : null;
+  const hasSignals = (selected?.signals.length ?? 0) > 0;
 
   return (
     <div className="pt-16">
@@ -73,21 +74,29 @@ function DashboardPage() {
             <div>
               <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">{t("dash.tuTablero")}</p>
               <h1 className="mt-2 max-w-3xl font-display text-3xl font-bold leading-tight sm:text-4xl">
-                {t("dash.headline")
-                  .replace("{month}", selected.label)
-                  .replace("{pct}", selected.netPct.toFixed(1).replace(".", ","))}
+                {hasSignals
+                  ? t("dq.headlineNeutral")
+                      .replace("{month}", selected.label)
+                      .replace("{amount}", money(selected.sales))
+                  : t("dash.headline")
+                      .replace("{month}", selected.label)
+                      .replace("{pct}", selected.netPct.toFixed(1).replace(".", ","))}
               </h1>
               <p className="mt-3 text-sm text-muted-foreground">
-                {t("dash.vendisteMes").replace("{amount}", money(selected.sales))}{" "}
-                {deltaNet === null
-                  ? t("dash.compFirstMonth")
-                  : Math.abs(deltaNet) < 0.05
-                    ? t("dash.compEqual").replace("{month}", prev!.label)
-                    : (deltaNet > 0 ? t("dash.compUp") : t("dash.compDown"))
-                        .replace("{points}", Math.abs(deltaNet).toFixed(1).replace(".", ","))
-                        .replace("{month}", prev!.label)}
+                {hasSignals
+                  ? t("dq.headlineSubNeutral")
+                  : `${t("dash.vendisteMes").replace("{amount}", money(selected.sales))} ${
+                      deltaNet === null
+                        ? t("dash.compFirstMonth")
+                        : Math.abs(deltaNet) < 0.05
+                          ? t("dash.compEqual").replace("{month}", prev!.label)
+                          : (deltaNet > 0 ? t("dash.compUp") : t("dash.compDown"))
+                              .replace("{points}", Math.abs(deltaNet).toFixed(1).replace(".", ","))
+                              .replace("{month}", prev!.label)
+                    }`}
               </p>
             </div>
+
             {lastThree.length > 1 && (
               <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
                 {t("dash.mesLabel")}
