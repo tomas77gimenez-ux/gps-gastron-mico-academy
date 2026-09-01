@@ -363,7 +363,7 @@ function HomePage() {
                   </p>
                   <div className="mt-6 flex items-center gap-1">
                     {Array.from({ length: te.stars }).map((_, si) => (
-                      <Star key={si} className="h-3.5 w-3.5 fill-primary text-primary-text" />
+                      <Star key={si} className="h-3.5 w-3.5 fill-primary-text text-primary-text" />
                     ))}
                   </div>
                   <div className="mt-5 flex items-center gap-3">

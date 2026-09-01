@@ -126,7 +126,7 @@ export function Footer() {
         <div className="mt-12 pt-6 border-t border-border flex flex-col sm:flex-row gap-3 items-center justify-between text-xs text-muted-foreground">
           <p>© {year} GPS Gastronômico. {t("footer.derechos")}</p>
           <p className="inline-flex items-center gap-1.5">
-            {t("footer.hechoCon")} <Heart className="w-3 h-3 fill-primary text-primary-text" /> {t("footer.para")}
+            {t("footer.hechoCon")} <Heart className="w-3 h-3 fill-primary-text text-primary-text" /> {t("footer.para")}
           </p>
         </div>
       </div>
