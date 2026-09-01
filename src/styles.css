@@ -56,6 +56,7 @@
   --color-nav-control: var(--nav-control);
   --color-primary-hover: var(--primary-hover);
   --color-primary-soft: var(--primary-soft);
+  --color-primary-text: var(--primary-text);
   --color-border-strong: var(--border-strong);
   --color-success-foreground: var(--success-foreground);
   --color-warning: var(--warning);
@@ -83,17 +84,19 @@
   --card-foreground: #1A1815;
   --popover: #FFFFFF;
   --popover-foreground: #1A1815;
-  /* Dorado oscurecido: 4,9:1 como texto sobre papel y sobre blanco */
-  --primary: #75580C;
-  --primary-hover: #5E4708;
-  --primary-soft: #8A6910;
-  --primary-foreground: #FFFFFF;
+  /* Relleno: dorado vivo apenas profundizado, con texto casi negro encima */
+  --primary: #C08D0F;
+  --primary-hover: #A97A0C;
+  --primary-soft: #7E5F0E;
+  --primary-foreground: #17130A;
+  /* Dorado como TEXTO/ícono sobre fondo de página o card (4,7:1+) */
+  --primary-text: #75580C;
   --secondary: #EAE4D8;
   --secondary-foreground: #2A2721;
   --muted: #E6E0D4;
   --muted-foreground: #55524B;
-  --accent: #75580C;
-  --accent-foreground: #FFFFFF;
+  --accent: #C08D0F;
+  --accent-foreground: #17130A;
   --destructive: oklch(0.52 0.20 27.325);
   --destructive-foreground: #FFFFFF;
   /* Bordes sólidos: el blanco translúcido desaparecía sobre papel */
@@ -101,22 +104,22 @@
   --border-strong: #CDC5B6;
   --input: #CDC5B6;
   --ring: #75580C;
-  --chart-1: #75580C;
+  --chart-1: #A97A0C;
   --chart-2: oklch(0.52 0.11 184.704);
   --chart-3: oklch(0.45 0.09 227.392);
   --chart-4: oklch(0.62 0.16 84.429);
   --chart-5: oklch(0.58 0.16 70.08);
   --sidebar: #F0ECE3;
   --sidebar-foreground: #1A1815;
-  --sidebar-primary: #75580C;
-  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-primary: #C08D0F;
+  --sidebar-primary-foreground: #17130A;
   --sidebar-accent: #E6E0D4;
   --sidebar-accent-foreground: #2A2721;
   --sidebar-border: #D6CBB4;
   --sidebar-ring: #75580C;
 
   /* Brand gradient + glow (glows muy reducidos: sobre papel ensucian) */
-  --gradient-brand: linear-gradient(100deg, #75580C, #8A6910);
+  --gradient-brand: linear-gradient(100deg, #C08D0F, #E0AC2A);
   --gradient-brand-text: linear-gradient(100deg, #5E4708 0%, #8A6910 35%, #5E4708 70%);
   --gradient-border-mid: rgba(117, 88, 12, 0.30);
   --glow-gold: 0 0 0 1px rgba(138, 105, 16, 0.18), 0 10px 28px -14px rgba(138, 105, 16, 0.20);
@@ -157,6 +160,7 @@
   --primary-hover: #E8B83A;
   --primary-soft: #F0D080;
   --primary-foreground: #050505;
+  --primary-text: #D4A017;
   --secondary: #1E222D;
   --secondary-foreground: #E8EAEF;
   --muted: #2A2F3D;
