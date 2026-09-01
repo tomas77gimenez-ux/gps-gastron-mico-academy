@@ -3,6 +3,8 @@ import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n";
+import { ThemeProvider } from "@/lib/theme";
+import { readPrefs, THEME_BOOTSTRAP_SCRIPT } from "@/lib/prefs";
 import { GA_MEASUREMENT_ID, identifyUser, trackEvent, trackPageView } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { sendWelcomeIfNeeded } from "@/lib/email/send-welcome";
@@ -104,9 +106,21 @@ export const Route = createRootRoute({
 });
 
 function RootShell({ children }: { children: React.ReactNode }) {
+  // Language comes from the cookie on both sides of the render (server: request
+  // header, client: document.cookie) so SSR markup and hydration agree.
+  const { theme, lang } = readPrefs();
+
   return (
-    <html lang="en">
+    // The theme class is owned by the inline bootstrap script below: it runs
+    // before the first paint (cookie, else OS preference), so there is no flash.
+    // React must not fight it — hence suppressHydrationWarning.
+    <html
+      lang={lang}
+      className={theme === "dark" ? "dark" : undefined}
+      suppressHydrationWarning
+    >
       <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOTSTRAP_SCRIPT }} />
         <HeadContent />
       </head>
       <body>
@@ -149,12 +163,14 @@ function RootComponent() {
   }, []);
 
   return (
-    <I18nProvider>
-      <Navbar />
-      <div key={pathname} className="animate-in fade-in duration-150">
-        <Outlet />
-      </div>
-      <Footer />
-    </I18nProvider>
+    <ThemeProvider>
+      <I18nProvider>
+        <Navbar />
+        <div key={pathname} className="animate-in fade-in duration-150">
+          <Outlet />
+        </div>
+        <Footer />
+      </I18nProvider>
+    </ThemeProvider>
   );
 }
