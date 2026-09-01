@@ -76,21 +76,24 @@ export function useDreMetrics(): DreState {
         .select("dre_month_id, category, amount")
         .in("dre_month_id", rows.map((r) => r.id));
 
-      const byMonth = new Map<string, { personal: number; opex: number }>();
+      const byMonth = new Map<string, { personal: number; fijos: number; otros: number; opex: number }>();
       for (const e of expenses ?? []) {
-        const acc = byMonth.get(e.dre_month_id) ?? { personal: 0, opex: 0 };
+        const acc = byMonth.get(e.dre_month_id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
         const amount = Number(e.amount ?? 0);
         acc.opex += amount;
         if (e.category === "personal") acc.personal += amount;
+        else if (e.category === "fijos") acc.fijos += amount;
+        else acc.otros += amount;
         byMonth.set(e.dre_month_id, acc);
       }
 
       const months: DreMonthMetrics[] = rows.map((r) => {
         const sales = Number(r.sales ?? 0);
         const cmv = Number(r.cmv_purchases ?? 0);
-        const { personal, opex } = byMonth.get(r.id) ?? { personal: 0, opex: 0 };
+        const { personal, fijos, otros, opex } = byMonth.get(r.id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
         const cmvPct = sales > 0 ? (cmv / sales) * 100 : 0;
         const contributionRatio = 1 - cmvPct / 100;
+        const netPct = sales > 0 ? ((sales - cmv - opex) / sales) * 100 : 0;
         return {
           month: r.month,
           label: monthLabel(r.month, false, lang),
@@ -98,10 +101,12 @@ export function useDreMetrics(): DreState {
           sales,
           cmvPct,
           personalPct: sales > 0 ? (personal / sales) * 100 : 0,
-          netPct: sales > 0 ? ((sales - cmv - opex) / sales) * 100 : 0,
+          netPct,
           breakEven: contributionRatio > 0 ? opex / contributionRatio : 0,
+          signals: detectSignals({ sales, cmvPct, netPct, personal, fijos, otros }),
         };
       });
+
 
       if (!cancelled) setState({ loading: false, months });
     }
