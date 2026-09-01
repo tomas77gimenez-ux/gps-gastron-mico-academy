@@ -4,7 +4,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { I18nProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
-import { readPrefs, THEME_BOOTSTRAP_SCRIPT } from "@/lib/prefs";
+import { DEFAULT_THEME, readPrefs, THEME_BOOTSTRAP_SCRIPT } from "@/lib/prefs";
 import { GA_MEASUREMENT_ID, identifyUser, trackEvent, trackPageView } from "@/lib/analytics";
 import { supabase } from "@/integrations/supabase/client";
 import { sendWelcomeIfNeeded } from "@/lib/email/send-welcome";
@@ -36,9 +36,14 @@ function NotFoundComponent() {
 }
 
 export const Route = createRootRoute({
-  head: () => ({
+  // Read once per request/navigation and expose to every component, loader and
+  // head() below via the router context.
+  beforeLoad: () => ({ prefs: readPrefs() }),
+  loader: ({ context }) => context.prefs,
+  head: ({ loaderData }) => ({
     meta: [
       { charSet: "utf-8" },
+      { name: "color-scheme", content: loaderData?.theme ?? DEFAULT_THEME },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
         { name: "referrer", content: "strict-origin-when-cross-origin" },
       { title: "GPS Gastronômico — Gestión · Procesos · Sustentabilidad" },
@@ -132,6 +137,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
 }
 
 function RootComponent() {
+  const { prefs } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   // SPA page_view: gtag only auto-reports the first load.
@@ -164,7 +170,7 @@ function RootComponent() {
 
   return (
     <ThemeProvider>
-      <I18nProvider>
+      <I18nProvider initialLang={prefs.lang}>
         <Navbar />
         <div key={pathname} className="animate-in fade-in duration-150">
           <Outlet />
