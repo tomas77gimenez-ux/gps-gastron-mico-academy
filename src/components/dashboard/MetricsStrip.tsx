@@ -2,10 +2,12 @@ import { Link } from "@tanstack/react-router";
 import { FileSpreadsheet } from "lucide-react";
 import type { DreMonthMetrics } from "@/hooks/useMemberDashboard";
 import { money, pct } from "@/lib/tools-format";
+import { useI18n } from "@/lib/i18n";
 
 export function Sparkline({ values, className }: { values: number[]; className?: string }) {
+  const { t } = useI18n();
   if (values.length < 2) {
-    return <div className="h-8 text-[0.65rem] text-muted-foreground">Sin histórico todavía</div>;
+    return <div className="h-8 text-[0.65rem] text-muted-foreground">{t("dash.sinHistorico")}</div>;
   }
   const min = Math.min(...values);
   const max = Math.max(...values);
@@ -39,10 +41,11 @@ interface MetricDef {
 }
 
 function VariationTag({ deltaPoints, lowerIsBetter }: { deltaPoints: number | null; lowerIsBetter: boolean }) {
+  const { t } = useI18n();
   if (deltaPoints === null) {
     return (
       <span className="inline-flex rounded-md bg-secondary px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
-        Primer mes cargado
+        {t("dash.primerMesCargado")}
       </span>
     );
   }
@@ -50,7 +53,7 @@ function VariationTag({ deltaPoints, lowerIsBetter }: { deltaPoints: number | nu
   if (abs < 0.05) {
     return (
       <span className="inline-flex rounded-md bg-secondary px-2 py-0.5 text-[0.7rem] font-medium text-muted-foreground">
-        = Se mantuvo igual
+        {t("dash.seMantuvoIgual")}
       </span>
     );
   }
@@ -62,12 +65,13 @@ function VariationTag({ deltaPoints, lowerIsBetter }: { deltaPoints: number | nu
         improved ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive"
       }`}
     >
-      {arrow} {improved ? "Mejoró" : "Empeoró"} {abs.toFixed(1)} puntos
+      {arrow} {improved ? t("dash.mejoro") : t("dash.empeoro")} {abs.toFixed(1)} {t("dash.puntos")}
     </span>
   );
 }
 
 export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; selected: DreMonthMetrics }) {
+  const { t } = useI18n();
   const idx = months.findIndex((m) => m.month === selected.month);
   const prev = idx > 0 ? months[idx - 1] : null;
   const upTo = months.slice(0, idx + 1);
@@ -77,45 +81,45 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
 
   const metrics: MetricDef[] = [
     {
-      name: "CMV",
+      name: t("dash.metric.cmv"),
       value: pct(selected.cmvPct),
       deltaPoints: prev ? selected.cmvPct - prev.cmvPct : null,
       lowerIsBetter: true,
-      plain: `De cada $100 que vendés, $${cmvGone} se van en compras`,
-      ideal: "Lo ideal es entre 28% y 35%",
+      plain: t("dash.plainCmv").replace("{amount}", String(cmvGone)),
+      ideal: t("dash.idealCmv"),
       trend: upTo.map((m) => m.cmvPct),
     },
     {
-      name: "Personal",
+      name: t("dash.metric.personal"),
       value: pct(selected.personalPct),
       deltaPoints: prev ? selected.personalPct - prev.personalPct : null,
       lowerIsBetter: true,
-      plain: `De cada $100 que vendés, $${personalGone} se van en sueldos`,
-      ideal: "Lo ideal es entre 25% y 32%",
+      plain: t("dash.plainPersonal").replace("{amount}", String(personalGone)),
+      ideal: t("dash.idealPersonal"),
       trend: upTo.map((m) => m.personalPct),
     },
     {
-      name: "Margen neto",
+      name: t("dash.metric.margenNeto"),
       value: pct(selected.netPct),
       deltaPoints: prev ? selected.netPct - prev.netPct : null,
       lowerIsBetter: false,
       plain:
         selected.netPct >= 0
-          ? `Te quedaron ${money((selected.sales * selected.netPct) / 100)} limpios en el mes`
-          : `Perdiste ${money(Math.abs((selected.sales * selected.netPct) / 100))} en el mes`,
-      ideal: "Lo ideal es 10% o más",
+          ? t("dash.plainNetPos").replace("{amount}", money((selected.sales * selected.netPct) / 100))
+          : t("dash.plainNetNeg").replace("{amount}", money(Math.abs((selected.sales * selected.netPct) / 100))),
+      ideal: t("dash.idealMargen"),
       trend: upTo.map((m) => m.netPct),
     },
     {
-      name: "Punto de equilibrio",
+      name: t("dash.metric.puntoEquilibrio"),
       value: money(selected.breakEven),
       deltaPoints: null,
       lowerIsBetter: true,
       plain:
         selected.sales >= selected.breakEven
-          ? `Vendiste ${money(selected.sales - selected.breakEven)} por encima de lo que necesitás para no perder`
-          : `Te faltaron ${money(selected.breakEven - selected.sales)} de venta para no perder plata`,
-      ideal: "Lo ideal es superarlo antes de la última semana del mes",
+          ? t("dash.plainBePos").replace("{amount}", money(selected.sales - selected.breakEven))
+          : t("dash.plainBeNeg").replace("{amount}", money(selected.breakEven - selected.sales)),
+      ideal: t("dash.idealBe"),
       trend: upTo.map((m) => m.breakEven),
     },
   ];
@@ -141,19 +145,17 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
 }
 
 export function EmptyDreBlock() {
+  const { t } = useI18n();
   return (
     <div className="border-y border-border px-5 py-10 text-center">
       <FileSpreadsheet className="mx-auto h-6 w-6 text-primary-text" strokeWidth={1.5} />
-      <h2 className="mt-3 font-display text-xl font-semibold">Todavía no cargaste ningún mes</h2>
-      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-        Cargá tu primer mes en el DRE y acá vas a ver, en lenguaje llano, cuánta ganancia limpia te queda y qué palanca
-        mover primero.
-      </p>
+      <h2 className="mt-3 font-display text-xl font-semibold">{t("dash.emptyDreTitulo")}</h2>
+      <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">{t("dash.emptyDreDesc")}</p>
       <Link
         to="/herramientas/dre"
         className="mt-5 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
       >
-        Cargar mi primer mes
+        {t("dash.cargarPrimerMes")}
       </Link>
     </div>
   );
