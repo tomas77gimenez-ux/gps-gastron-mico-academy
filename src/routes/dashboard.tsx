@@ -13,6 +13,8 @@ import {
   type ToolStatusKind,
 } from "@/hooks/useMemberDashboard";
 import { MetricsStrip, EmptyDreBlock } from "@/components/dashboard/MetricsStrip";
+import { DataQualityNotice } from "@/components/dashboard/DataQualityNotice";
+
 import { ProximoEnVivoCard } from "@/components/dashboard/ProximoEnVivoCard";
 import { NovedadesSection } from "@/components/dashboard/NovedadesSection";
 import { money } from "@/lib/tools-format";
