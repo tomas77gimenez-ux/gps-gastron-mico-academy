@@ -8,6 +8,7 @@ import {
   useDreMetrics,
   useMemberProgress,
   useToolsStatus,
+  toolStatusLabel,
   type RouteCourse,
   type ToolStatusKind,
 } from "@/hooks/useMemberDashboard";
@@ -15,7 +16,7 @@ import { MetricsStrip, EmptyDreBlock } from "@/components/dashboard/MetricsStrip
 import { ProximoEnVivoCard } from "@/components/dashboard/ProximoEnVivoCard";
 import { NovedadesSection } from "@/components/dashboard/NovedadesSection";
 import { money } from "@/lib/tools-format";
-import { useI18n, tFor, type TranslationKey } from "@/lib/i18n";
+import { useI18n, tFor } from "@/lib/i18n";
 import { readPrefs } from "@/lib/prefs";
 
 export const Route = createFileRoute("/dashboard")({
