@@ -73,6 +73,10 @@
   --background: #050505;
   --foreground: #F5F5F5;
   --surface: #0F1118;
+  /* Barra superior: tono cálido propio, más oscuro que la página */
+  --nav: #17120A;
+  --nav-border: #332916;
+  --nav-control: #241D11;
   --card: #151821;
   --card-foreground: #F5F5F5;
   --popover: #181B24;
