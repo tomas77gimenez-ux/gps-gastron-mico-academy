@@ -42,7 +42,7 @@ export function monthLabel(month: string, withYear = false, lang: Lang = "es"): 
  * Señales de carga incompleta sobre un mes. Conservador: sin ventas no se evalúa nada.
  * Orden del array = gravedad, de mayor a menor.
  */
-function detectSignals(input: {
+export function detectSignals(input: {
   sales: number;
   cmvPct: number;
   netPct: number;
