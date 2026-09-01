@@ -157,4 +157,16 @@ export const studentDict = {
   "pro.casoDelMes": { es: "Caso Real del Mes", en: "Real Case of the Month", pt: "Caso Real do Mês" },
   "pro.primerCaso": { es: "El primer caso llega este mes.", en: "The first case is coming this month.", pt: "O primeiro caso chega este mês." },
   "pro.descargarPdf": { es: "Descargar PDF", en: "Download PDF", pt: "Baixar PDF" },
+
+  // ---- Aviso de datos incompletos (dq.*) ----
+  "dq.titulo": { es: "Estos números parecen incompletos", en: "These numbers look incomplete", pt: "Estes números parecem incompletos" },
+  "dq.intro": { es: "Revisá la carga del mes antes de sacar conclusiones:", en: "Review this month's data before drawing conclusions:", pt: "Revise o carregamento do mês antes de tirar conclusões:" },
+  "dq.cta": { es: "Revisar mis gastos", en: "Review my expenses", pt: "Revisar meus gastos" },
+  "dq.noExpenses": { es: "No cargaste ningún gasto en este mes: sin sueldos, alquiler ni servicios, el resultado no refleja tu operación.", en: "You didn't log any expenses this month: without payroll, rent or utilities, the result doesn't reflect your operation.", pt: "Você não lançou nenhuma despesa neste mês: sem salários, aluguel ou serviços, o resultado não reflete sua operação." },
+  "dq.noPersonal": { es: "No cargaste sueldos en este mes.", en: "You didn't log payroll for this month.", pt: "Você não lançou salários neste mês." },
+  "dq.noFijos": { es: "No cargaste gastos fijos (alquiler, servicios, impuestos) en este mes.", en: "You didn't log fixed costs (rent, utilities, taxes) for this month.", pt: "Você não lançou despesas fixas (aluguel, serviços, impostos) neste mês." },
+  "dq.lowCmv": { es: "Tu CMV dio {pct}%, muy por debajo del 28–35% habitual — revisá si cargaste todas las compras.", en: "Your food cost came out at {pct}%, well below the usual 28–35% — check whether you logged all your purchases.", pt: "Seu CMV deu {pct}%, bem abaixo dos 28–35% habituais — confira se lançou todas as compras." },
+  "dq.highNet": { es: "Un margen neto de {pct}% casi no existe en gastronomía: lo más probable es que falten gastos por cargar.", en: "A {pct}% net margin is almost unheard of in food service: most likely some expenses are still missing.", pt: "Uma margem líquida de {pct}% quase não existe na gastronomia: o mais provável é que faltem despesas a lançar." },
+  "dq.headlineNeutral": { es: "En {month} cargaste {amount} de ventas", en: "In {month} you logged {amount} in sales", pt: "Em {month} você lançou {amount} em vendas" },
+  "dq.headlineSubNeutral": { es: "Antes de mirar el margen, completá la carga de gastos del mes para que el número sea real.", en: "Before looking at your margin, finish logging this month's expenses so the number is real.", pt: "Antes de olhar a margem, complete o lançamento das despesas do mês para que o número seja real." },
 } as const;
