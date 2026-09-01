@@ -12,20 +12,25 @@ import { supabase } from "@/integrations/supabase/client";
 import { getStripeEnvironment } from "@/lib/stripe";
 import { toast } from "sonner";
 import { listGerentesDigitales, listOwnedGdIds, type GerenteDigital } from "@/lib/gerentes-digitales";
+import { readPrefs } from "@/lib/prefs";
+import { tFor } from "@/lib/i18n";
 
 export const Route = createFileRoute("/perfil")({
   component: PerfilPage,
-  head: () => ({
-    meta: [
-      { title: "Mi Perfil — GPS Gastronômico" },
-      { name: "description", content: "Gestiona tu cuenta, cursos y compras." },
-      { property: "og:title", content: 'Mi Perfil — GPS Gastronômico' },
-      { property: "og:description", content: 'Gestiona tu cuenta, suscripción y certificados.' },
-      { property: "og:url", content: "https://plataforma-test1.lovable.app/perfil" },
-      { name: "robots", content: "noindex,nofollow" }
-    ],
-    links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/perfil" }],
-  }),
+  head: () => {
+    const t = tFor(readPrefs().lang);
+    return {
+      meta: [
+        { title: t("acct.headTitle") },
+        { name: "description", content: t("acct.headDesc") },
+        { property: "og:title", content: t("acct.headTitle") },
+        { property: "og:description", content: t("acct.ogDesc") },
+        { property: "og:url", content: "https://plataforma-test1.lovable.app/perfil" },
+        { name: "robots", content: "noindex,nofollow" }
+      ],
+      links: [{ rel: "canonical", href: "https://plataforma-test1.lovable.app/perfil" }],
+    };
+  },
 });
 
 function formatDate(iso: string | null, lang: string): string {
@@ -195,7 +200,7 @@ function PerfilPage() {
       setEmailNovedades(!next);
       toast.error(t("perfil.errorGuardar"));
     } else {
-      toast.success(next ? "Vas a recibir las novedades por correo" : "Ya no vas a recibir novedades por correo");
+      toast.success(next ? t("acct.novedadesOn") : t("acct.novedadesOff"));
     }
   }
 
@@ -219,7 +224,7 @@ function PerfilPage() {
         error?.message ??
         null;
       if (!data?.url) {
-        setPortalError(detail || "El portal de facturación no devolvió una URL válida.");
+        setPortalError(detail || t("acct.portalSinUrl"));
         return;
       }
       window.open(data.url as string, "_blank", "noopener,noreferrer");
@@ -264,7 +269,7 @@ function PerfilPage() {
         {isReady && !user && (
           <section className="bg-card rounded-xl border border-border p-6 mb-8 text-center">
             <p className="font-medium mb-2">{t("perfil.sinSuscripcion")}</p>
-            <p className="text-sm text-muted-foreground mb-4">Inicia sesión para ver tu suscripción y gestionar tu cuenta.</p>
+            <p className="text-sm text-muted-foreground mb-4">{t("acct.iniciaSesionSub")}</p>
             <Button asChild>
               <Link to="/login">{t("nav.entrar")}</Link>
             </Button>
@@ -278,7 +283,7 @@ function PerfilPage() {
                 <User className="w-8 h-8 text-primary-text" />
               </div>
               <div>
-                <h2 className="text-xl font-semibold">{initialName || user?.email?.split("@")[0] || "Usuario"}</h2>
+                <h2 className="text-xl font-semibold">{initialName || user?.email?.split("@")[0] || t("acct.usuario")}</h2>
                 <p className="text-sm text-muted-foreground">{user?.email ?? "—"}</p>
                 {sub.hasActive && (
                   <span className="inline-block mt-1 px-2 py-0.5 bg-primary/20 text-primary-text text-xs font-semibold rounded-full">
@@ -295,7 +300,7 @@ function PerfilPage() {
           </div>
           {memberLabel && (
             <p className="text-sm text-muted-foreground mt-4">
-              {lang === "en" ? `Member since ${memberLabel}` : lang === "pt" ? `Membro desde ${memberLabel}` : `Miembro desde ${memberLabel}`}
+              {t("acct.miembroDesde").replace("{fecha}", memberLabel ?? "")}
             </p>
           )}
         </div>
@@ -336,16 +341,16 @@ function PerfilPage() {
 
             <div className="mt-6 pt-5 border-t border-border flex items-start justify-between gap-4 max-w-md">
               <div>
-                <p className="text-sm font-medium">Recibir novedades por correo</p>
+                <p className="text-sm font-medium">{t("acct.recibirNovedades")}</p>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  Un solo correo con el contenido nuevo (clases, materiales y Sala Pro).
+                  {t("acct.recibirNovedadesDesc")}
                 </p>
               </div>
               <button
                 type="button"
                 role="switch"
                 aria-checked={emailNovedades}
-                aria-label="Recibir novedades por correo"
+                aria-label={t("acct.recibirNovedades")}
                 disabled={savingPref || profileLoading}
                 onClick={() => void toggleNovedades(!emailNovedades)}
                 className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${emailNovedades ? "bg-primary" : "bg-secondary border border-border"}`}
@@ -374,8 +379,8 @@ function PerfilPage() {
             </div>
           ) : !user ? (
             <div className="text-center py-6">
-              <p className="font-medium mb-1">Inicia sesión para ver tu suscripción</p>
-              <p className="text-sm text-muted-foreground mb-4">Tu plan, estado y cobros aparecerán aquí automáticamente.</p>
+              <p className="font-medium mb-1">{t("acct.iniciaSesionSuscripcion")}</p>
+              <p className="text-sm text-muted-foreground mb-4">{t("acct.iniciaSesionSuscripcionDesc")}</p>
               <Button asChild>
                 <Link to="/login">{t("nav.entrar")}</Link>
               </Button>
@@ -391,7 +396,7 @@ function PerfilPage() {
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/30 text-destructive">
                   <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
                   <p className="text-sm font-medium">
-                    Actualizá tu método de pago — tenés 5 días de acceso mientras se regulariza el cobro.
+                    {t("acct.actualizaPago")}
                   </p>
                 </div>
               )}
@@ -476,7 +481,7 @@ function PerfilPage() {
             {gdsLoading ? (
               <div className="flex items-center gap-2 text-muted-foreground py-4">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">…</span>
+                <span className="text-sm">{t("acct.cargando")}</span>
               </div>
             ) : myGds.length === 0 ? (
               <div className="text-center py-6">
@@ -521,7 +526,7 @@ function PerfilPage() {
             {coursesLoading ? (
               <div className="flex items-center gap-2 text-muted-foreground py-4">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                <span className="text-sm">…</span>
+                <span className="text-sm">{t("acct.cargando")}</span>
               </div>
             ) : courses.length === 0 ? (
               <div className="text-center py-6">

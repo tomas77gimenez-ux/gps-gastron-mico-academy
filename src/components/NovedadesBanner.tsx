@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { Sparkles, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useI18n } from "@/lib/i18n";
 import { summarizeNovedades, type NovedadKind } from "@/lib/novedades";
 
 /**
@@ -11,6 +12,7 @@ import { summarizeNovedades, type NovedadKind } from "@/lib/novedades";
  * comes back automatically as soon as newer content is published.
  */
 export function NovedadesBanner() {
+  const { t } = useI18n();
   const { isReady, user } = useAuthSession();
   const [summary, setSummary] = useState<string | null>(null);
   const [hidden, setHidden] = useState(false);
@@ -49,7 +51,7 @@ export function NovedadesBanner() {
       if (total === 0) return;
       if (dismissedAt && newest <= dismissedAt) return;
 
-      setSummary(summarizeNovedades(counts));
+      setSummary(summarizeNovedades(counts, t));
     })();
 
     return () => { active = false; };
@@ -69,16 +71,16 @@ export function NovedadesBanner() {
     <div className="mb-6 flex items-center gap-3 rounded-lg border border-primary/40 bg-primary/10 px-4 py-2.5">
       <Sparkles className="h-4 w-4 shrink-0 text-primary-text" strokeWidth={1.75} />
       <p className="flex-1 text-sm text-foreground">
-        <span className="font-semibold">Nuevo este mes:</span>{" "}
+        <span className="font-semibold">{t("nov.nuevoEsteMes")}</span>{" "}
         <span className="text-muted-foreground">{summary}</span>{" "}
         <Link to="/" hash="novedades" className="font-semibold text-primary-text underline underline-offset-2">
-          Ver novedades
+          {t("nov.verNovedades")}
         </Link>
       </p>
       <button
         type="button"
         onClick={dismiss}
-        aria-label="Ocultar aviso de novedades"
+        aria-label={t("nov.ocultarAviso")}
         className="shrink-0 rounded-md p-1 text-muted-foreground transition-colors hover:text-foreground"
       >
         <X className="h-4 w-4" />
