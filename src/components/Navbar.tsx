@@ -1,8 +1,9 @@
 import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, Crown, Lock } from "lucide-react";
+import { Home, Film, ShoppingCart, User, Search, Menu, X, MessageCircle, LogIn, LogOut, Shield, CreditCard, Globe, Wrench, Crown, Lock, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useI18n } from "@/lib/i18n";
+import { useTheme } from "@/lib/theme";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useSubscription } from "@/hooks/useSubscription";
 import { useProAccess } from "@/hooks/useProAccess";
@@ -19,6 +20,7 @@ export function Navbar() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { t, lang, toggleLang } = useI18n();
+  const { theme, toggleTheme } = useTheme();
 
   const allNavItems = [
     { to: user ? "/dashboard" : "/", label: t("nav.inicio"), icon: Home },
@@ -81,7 +83,7 @@ export function Navbar() {
             <img
               src={logoGps}
               alt="Método GPS · GPS Gastronômico"
-              className="h-9 sm:h-10 w-auto shrink-0 mix-blend-screen"
+              className="h-9 sm:h-10 w-auto shrink-0 mix-blend-screen rounded-md bg-foreground dark:bg-transparent"
             />
             <span className="sr-only">GPS Gastronômico</span>
           </Link>
@@ -144,6 +146,19 @@ export function Navbar() {
             >
               <Globe className="w-4 h-4" />
               {lang === "es" ? "EN" : lang === "en" ? "PT" : "ES"}
+            </button>
+
+            {/* Theme toggle: ícono + palabra (público 40+, un sol solo no comunica) */}
+            <button
+              onClick={toggleTheme}
+              aria-label={theme === "dark" ? t("nav.temaClaro") : t("nav.temaOscuro")}
+              title={theme === "dark" ? t("nav.temaClaro") : t("nav.temaOscuro")}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-nav-control transition-colors"
+            >
+              {theme === "light" ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
+              <span className="hidden sm:inline">
+                {theme === "light" ? t("nav.temaOscuroCorto") : t("nav.temaClaroCorto")}
+              </span>
             </button>
 
             <button
