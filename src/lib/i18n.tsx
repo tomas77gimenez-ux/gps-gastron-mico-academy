@@ -3,6 +3,7 @@ import { LANG_COOKIE, readPrefs, writePrefCookie } from "@/lib/prefs";
 import { studentDict } from "@/lib/i18n-dicts/student";
 import { toolsDict } from "@/lib/i18n-dicts/tools";
 import { authDict } from "@/lib/i18n-dicts/auth";
+import { storeDict } from "@/lib/i18n-dicts/store";
 
 export type Lang = "es" | "en" | "pt";
 
@@ -494,6 +495,7 @@ const translations = {
   ...studentDict,
   ...toolsDict,
   ...authDict,
+  ...storeDict,
 } as const;
 
 export type TranslationKey = keyof typeof translations;
