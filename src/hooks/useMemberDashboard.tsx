@@ -9,6 +9,14 @@ import type { Lang } from "@/lib/i18n";
 /* DRE — indicadores del mes                                           */
 /* ------------------------------------------------------------------ */
 
+export type DataQualityId = "noExpenses" | "noPersonal" | "noFijos" | "lowCmv" | "highNet";
+
+export interface DataQualitySignal {
+  id: DataQualityId;
+  /** Valor asociado, redondeado (porcentaje) cuando aplica. */
+  value?: number;
+}
+
 export interface DreMonthMetrics {
   month: string; // "2026-05"
   label: string; // "mayo"
@@ -18,7 +26,10 @@ export interface DreMonthMetrics {
   personalPct: number;
   netPct: number;
   breakEven: number;
+  /** Señales de carga incompleta, de más grave a menos. */
+  signals: DataQualitySignal[];
 }
+
 
 const LOCALE_MAP: Record<Lang, string> = { es: "es-AR", en: "en-US", pt: "pt-BR" };
 
@@ -27,6 +38,36 @@ export function monthLabel(month: string, withYear = false, lang: Lang = "es"): 
   const d = new Date(y, (m ?? 1) - 1, 1);
   return d.toLocaleDateString(LOCALE_MAP[lang], withYear ? { month: "long", year: "numeric" } : { month: "long" });
 }
+/**
+ * Señales de carga incompleta sobre un mes. Conservador: sin ventas no se evalúa nada.
+ * Orden del array = gravedad, de mayor a menor.
+ */
+export function detectSignals(input: {
+  sales: number;
+  cmvPct: number;
+  netPct: number;
+  personal: number;
+  fijos: number;
+  otros: number;
+}): DataQualitySignal[] {
+  const { sales, cmvPct, netPct, personal, fijos, otros } = input;
+  if (sales <= 0) return [];
+
+  const signals: DataQualitySignal[] = [];
+  const expensesTotal = personal + fijos + otros;
+
+  if (expensesTotal <= 0) {
+    signals.push({ id: "noExpenses" });
+  } else {
+    if (personal <= 0) signals.push({ id: "noPersonal" });
+    if (fijos <= 0) signals.push({ id: "noFijos" });
+  }
+  if (cmvPct < 20) signals.push({ id: "lowCmv", value: Math.round(cmvPct) });
+  if (netPct > 35) signals.push({ id: "highNet", value: Math.round(netPct) });
+
+  return signals;
+}
+
 
 interface DreState {
   loading: boolean;
@@ -65,21 +106,24 @@ export function useDreMetrics(): DreState {
         .select("dre_month_id, category, amount")
         .in("dre_month_id", rows.map((r) => r.id));
 
-      const byMonth = new Map<string, { personal: number; opex: number }>();
+      const byMonth = new Map<string, { personal: number; fijos: number; otros: number; opex: number }>();
       for (const e of expenses ?? []) {
-        const acc = byMonth.get(e.dre_month_id) ?? { personal: 0, opex: 0 };
+        const acc = byMonth.get(e.dre_month_id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
         const amount = Number(e.amount ?? 0);
         acc.opex += amount;
         if (e.category === "personal") acc.personal += amount;
+        else if (e.category === "fijos") acc.fijos += amount;
+        else acc.otros += amount;
         byMonth.set(e.dre_month_id, acc);
       }
 
       const months: DreMonthMetrics[] = rows.map((r) => {
         const sales = Number(r.sales ?? 0);
         const cmv = Number(r.cmv_purchases ?? 0);
-        const { personal, opex } = byMonth.get(r.id) ?? { personal: 0, opex: 0 };
+        const { personal, fijos, otros, opex } = byMonth.get(r.id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
         const cmvPct = sales > 0 ? (cmv / sales) * 100 : 0;
         const contributionRatio = 1 - cmvPct / 100;
+        const netPct = sales > 0 ? ((sales - cmv - opex) / sales) * 100 : 0;
         return {
           month: r.month,
           label: monthLabel(r.month, false, lang),
@@ -87,10 +131,12 @@ export function useDreMetrics(): DreState {
           sales,
           cmvPct,
           personalPct: sales > 0 ? (personal / sales) * 100 : 0,
-          netPct: sales > 0 ? ((sales - cmv - opex) / sales) * 100 : 0,
+          netPct,
           breakEven: contributionRatio > 0 ? opex / contributionRatio : 0,
+          signals: detectSignals({ sales, cmvPct, netPct, personal, fijos, otros }),
         };
       });
+
 
       if (!cancelled) setState({ loading: false, months });
     }
