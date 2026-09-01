@@ -60,7 +60,7 @@ export function GlassCard({ children, className, glowFollow = false, tilt = fals
           className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           style={{
             background: pos
-              ? `radial-gradient(340px circle at ${pos.x}px ${pos.y}px, color-mix(in oklab, var(--primary) 13%, transparent), transparent 70%)`
+              ? `radial-gradient(340px circle at ${pos.x}px ${pos.y}px, rgba(212,160,23,0.13), transparent 70%)`
               : undefined,
           }}
         />

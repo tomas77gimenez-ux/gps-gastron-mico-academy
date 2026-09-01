@@ -218,7 +218,7 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
     <Link
       to="/cursos/$id"
       params={{ id: course.id }}
-      className="group rounded-xl bg-card border border-border overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_0_30px_color-mix(in_oklab,var(--primary)_8%,transparent)]"
+      className="group rounded-xl bg-card border border-border overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/40 hover:shadow-[0_0_30px_rgba(212,160,23,0.06)]"
     >
       <div className="relative aspect-video bg-secondary overflow-hidden">
         {course.thumbnail_url ? (
