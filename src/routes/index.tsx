@@ -109,7 +109,7 @@ function MethodTimeline({ steps }: { steps: { icon: LucideIcon; title: string; d
               <span
                 aria-hidden="true"
                 className={`absolute left-0 top-[22px] hidden h-2.5 w-2.5 rounded-full transition-colors duration-300 lg:block ${
-                  active ? "bg-primary shadow-[0_0_0_4px_rgba(212,160,23,0.16)]" : "bg-muted"
+                  active ? "bg-primary shadow-[0_0_0_4px_color-mix(in_oklab,var(--primary)_18%,transparent)]" : "bg-muted"
                 }`}
               />
               <div className="flex items-center gap-3">
@@ -117,7 +117,7 @@ function MethodTimeline({ steps }: { steps: { icon: LucideIcon; title: string; d
                   className={`font-display text-4xl font-bold tabular transition-colors duration-300 ${
                     active ? "text-primary" : "text-transparent"
                   }`}
-                  style={{ WebkitTextStroke: active ? "0" : "1px rgba(255,255,255,0.14)" }}
+                  style={{ WebkitTextStroke: active ? "0" : "1px var(--border-strong)" }}
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -181,7 +181,7 @@ function HomePage() {
         <div
           aria-hidden="true"
           className="pointer-events-none absolute left-1/2 top-0 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-70 blur-[120px]"
-          style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.14), transparent)" }}
+          style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--primary) 16%, transparent), transparent)" }}
         />
 
         <div className="relative mx-auto grid max-w-7xl items-center gap-14 px-4 sm:px-6 lg:grid-cols-[1.05fr_1fr]">
@@ -204,7 +204,7 @@ function HomePage() {
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -inset-8 rounded-[2rem] opacity-80 blur-[80px]"
-              style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.20), transparent)" }}
+              style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--primary) 22%, transparent), transparent)" }}
             />
             <div className="relative overflow-hidden rounded-2xl glass glow-gold-soft transition-transform duration-700 ease-out [transform:rotateY(-9deg)_rotateX(4deg)_translateZ(0)] group-hover:[transform:rotateY(0deg)_rotateX(0deg)]">
               <DreMockupPreview />
@@ -289,7 +289,7 @@ function HomePage() {
               <div
                 aria-hidden="true"
                 className="pointer-events-none absolute -inset-6 rounded-[2rem] opacity-70 blur-[70px]"
-                style={{ background: "radial-gradient(closest-side, rgba(212,160,23,0.18), transparent)" }}
+                style={{ background: "radial-gradient(closest-side, color-mix(in oklab, var(--primary) 20%, transparent), transparent)" }}
               />
               <div className="relative aspect-[4/5] overflow-hidden rounded-2xl glass p-1.5">
                 <img

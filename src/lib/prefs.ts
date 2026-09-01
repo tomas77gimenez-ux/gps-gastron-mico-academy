@@ -10,7 +10,7 @@ export const LANG_COOKIE = "gps-lang";
 export const DEFAULT_THEME: Theme = "dark";
 /** Tanda 2 enables the light palette. Until then every visitor stays dark,
  *  so the OS preference is detected but not honoured yet. */
-export const LIGHT_THEME_ENABLED = false;
+export const LIGHT_THEME_ENABLED = true;
 export const DEFAULT_LANG: LangCode = "es";
 
 const ONE_YEAR = 60 * 60 * 24 * 365;

@@ -20,6 +20,8 @@ const translations = {
   "nav.buscar": { es: "Buscar cursos, productos...", en: "Search courses, products...", pt: "Buscar cursos, produtos..." },
   "nav.cambiarTema": { es: "Cambiar tema", en: "Toggle theme", pt: "Alternar tema" },
   "nav.temaClaro": { es: "Cambiar a modo claro", en: "Switch to light mode", pt: "Mudar para modo claro" },
+  "nav.temaClaroCorto": { es: "Claro", en: "Light", pt: "Claro" },
+  "nav.temaOscuroCorto": { es: "Oscuro", en: "Dark", pt: "Escuro" },
   "nav.temaOscuro": { es: "Cambiar a modo oscuro", en: "Switch to dark mode", pt: "Mudar para modo escuro" },
   "nav.abrirMenu": { es: "Abrir menú", en: "Open menu", pt: "Abrir menu" },
   "nav.cerrarMenu": { es: "Cerrar menú", en: "Close menu", pt: "Fechar menu" },

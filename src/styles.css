@@ -64,11 +64,83 @@
   --color-info-foreground: var(--info-foreground);
 }
 
+/* ============================================================
+   LIGHT — papel cálido (default en :root)
+   ============================================================ */
 :root {
   --radius: 0.75rem;
   --font-display: 'Outfit', sans-serif;
   --font-body: 'Figtree', sans-serif;
 
+  --background: #F7F5F0;
+  --foreground: #1A1815;
+  --surface: #F0ECE3;
+  /* Barra superior: arena, más oscura que la página, para anclar el borde */
+  --nav: #EBE3D3;
+  --nav-border: #D6CBB4;
+  --nav-control: #E1D7C2;
+  --card: #FFFFFF;
+  --card-foreground: #1A1815;
+  --popover: #FFFFFF;
+  --popover-foreground: #1A1815;
+  /* Dorado oscurecido: 4,9:1 como texto sobre papel y sobre blanco */
+  --primary: #75580C;
+  --primary-hover: #5E4708;
+  --primary-soft: #8A6910;
+  --primary-foreground: #FFFFFF;
+  --secondary: #EAE4D8;
+  --secondary-foreground: #2A2721;
+  --muted: #E6E0D4;
+  --muted-foreground: #55524B;
+  --accent: #75580C;
+  --accent-foreground: #FFFFFF;
+  --destructive: oklch(0.52 0.20 27.325);
+  --destructive-foreground: #FFFFFF;
+  /* Bordes sólidos: el blanco translúcido desaparecía sobre papel */
+  --border: #E3DDD1;
+  --border-strong: #CDC5B6;
+  --input: #CDC5B6;
+  --ring: #75580C;
+  --chart-1: #75580C;
+  --chart-2: oklch(0.52 0.11 184.704);
+  --chart-3: oklch(0.45 0.09 227.392);
+  --chart-4: oklch(0.62 0.16 84.429);
+  --chart-5: oklch(0.58 0.16 70.08);
+  --sidebar: #F0ECE3;
+  --sidebar-foreground: #1A1815;
+  --sidebar-primary: #75580C;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #E6E0D4;
+  --sidebar-accent-foreground: #2A2721;
+  --sidebar-border: #D6CBB4;
+  --sidebar-ring: #75580C;
+
+  /* Brand gradient + glow (glows muy reducidos: sobre papel ensucian) */
+  --gradient-brand: linear-gradient(100deg, #75580C, #8A6910);
+  --gradient-brand-text: linear-gradient(100deg, #5E4708 0%, #8A6910 35%, #5E4708 70%);
+  --gradient-border-mid: rgba(117, 88, 12, 0.30);
+  --glow-gold: 0 0 0 1px rgba(138, 105, 16, 0.18), 0 10px 28px -14px rgba(138, 105, 16, 0.20);
+  --glow-gold-soft: 0 14px 40px -26px rgba(138, 105, 16, 0.16);
+
+  /* Efectos dependientes del tema */
+  --grid-line: rgba(26, 24, 21, 0.07);
+  --noise-opacity: 0.012;
+  --shine-sweep: rgba(255, 255, 255, 0.55);
+  --glass-opacity: 88%;
+
+  /* Semantic status tokens (rebrand-safe) */
+  --success: oklch(0.52 0.14 150);
+  --success-foreground: #FFFFFF;
+  --warning: oklch(0.58 0.14 85);
+  --warning-foreground: #FFFFFF;
+  --info: oklch(0.52 0.14 235);
+  --info-foreground: #FFFFFF;
+}
+
+/* ============================================================
+   DARK — vibrant amber (valores originales, sin cambios)
+   ============================================================ */
+.dark {
   /* Vibrant amber high-contrast: near-black foundation + luminous gold */
   --background: #050505;
   --foreground: #F5F5F5;
@@ -113,8 +185,16 @@
 
   /* Brand gradient + glow */
   --gradient-brand: linear-gradient(100deg, #D4A017, #F0D080);
+  --gradient-brand-text: linear-gradient(100deg, #D4A017 0%, #F0D080 35%, #D4A017 70%);
+  --gradient-border-mid: rgba(240, 208, 128, 0.15);
   --glow-gold: 0 0 0 1px rgba(212, 160, 23, 0.20), 0 12px 48px -12px rgba(212, 160, 23, 0.40);
   --glow-gold-soft: 0 18px 70px -20px rgba(212, 160, 23, 0.32);
+
+  /* Efectos dependientes del tema */
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --noise-opacity: 0.03;
+  --shine-sweep: rgba(255, 255, 255, 0.35);
+  --glass-opacity: 62%;
 
   /* Semantic status tokens (rebrand-safe) */
   --success: oklch(0.72 0.17 150);
@@ -124,6 +204,7 @@
   --info: oklch(0.70 0.13 235);
   --info-foreground: oklch(0.14 0 0);
 }
+
 
 @layer base {
   * {
@@ -166,13 +247,13 @@ body::before {
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.03;
+  opacity: var(--noise-opacity);
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 /* Gold gradient text with slow shimmer */
 .text-gradient-brand {
-  background: linear-gradient(100deg, #D4A017 0%, #F0D080 35%, #D4A017 70%);
+  background: var(--gradient-brand-text);
   background-size: 220% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -190,7 +271,7 @@ body::before {
 }
 
 @utility glass {
-  background: color-mix(in oklab, var(--card) 62%, transparent);
+  background: color-mix(in oklab, var(--card) var(--glass-opacity), transparent);
   backdrop-filter: blur(14px);
   border: 1px solid var(--border);
 }
@@ -209,7 +290,7 @@ body::before {
     position: absolute;
     inset: 0;
     transform: translateX(-120%);
-    background: linear-gradient(100deg, transparent 20%, rgba(255, 255, 255, 0.35) 50%, transparent 80%);
+    background: linear-gradient(100deg, transparent 20%, var(--shine-sweep) 50%, transparent 80%);
     transition: transform 0.7s ease-out;
   }
   &:hover::after {
@@ -233,10 +314,11 @@ body::before {
 /* Linear-style faint grid */
 .grid-lines {
   background-image:
-    linear-gradient(to right, rgba(255, 255, 255, 0.035) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 64px 64px;
   mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse 90% 70% at 50% 0%, black, transparent 75%);
 }
 
 /* Animated underline for footer/nav links */
@@ -265,7 +347,7 @@ body::before {
   border: 1px solid transparent;
   background:
     linear-gradient(var(--card), var(--card)) padding-box,
-    linear-gradient(140deg, #D4A017, rgba(240, 208, 128, 0.15) 55%, #D4A017) border-box;
+    linear-gradient(140deg, var(--primary), var(--gradient-border-mid) 55%, var(--primary)) border-box;
 }
 
 /* Reveal-on-scroll: visible by default, JS opts in */
