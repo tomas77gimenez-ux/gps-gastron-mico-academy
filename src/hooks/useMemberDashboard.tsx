@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
+import { useI18n } from "@/lib/i18n";
+import type { Lang } from "@/lib/i18n";
 
 /* ------------------------------------------------------------------ */
 /* DRE — indicadores del mes                                           */
@@ -17,10 +19,12 @@ export interface DreMonthMetrics {
   breakEven: number;
 }
 
-export function monthLabel(month: string, withYear = false): string {
+const LOCALE_MAP: Record<Lang, string> = { es: "es-AR", en: "en-US", pt: "pt-BR" };
+
+export function monthLabel(month: string, withYear = false, lang: Lang = "es"): string {
   const [y, m] = month.split("-").map(Number);
   const d = new Date(y, (m ?? 1) - 1, 1);
-  return d.toLocaleDateString("es-AR", withYear ? { month: "long", year: "numeric" } : { month: "long" });
+  return d.toLocaleDateString(LOCALE_MAP[lang], withYear ? { month: "long", year: "numeric" } : { month: "long" });
 }
 
 interface DreState {
@@ -30,6 +34,7 @@ interface DreState {
 }
 
 export function useDreMetrics(): DreState {
+  const { lang } = useI18n();
   const { isReady, user } = useAuthSession();
   const [state, setState] = useState<DreState>({ loading: true, months: [] });
 
@@ -76,8 +81,8 @@ export function useDreMetrics(): DreState {
         const contributionRatio = 1 - cmvPct / 100;
         return {
           month: r.month,
-          label: monthLabel(r.month),
-          labelLong: monthLabel(r.month, true),
+          label: monthLabel(r.month, false, lang),
+          labelLong: monthLabel(r.month, true, lang),
           sales,
           cmvPct,
           personalPct: sales > 0 ? (personal / sales) * 100 : 0,
@@ -93,7 +98,7 @@ export function useDreMetrics(): DreState {
     return () => {
       cancelled = true;
     };
-  }, [isReady, user?.id]);
+  }, [isReady, user?.id, lang]);
 
   return state;
 }
@@ -225,12 +230,9 @@ export interface ToolStatusRow {
   detail: string;
 }
 
-export const TOOL_STATUS_LABEL: Record<ToolStatusKind, string> = {
-  ok: "Al día",
-  pending: "Falta cargar",
-  late: "Atrasado",
-  unused: "Sin usar",
-};
+export function toolStatusLabel(status: ToolStatusKind, t: (key: string) => string): string {
+  return t(`dash.status.${status}`);
+}
 
 function currentMonthKey(offset = 0): string {
   const now = new Date();
@@ -244,6 +246,7 @@ function daysSince(iso: string): number {
 
 export function useToolsStatus() {
   const { isReady, user } = useAuthSession();
+  const { t, lang } = useI18n();
   const [rows, setRows] = useState<ToolStatusRow[] | null>(null);
 
   const load = useCallback(async (userId: string) => {
@@ -259,77 +262,82 @@ export function useToolsStatus() {
     const out: ToolStatusRow[] = [];
 
     // DRE mensual — dre_months
+    const dreName = t("dash.tool.dre");
     const lastDre = dre.data?.[0]?.month ?? null;
     if (!lastDre) {
-      out.push({ key: "dre", name: "DRE mensual", to: "/herramientas/dre-mensual", status: "unused", detail: "Todavía no cargaste ningún mes" });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "unused", detail: t("dash.dre.empty") });
     } else if (lastDre === currentMonthKey(0) || lastDre === currentMonthKey(1)) {
-      out.push({ key: "dre", name: "DRE mensual", to: "/herramientas/dre-mensual", status: "ok", detail: `Último mes cargado: ${monthLabel(lastDre, true)}` });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "ok", detail: t("dash.dre.ok").replace("{month}", monthLabel(lastDre, true, lang)) });
     } else {
-      out.push({ key: "dre", name: "DRE mensual", to: "/herramientas/dre-mensual", status: "late", detail: `El último mes cargado es ${monthLabel(lastDre, true)}` });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "late", detail: t("dash.dre.late").replace("{month}", monthLabel(lastDre, true, lang)) });
     }
 
     // Monitor de CMV — cmv_weeks
+    const cmvName = t("dash.tool.cmv");
     const cmvRows = cmv.data ?? [];
     if (cmvRows.length === 0) {
-      out.push({ key: "cmv", name: "Monitor de CMV", to: "/herramientas/monitor-cmv", status: "unused", detail: "Todavía no cargaste ninguna semana" });
+      out.push({ key: "cmv", name: cmvName, to: "/herramientas/monitor-cmv", status: "unused", detail: t("dash.cmv.empty") });
     } else {
       const lastMonth = cmvRows[0].month;
       const weeks = new Set(cmvRows.filter((r) => r.month === lastMonth).map((r) => r.week));
       const missing = [1, 2, 3, 4].filter((w) => !weeks.has(w));
       if (missing.length === 0) {
-        out.push({ key: "cmv", name: "Monitor de CMV", to: "/herramientas/monitor-cmv", status: "ok", detail: `Las 4 semanas de ${monthLabel(lastMonth)} están cargadas` });
+        out.push({ key: "cmv", name: cmvName, to: "/herramientas/monitor-cmv", status: "ok", detail: t("dash.cmv.ok").replace("{month}", monthLabel(lastMonth, false, lang)) });
       } else {
         out.push({
           key: "cmv",
-          name: "Monitor de CMV",
+          name: cmvName,
           to: "/herramientas/monitor-cmv",
           status: "pending",
-          detail: `No cargaste la semana ${missing.join(", ")} de ${monthLabel(lastMonth)}`,
+          detail: t("dash.cmv.pending").replace("{weeks}", missing.join(", ")).replace("{month}", monthLabel(lastMonth, false, lang)),
         });
       }
     }
 
     // Control de caja — cash_sessions
+    const cajaName = t("dash.tool.caja");
     const lastCash = cash.data?.[0] ?? null;
     if (!lastCash) {
-      out.push({ key: "caja", name: "Control de caja", to: "/herramientas/control-caja", status: "unused", detail: "Todavía no abriste ninguna caja" });
+      out.push({ key: "caja", name: cajaName, to: "/herramientas/control-caja", status: "unused", detail: t("dash.caja.empty") });
     } else {
       const d = daysSince(lastCash.session_date);
       if (lastCash.status === "open") {
-        out.push({ key: "caja", name: "Control de caja", to: "/herramientas/control-caja", status: "pending", detail: "Tenés una caja abierta sin cerrar" });
+        out.push({ key: "caja", name: cajaName, to: "/herramientas/control-caja", status: "pending", detail: t("dash.caja.pending") });
       } else if (d <= 1) {
-        out.push({ key: "caja", name: "Control de caja", to: "/herramientas/control-caja", status: "ok", detail: "Caja cerrada al día" });
+        out.push({ key: "caja", name: cajaName, to: "/herramientas/control-caja", status: "ok", detail: t("dash.caja.ok") });
       } else {
-        out.push({ key: "caja", name: "Control de caja", to: "/herramientas/control-caja", status: "late", detail: `Sin movimientos hace ${d} días` });
+        out.push({ key: "caja", name: cajaName, to: "/herramientas/control-caja", status: "late", detail: t("dash.caja.late").replace("{d}", String(d)) });
       }
     }
 
     // Punto de equilibrio — breakeven_inputs
+    const beName = t("dash.tool.be");
     const beRow = be.data ?? null;
     if (!beRow) {
-      out.push({ key: "be", name: "Punto de equilibrio", to: "/herramientas/punto-equilibrio", status: "unused", detail: "Todavía no calculaste tu punto de equilibrio" });
+      out.push({ key: "be", name: beName, to: "/herramientas/punto-equilibrio", status: "unused", detail: t("dash.be.empty") });
     } else {
       const d = daysSince(beRow.updated_at);
       out.push(
         d > 90
-          ? { key: "be", name: "Punto de equilibrio", to: "/herramientas/punto-equilibrio", status: "pending", detail: `Sin actualizar hace ${d} días` }
-          : { key: "be", name: "Punto de equilibrio", to: "/herramientas/punto-equilibrio", status: "ok", detail: "Cálculo actualizado" },
+          ? { key: "be", name: beName, to: "/herramientas/punto-equilibrio", status: "pending", detail: t("dash.be.pending").replace("{d}", String(d)) }
+          : { key: "be", name: beName, to: "/herramientas/punto-equilibrio", status: "ok", detail: t("dash.be.ok") },
       );
     }
 
     // Fichas técnicas — dishes / ingredients
+    const fichasName = t("dash.tool.fichas");
     const hasDish = (dishes.data ?? []).length > 0;
     const hasIng = (ingredients.data ?? []).length > 0;
     if (!hasDish && !hasIng) {
-      out.push({ key: "fichas", name: "Fichas técnicas", to: "/herramientas/fichas-tecnicas", status: "unused", detail: "Todavía no cargaste ingredientes ni platos" });
+      out.push({ key: "fichas", name: fichasName, to: "/herramientas/fichas-tecnicas", status: "unused", detail: t("dash.fichas.empty") });
     } else if (!hasDish) {
-      out.push({ key: "fichas", name: "Fichas técnicas", to: "/herramientas/fichas-tecnicas", status: "pending", detail: "Cargaste ingredientes pero ningún plato" });
+      out.push({ key: "fichas", name: fichasName, to: "/herramientas/fichas-tecnicas", status: "pending", detail: t("dash.fichas.pending") });
     } else {
-      out.push({ key: "fichas", name: "Fichas técnicas", to: "/herramientas/fichas-tecnicas", status: "ok", detail: "Ingredientes y platos cargados" });
+      out.push({ key: "fichas", name: fichasName, to: "/herramientas/fichas-tecnicas", status: "ok", detail: t("dash.fichas.ok") });
     }
 
     return out;
-  }, []);
+  }, [t, lang]);
 
   useEffect(() => {
     if (!isReady) return;
