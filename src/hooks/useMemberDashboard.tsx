@@ -9,6 +9,14 @@ import type { Lang } from "@/lib/i18n";
 /* DRE — indicadores del mes                                           */
 /* ------------------------------------------------------------------ */
 
+export type DataQualityId = "noExpenses" | "noPersonal" | "noFijos" | "lowCmv" | "highNet";
+
+export interface DataQualitySignal {
+  id: DataQualityId;
+  /** Valor asociado, redondeado (porcentaje) cuando aplica. */
+  value?: number;
+}
+
 export interface DreMonthMetrics {
   month: string; // "2026-05"
   label: string; // "mayo"
@@ -18,7 +26,10 @@ export interface DreMonthMetrics {
   personalPct: number;
   netPct: number;
   breakEven: number;
+  /** Señales de carga incompleta, de más grave a menos. */
+  signals: DataQualitySignal[];
 }
+
 
 const LOCALE_MAP: Record<Lang, string> = { es: "es-AR", en: "en-US", pt: "pt-BR" };
 
