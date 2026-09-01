@@ -66,7 +66,7 @@ function DashboardPage() {
               <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">Tu tablero</p>
               <h1 className="mt-2 max-w-3xl font-display text-3xl font-bold leading-tight sm:text-4xl">
                 En {selected.label} te quedó{" "}
-                <span className="text-primary">{selected.netPct.toFixed(1).replace(".", ",")}%</span> de ganancia limpia
+                <span className="text-primary-text">{selected.netPct.toFixed(1).replace(".", ",")}%</span> de ganancia limpia
               </h1>
               <p className="mt-3 text-sm text-muted-foreground">
                 Vendiste {money(selected.sales)} en el mes.{" "}
@@ -150,7 +150,7 @@ function ResumeBlock() {
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <PlayCircle className="h-4 w-4 text-primary" strokeWidth={1.5} /> Donde quedaste
+        <PlayCircle className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Donde quedaste
       </h2>
       {resume ? (
         <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-center">
@@ -218,7 +218,7 @@ function RouteBlock() {
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <RouteIcon className="h-4 w-4 text-primary" strokeWidth={1.5} /> Tu ruta
+        <RouteIcon className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Tu ruta
       </h2>
       <div className="mt-4 flex gap-1.5 border-t border-border pt-4">
         {route.map((c) => (
@@ -249,7 +249,7 @@ function RouteBlock() {
         <Link
           to="/cursos/$id"
           params={{ id: current.id }}
-          className="inline-flex shrink-0 items-center justify-center rounded-xl border border-border-strong px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+          className="inline-flex shrink-0 items-center justify-center rounded-xl border border-border-strong px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary-text"
         >
           {cta(current)}
         </Link>
@@ -275,7 +275,7 @@ function ToolsBlock() {
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <Wrench className="h-4 w-4 text-primary" strokeWidth={1.5} /> Tus herramientas
+        <Wrench className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Tus herramientas
       </h2>
       <div className="mt-4 border-t border-border">
         {rows.map((r) => (
@@ -291,7 +291,7 @@ function ToolsBlock() {
             </div>
             <Link
               to={r.to}
-              className="inline-flex shrink-0 items-center justify-center rounded-xl border border-border-strong px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary"
+              className="inline-flex shrink-0 items-center justify-center rounded-xl border border-border-strong px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary-text"
             >
               Abrir
             </Link>
@@ -312,7 +312,7 @@ function LiveColumn() {
   if (!pro.hasPro) {
     return (
       <section className="rounded-2xl border border-primary/30 bg-primary/[0.06] p-6">
-        <span className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+        <span className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary-text">
           <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> Próximo en vivo
         </span>
         <h2 className="mt-3 font-display text-xl font-bold">Las clases en vivo son de Academy Pro</h2>

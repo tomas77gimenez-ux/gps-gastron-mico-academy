@@ -134,7 +134,7 @@ export function BunnySync() {
     <div className="rounded-xl border border-border bg-card p-4 space-y-4">
       <div>
         <h3 className="text-sm font-semibold flex items-center gap-1.5 mb-1">
-          <Video className="w-4 h-4 text-primary" /> Sincronización con Bunny Stream
+          <Video className="w-4 h-4 text-primary-text" /> Sincronización con Bunny Stream
         </h3>
         <p className="text-xs text-muted-foreground">
           Busca los videos de la biblioteca y los asocia automáticamente a cada lección por nombre de archivo.
@@ -143,7 +143,7 @@ export function BunnySync() {
 
       <div>
         <label className="block text-xs font-medium mb-1 flex items-center gap-1.5">
-          <Key className="w-3.5 h-3.5 text-primary" /> Bunny API Key
+          <Key className="w-3.5 h-3.5 text-primary-text" /> Bunny API Key
         </label>
         <div className="flex items-center gap-2">
           <input
@@ -166,7 +166,7 @@ export function BunnySync() {
 
       <div>
         <label className="block text-xs font-medium mb-1 flex items-center gap-1.5">
-          <Key className="w-3.5 h-3.5 text-primary" /> Bunny Token Auth Key
+          <Key className="w-3.5 h-3.5 text-primary-text" /> Bunny Token Auth Key
           {hasTokenKey && (
             <span className="text-[10px] font-semibold text-green-400 border border-green-400/40 rounded px-1.5 py-0.5">
               Activa · videos firmados
@@ -216,7 +216,7 @@ export function BunnySync() {
                   <Check className="w-3.5 h-3.5 text-green-400 shrink-0 mt-0.5" />
                   <span className="flex-1">
                     <span className="font-medium">{m.lessonTitle}</span>
-                    {m.slot === 2 && <span className="text-primary"> (video 2)</span>}
+                    {m.slot === 2 && <span className="text-primary-text"> (video 2)</span>}
                     <span className="text-muted-foreground"> ← {m.videoTitle}</span>
                   </span>
                 </div>

@@ -325,7 +325,7 @@ export function RecipeTool() {
                       <td className="px-4 py-3 text-muted-foreground">{i.unit}</td>
                       <td className="px-4 py-3 text-right">{money2(Number(i.purchase_price))}</td>
                       <td className="px-4 py-3 text-right text-muted-foreground">{pct(Number(i.yield_factor_pct), 0)}</td>
-                      <td className="px-4 py-3 text-right font-semibold text-primary">
+                      <td className="px-4 py-3 text-right font-semibold text-primary-text">
                         {money2(realCost(Number(i.purchase_price), Number(i.yield_factor_pct)))}
                         <span className="text-[10px] text-muted-foreground"> /{i.unit}</span>
                       </td>
@@ -341,7 +341,7 @@ export function RecipeTool() {
                                 yield: String(i.yield_factor_pct),
                               })
                             }
-                            className="p-1.5 rounded hover:bg-primary/10 text-primary transition-colors"
+                            className="p-1.5 rounded hover:bg-primary/10 text-primary-text transition-colors"
                             aria-label="Editar"
                           >
                             <Pencil className="w-3.5 h-3.5" />
@@ -375,7 +375,7 @@ export function RecipeTool() {
             <ToolCard>
               <div className="flex items-center justify-between mb-4">
                 <ToolSectionTitle icon={ClipboardList}>{dishId ? "Editar ficha" : "Nueva ficha"}</ToolSectionTitle>
-                <button onClick={newDish} className="text-xs text-primary hover:underline">Nuevo plato</button>
+                <button onClick={newDish} className="text-xs text-primary-text hover:underline">Nuevo plato</button>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="sm:col-span-3">
@@ -486,7 +486,7 @@ export function RecipeTool() {
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {p > 0 && <Pill tone={ok ? "success" : "danger"}>{ok ? "Plato rentable" : "CMV alto"}</Pill>}
-                        <button onClick={() => editDish(d)} className="p-1.5 rounded hover:bg-primary/10 text-primary transition-colors" aria-label="Editar ficha">
+                        <button onClick={() => editDish(d)} className="p-1.5 rounded hover:bg-primary/10 text-primary-text transition-colors" aria-label="Editar ficha">
                           <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button onClick={() => deleteDish(d.id)} className="p-1.5 rounded hover:bg-destructive/10 text-destructive transition-colors" aria-label="Eliminar ficha">

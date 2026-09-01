@@ -27,7 +27,7 @@ function StatCard({ icon: Icon, label, value, hint, accent }: {
   return (
     <div className="rounded-xl border border-border bg-card p-5">
       <div className="flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground mb-2">
-        <Icon className={`w-4 h-4 ${accent ?? "text-primary"}`} /> {label}
+        <Icon className={`w-4 h-4 ${accent ?? "text-primary-text"}`} /> {label}
       </div>
       <div className="text-2xl font-bold font-display">{value}</div>
       {hint && <div className="text-xs text-muted-foreground mt-1">{hint}</div>}
@@ -125,7 +125,7 @@ export function MetricsPanel() {
     <div className="space-y-6">
       <div>
         <h2 className="text-xl font-bold font-display flex items-center gap-2">
-          <TrendingUp className="w-5 h-5 text-primary" /> Métricas del negocio
+          <TrendingUp className="w-5 h-5 text-primary-text" /> Métricas del negocio
         </h2>
         <p className="text-xs text-muted-foreground mt-1">
           Ingresos estimados en función de los precios de lista. Excluye accesos manuales.

@@ -210,7 +210,7 @@ function TiendaPage() {
       <PaymentTestModeBanner />
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <div className="mb-10 rounded-2xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-8 sm:p-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary-text text-xs font-semibold mb-4">
             <ShoppingCart className="w-3.5 h-3.5" /> TIENDA · 5 ÁREAS
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display leading-tight">{t("tienda.titulo")}</h1>
@@ -241,7 +241,7 @@ function TiendaPage() {
                       <p className="text-muted-foreground max-w-2xl mb-4">
                         {lang === "en" ? featured.descEn : featured.description}
                       </p>
-                      <p className="text-sm font-medium text-primary">
+                      <p className="text-sm font-medium text-primary-text">
                         {lang === "en" ? featured.featuredReasonEn : featured.featuredReason}
                       </p>
                     </div>
@@ -273,9 +273,9 @@ function TiendaPage() {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <product.icon className="w-5 h-5 text-primary" />
+                        <product.icon className="w-5 h-5 text-primary-text" />
                       </div>
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-primary-text">
                         {product.area}
                       </span>
                     </div>
@@ -299,7 +299,7 @@ function TiendaPage() {
                       {product.priceId ? (
                         <div className="flex flex-col">
                           <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">{t("tienda.desde")}</span>
-                          <span className="text-xl font-bold text-primary leading-tight">{product.priceLabel}</span>
+                          <span className="text-xl font-bold text-primary-text leading-tight">{product.priceLabel}</span>
                         </div>
                       ) : (
                         <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground leading-tight">
@@ -341,7 +341,7 @@ function TiendaPage() {
         {gds.length > 0 && (
           <section className="mt-14">
             <div className="mb-6">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary text-xs font-semibold mb-3">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/15 text-primary-text text-xs font-semibold mb-3">
                 <ClipboardCheck className="w-3.5 h-3.5" /> {t("gd.tituloLinea")}
               </div>
               <h2 className="text-2xl sm:text-3xl font-bold font-display">{t("gd.tituloLinea")}</h2>
@@ -360,7 +360,7 @@ function TiendaPage() {
                   >
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <ClipboardCheck className="w-5 h-5 text-primary" />
+                        <ClipboardCheck className="w-5 h-5 text-primary-text" />
                       </div>
                       {owned && (
                         <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success text-success-foreground text-[10px] font-bold uppercase tracking-wider">
@@ -375,7 +375,7 @@ function TiendaPage() {
                         <span className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
                           {t("gd.compraUnica")}
                         </span>
-                        <span className="text-xl font-bold text-primary leading-tight">
+                        <span className="text-xl font-bold text-primary-text leading-tight">
                           {formatGdPrice(gd.price_cents)}
                         </span>
                       </div>

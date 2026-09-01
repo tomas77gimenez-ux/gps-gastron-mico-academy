@@ -26,7 +26,7 @@ export function CourseCard({ course }: CourseCardProps) {
         <div className="relative aspect-video rounded-xl overflow-hidden bg-secondary mb-3 border border-border/50">
           {/* Thumbnail placeholder */}
           <div className="absolute inset-0 bg-gradient-to-br from-card to-secondary flex items-center justify-center">
-            <BookOpen className="w-10 h-10 text-primary/30" />
+            <BookOpen className="w-10 h-10 text-primary-text/30" />
           </div>
           
           {/* Hover overlay */}
@@ -47,7 +47,7 @@ export function CourseCard({ course }: CourseCardProps) {
           )}
         </div>
 
-        <h3 className="font-semibold text-sm text-foreground group-hover:text-primary transition-colors line-clamp-2 mb-1">
+        <h3 className="font-semibold text-sm text-foreground group-hover:text-primary-text transition-colors line-clamp-2 mb-1">
           {course.title}
         </h3>
         <p className="text-xs text-muted-foreground">

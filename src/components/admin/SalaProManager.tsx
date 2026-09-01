@@ -27,7 +27,7 @@ export function SalaProManager() {
   return (
     <div className="space-y-6">
       <div className="rounded-xl border border-border bg-card p-6">
-        <div className="mb-1 inline-flex items-center gap-2 text-primary">
+        <div className="mb-1 inline-flex items-center gap-2 text-primary-text">
           <Crown className="h-4 w-4" strokeWidth={1.5} />
           <h2 className="font-display text-lg font-semibold text-foreground">Sala Pro</h2>
         </div>

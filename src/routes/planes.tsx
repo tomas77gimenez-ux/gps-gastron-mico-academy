@@ -261,7 +261,7 @@ function PlanesPage() {
               {t("home.plans.billingYearly")}
               <span
                 className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
-                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary"
+                  billing === "yearly" ? "bg-primary-foreground/20" : "bg-primary/20 text-primary-text"
                 }`}
               >
                 −15%
@@ -276,7 +276,7 @@ function PlanesPage() {
             animate={{ opacity: 1, y: 0 }}
             className="max-w-4xl mx-auto mb-8 rounded-xl border border-primary/30 bg-primary/5 p-4 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4"
           >
-            <Settings className="w-5 h-5 text-primary shrink-0" />
+            <Settings className="w-5 h-5 text-primary-text shrink-0" />
             <div className="flex-1 text-sm">
               <p className="font-semibold">{t("planes.gestionar")}</p>
               <p className="text-muted-foreground">{t("planes.gestionarDesc")}</p>
@@ -321,7 +321,7 @@ function PlanesPage() {
                 )}
 
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4">
-                  <plan.icon className="w-6 h-6 text-primary" />
+                  <plan.icon className="w-6 h-6 text-primary-text" />
                 </div>
 
                 <h2 className="text-2xl font-bold font-display mb-1">{pickLang(plan.name, lang)}</h2>
@@ -337,7 +337,7 @@ function PlanesPage() {
                       <span className="text-sm text-muted-foreground">
                         ${monthlyEquivalent}{t("home.plans.perMonth")} · {t("planes.equivalente")}
                       </span>
-                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary">
+                      <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full bg-primary/20 text-primary-text">
                         {t("planes.ahorra")} ${yearlySavings}{t("planes.alAno")}
                       </span>
                     </div>
@@ -347,7 +347,7 @@ function PlanesPage() {
                 <ul className="space-y-3 mb-8 flex-1">
                   {pickLang(plan.features, lang).map((feature: string) => (
                     <li key={feature} className="flex items-start gap-2 text-sm">
-                      <Check className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                      <Check className="w-4 h-4 text-primary-text mt-0.5 shrink-0" />
                       <span className="text-foreground">{feature}</span>
                     </li>
                   ))}
@@ -394,10 +394,10 @@ function PlanesPage() {
         {/* Trust row */}
         <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3 text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-2">
-            <Shield className="w-4 h-4 text-primary" /> {t("planes.garantia")}
+            <Shield className="w-4 h-4 text-primary-text" /> {t("planes.garantia")}
           </span>
           <span className="inline-flex items-center gap-2">
-            <CreditCard className="w-4 h-4 text-primary" /> {t("planes.pagoSeguro")}
+            <CreditCard className="w-4 h-4 text-primary-text" /> {t("planes.pagoSeguro")}
           </span>
           <span className="inline-flex items-center gap-1.5 font-semibold tracking-wide">
             <span className="px-2 py-0.5 rounded bg-foreground/5 border border-border">VISA</span>
@@ -411,15 +411,15 @@ function PlanesPage() {
           {lang === "es"
             ? "5 días de prueba gratis. Se renueva automáticamente; cancelás en un clic desde tu cuenta. Al suscribirte aceptás los "
             : "5-day free trial. Renews automatically; cancel in one click from your account. By subscribing you accept the "}
-          <Link to="/terminos" className="underline hover:text-primary">
+          <Link to="/terminos" className="underline hover:text-primary-text">
             {t("footer.terminos")}
           </Link>
           {", "}
-          <Link to="/privacidad" className="underline hover:text-primary">
+          <Link to="/privacidad" className="underline hover:text-primary-text">
             {t("footer.privacidad")}
           </Link>
           {lang === "es" ? " y la " : " and the "}
-          <Link to="/reembolsos" className="underline hover:text-primary">
+          <Link to="/reembolsos" className="underline hover:text-primary-text">
             {t("footer.reembolsos")}
           </Link>
           .
@@ -439,7 +439,7 @@ function PlanesPage() {
             <div className="grid grid-cols-4 bg-secondary/40 border-b border-border">
               <div className="px-4 py-4 text-sm font-semibold">{t("planes.feature")}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(membershipPlans[0].name, lang)}</div>
-              <div className="px-4 py-4 text-sm font-semibold text-center text-primary">{pickLang(membershipPlans[1].name, lang)}</div>
+              <div className="px-4 py-4 text-sm font-semibold text-center text-primary-text">{pickLang(membershipPlans[1].name, lang)}</div>
               <div className="px-4 py-4 text-sm font-semibold text-center">{pickLang(membershipPlans[2].name, lang)}</div>
             </div>
             {compareFeatures.map((row, idx) => (
@@ -450,21 +450,21 @@ function PlanesPage() {
                 <div className="px-4 py-3 text-sm">{t(row.key)}</div>
                 <div className="px-4 py-3 flex justify-center">
                   {row.basico ? (
-                    <Check className="w-5 h-5 text-primary" />
+                    <Check className="w-5 h-5 text-primary-text" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40" />
                   )}
                 </div>
                 <div className="px-4 py-3 flex justify-center">
                   {row.premium ? (
-                    <Check className="w-5 h-5 text-primary" />
+                    <Check className="w-5 h-5 text-primary-text" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40" />
                   )}
                 </div>
                 <div className="px-4 py-3 flex justify-center">
                   {row.elite ? (
-                    <Check className="w-5 h-5 text-primary" />
+                    <Check className="w-5 h-5 text-primary-text" />
                   ) : (
                     <X className="w-5 h-5 text-muted-foreground/40" />
                   )}

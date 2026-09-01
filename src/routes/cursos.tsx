@@ -123,7 +123,7 @@ function CursosPage() {
         <NovedadesBanner />
         {/* Mentoría hero — high-contrast left accent */}
         <div className="mb-12 border-l-4 border-primary pl-6">
-          <span className="text-primary font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.heroKicker")}</span>
+          <span className="text-primary-text font-bold uppercase tracking-[0.2em] text-xs">{t("cursos.heroKicker")}</span>
           <h1 className="text-4xl sm:text-5xl font-bold font-display text-foreground mt-2 leading-tight">
             <span className="text-gradient-brand">GPS Gastronómico</span>
           </h1>
@@ -145,7 +145,7 @@ function CursosPage() {
         {showCtaBanner && (
           <div className="mb-6 flex items-center justify-between gap-4 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 to-primary/5 px-5 py-4">
             <div className="flex items-center gap-3">
-              <Sparkles className="w-5 h-5 text-primary shrink-0" />
+              <Sparkles className="w-5 h-5 text-primary-text shrink-0" />
               <span className="text-sm font-medium">{t("cursos.suscribete")}</span>
             </div>
             <Link
@@ -225,21 +225,21 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           <img src={course.thumbnail_url} alt={title} className="w-full h-full object-cover" loading="lazy" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-card to-secondary">
-            <BookOpen className="w-12 h-12 text-primary/30" />
+            <BookOpen className="w-12 h-12 text-primary-text/30" />
           </div>
         )}
 
         <div className="absolute inset-0 bg-gradient-to-t from-background/55 to-transparent" />
 
         {course.methodology === "gps" && course.module_number && (
-          <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary px-2 py-1 rounded">
+          <span className="absolute top-2 right-2 text-[10px] font-bold bg-background/80 backdrop-blur text-primary-text px-2 py-1 rounded">
             {t("cursos.moduloBadge")} {course.module_number}
           </span>
         )}
 
         {locked ? (
           <div className="absolute inset-0 bg-background/70 backdrop-blur-[2px] flex flex-col items-center justify-center gap-2">
-            <Lock className="w-8 h-8 text-primary" />
+            <Lock className="w-8 h-8 text-primary-text" />
             <span className="text-xs font-medium text-foreground/80">
               {needsUpgrade ? t("cursos.requierePremium") : t("cursos.bloqueado")}
             </span>
@@ -271,12 +271,12 @@ function CourseGridCard({ course, userPlan }: { course: CourseRow; userPlan: Pla
           {locked ? (
             <span className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest">{t("cursos.bloqueado")}</span>
           ) : requiredPlan === "premium" ? (
-            <span className="bg-primary/10 text-primary text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">{locPlan("premium", lang)}</span>
+            <span className="bg-primary/10 text-primary-text text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">{locPlan("premium", lang)}</span>
           ) : (
             <span className="bg-blue-500/10 text-blue-400 text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">{locPlan("basico", lang)}</span>
           )}
         </div>
-        <h3 className="text-foreground text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+        <h3 className="text-foreground text-lg font-bold mb-2 line-clamp-2 group-hover:text-primary-text transition-colors">
           {title}
         </h3>
         {description && (

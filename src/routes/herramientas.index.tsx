@@ -31,7 +31,7 @@ function ToolsIndexPage() {
     <div className="min-h-screen pt-20 pb-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary-text text-sm font-medium mb-4">
             <Wrench className="w-4 h-4" /> Caja de Herramientas
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display">

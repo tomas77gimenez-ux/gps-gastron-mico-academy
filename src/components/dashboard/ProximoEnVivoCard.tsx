@@ -45,14 +45,14 @@ export function ProximoEnVivoCard() {
         <div className="rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/10 via-card to-card p-6 sm:p-8">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+              <span className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary-text">
                 <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> Próximo en vivo
               </span>
               <h2 className="font-display text-2xl font-bold text-foreground">{event.title}</h2>
               {event.description && (
                 <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{event.description}</p>
               )}
-              <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary">
+              <p className="mt-3 inline-flex items-center gap-2 text-sm font-medium text-primary-text">
                 <CalendarClock className="h-4 w-4" strokeWidth={1.5} />
                 {formatLiveDate(event.starts_at)} <span className="text-muted-foreground">(hora ET)</span>
               </p>

@@ -185,7 +185,7 @@ export function BreakEvenTool() {
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="font-medium">Aumento de ticket medio</span>
-                <span className="text-primary font-semibold">+{ticketUp}%</span>
+                <span className="text-primary-text font-semibold">+{ticketUp}%</span>
               </div>
               <input
                 type="range"
@@ -202,7 +202,7 @@ export function BreakEvenTool() {
             <div>
               <div className="flex items-center justify-between text-sm mb-2">
                 <span className="font-medium">Reducción de costo variable</span>
-                <span className="text-primary font-semibold">−{cvDown} pts</span>
+                <span className="text-primary-text font-semibold">−{cvDown} pts</span>
               </div>
               <input
                 type="range"

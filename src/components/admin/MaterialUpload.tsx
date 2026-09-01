@@ -156,7 +156,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
     <div>
       <div className="flex items-center justify-between mb-3">
         <h4 className="text-sm font-semibold flex items-center gap-1.5">
-          <FileText className="w-4 h-4 text-primary" />
+          <FileText className="w-4 h-4 text-primary-text" />
           {lessonId ? "Materiales de apoyo" : "Materiales del módulo"} ({materials.length})
         </h4>
         <div className="flex items-center gap-2">
@@ -198,7 +198,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
         {materials.map(mat => (
           <div key={mat.id} className="flex items-center gap-3 rounded-lg border border-border bg-card/50 p-3">
             {mat.file_url ? (
-              <FileText className="w-4 h-4 text-primary shrink-0" />
+              <FileText className="w-4 h-4 text-primary-text shrink-0" />
             ) : (
               <Clock className="w-4 h-4 text-yellow-400 shrink-0" />
             )}
@@ -207,7 +207,7 @@ export function MaterialUpload({ courseId, lessonId }: { courseId: string; lesso
               <p className="text-xs text-muted-foreground">
                 {mat.file_type.toUpperCase()} · {mat.file_url ? formatSize(mat.file_size) : "Archivo pendiente"}
                 {(mat.required_plan ?? "basico") === "premium" ? (
-                  <span className="ml-2 text-primary inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
+                  <span className="ml-2 text-primary-text inline-flex items-center gap-0.5"><Crown className="w-3 h-3" /> Premium</span>
                 ) : (
                   <span className="ml-2 text-blue-300 inline-flex items-center gap-0.5"><Star className="w-3 h-3" /> Básico</span>
                 )}

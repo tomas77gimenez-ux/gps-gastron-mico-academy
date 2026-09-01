@@ -176,7 +176,7 @@ export function DREQuestionnaire({
               i === currentStep
                 ? "bg-primary text-primary-foreground"
                 : i < currentStep
-                ? "bg-primary/20 text-primary"
+                ? "bg-primary/20 text-primary-text"
                 : "bg-secondary text-muted-foreground"
             }`}
           >
@@ -207,7 +207,7 @@ export function DREQuestionnaire({
                   </div>
                 </div>
                 {section.referenceRange && (
-                  <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-full">
+                  <span className="text-xs bg-primary/10 text-primary-text px-2 py-1 rounded-full">
                     {dreT("dre.ref", lang)} {section.referenceRange}
                   </span>
                 )}
@@ -236,7 +236,7 @@ export function DREQuestionnaire({
               {/* Add another button */}
               <button
                 onClick={() => addCustomField(section.id)}
-                className="mt-4 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border text-sm text-muted-foreground hover:text-primary hover:border-primary/40 transition-colors w-full justify-center"
+                className="mt-4 flex items-center gap-2 px-3 py-2 rounded-lg border border-dashed border-border text-sm text-muted-foreground hover:text-primary-text hover:border-primary/40 transition-colors w-full justify-center"
               >
                 <Plus className="w-4 h-4" /> {dreT("dre.otro", lang)}
               </button>

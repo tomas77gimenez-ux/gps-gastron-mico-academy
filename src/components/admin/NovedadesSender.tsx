@@ -54,7 +54,7 @@ export function NovedadesSender() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h3 className="font-display text-lg font-bold inline-flex items-center gap-2">
-            <Mail className="h-4 w-4 text-primary" /> Novedades por correo
+            <Mail className="h-4 w-4 text-primary-text" /> Novedades por correo
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">
             El envío automático corre todos los días a las 10:00 ET con el contenido de las últimas 24 h.
@@ -81,12 +81,12 @@ export function NovedadesSender() {
             <ul className="max-h-64 space-y-1.5 overflow-y-auto pr-1">
               {items.map((item) => (
                 <li key={item.id} className="flex items-center gap-2 rounded-lg border border-border bg-secondary/30 px-3 py-2 text-sm">
-                  <span className="text-[0.65rem] font-bold uppercase tracking-wider text-primary">
+                  <span className="text-[0.65rem] font-bold uppercase tracking-wider text-primary-text">
                     {KIND_LABEL_ES[item.kind]}
                   </span>
                   <span className="flex-1 truncate">{item.title}</span>
                   {item.pro && (
-                    <span className="inline-flex items-center gap-1 rounded bg-primary/15 px-1.5 py-0.5 text-[0.6rem] font-bold text-primary">
+                    <span className="inline-flex items-center gap-1 rounded bg-primary/15 px-1.5 py-0.5 text-[0.6rem] font-bold text-primary-text">
                       <Crown className="h-3 w-3" /> PRO
                     </span>
                   )}

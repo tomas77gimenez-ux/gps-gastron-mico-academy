@@ -158,7 +158,7 @@ export function DRERealtimeTracker() {
   if (!user) {
     return (
       <div className="max-w-md mx-auto text-center rounded-2xl border border-border bg-card p-8">
-        <Lock className="w-10 h-10 mx-auto text-primary mb-3" />
+        <Lock className="w-10 h-10 mx-auto text-primary-text mb-3" />
         <h3 className="font-semibold mb-2">Inicia sesión para usar Tiempo Real</h3>
         <p className="text-sm text-muted-foreground mb-4">
           Tus datos semanales se guardan de forma segura en tu cuenta.
@@ -174,7 +174,7 @@ export function DRERealtimeTracker() {
     return (
       <div className="max-w-3xl mx-auto">
         <div className="max-w-md mx-auto text-center rounded-2xl border border-primary/30 bg-primary/5 p-8">
-          <Calendar className="w-10 h-10 mx-auto text-primary mb-3" />
+          <Calendar className="w-10 h-10 mx-auto text-primary-text mb-3" />
           <h3 className="font-semibold mb-2">Comienza tu seguimiento mensual</h3>
           <p className="text-sm text-muted-foreground mb-5">
             Carga tus números semana a semana y mira cómo se acumulan en tiempo real durante el mes.
@@ -264,7 +264,7 @@ export function DRERealtimeTracker() {
     <div className="max-w-3xl mx-auto">
       <div className="rounded-2xl border border-primary/30 bg-primary/5 p-5 mb-6 flex items-center justify-between flex-wrap gap-3">
         <div>
-          <div className="text-xs uppercase tracking-wide text-primary font-semibold mb-1">Ciclo en curso</div>
+          <div className="text-xs uppercase tracking-wide text-primary-text font-semibold mb-1">Ciclo en curso</div>
           <div className="font-semibold capitalize">{cycle.label}</div>
           <div className="text-xs text-muted-foreground mt-1">
             {completedWeeks} de 4 semanas cargadas
@@ -290,7 +290,7 @@ export function DRERealtimeTracker() {
 
       {completedWeeks < 4 ? (
         <div className="rounded-xl border border-primary/30 bg-primary/5 p-3 mb-6 flex items-center gap-3 text-sm">
-          <Calendar className="w-4 h-4 text-primary shrink-0" />
+          <Calendar className="w-4 h-4 text-primary-text shrink-0" />
           <span className="text-foreground">
             {completedWeeks === 0
               ? "Aún no cargas ninguna semana. Comienza por la Semana 1 para ver tu acumulado."
@@ -299,7 +299,7 @@ export function DRERealtimeTracker() {
         </div>
       ) : (
         <div className="rounded-xl border border-primary/40 bg-primary/10 p-3 mb-6 flex items-center gap-3 text-sm">
-          <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+          <CheckCircle2 className="w-4 h-4 text-primary-text shrink-0" />
           <span className="text-foreground font-medium">
             ¡Mes completo! Ya puedes cerrar el ciclo y archivarlo en tu histórico.
           </span>
@@ -323,7 +323,7 @@ export function DRERealtimeTracker() {
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Semana {week}</span>
                 {filled ? (
-                  <CheckCircle2 className="w-4 h-4 text-primary" />
+                  <CheckCircle2 className="w-4 h-4 text-primary-text" />
                 ) : (
                   <Plus className="w-4 h-4 text-muted-foreground" />
                 )}
@@ -422,7 +422,7 @@ function HistoryList({
                 <Stat label="Facturación" value={facturacion} />
                 <Stat label="CMV" value={cmv} />
               </div>
-              <div className="text-xs text-primary mt-3 font-medium">Ver dashboard →</div>
+              <div className="text-xs text-primary-text mt-3 font-medium">Ver dashboard →</div>
             </button>
           );
         })}

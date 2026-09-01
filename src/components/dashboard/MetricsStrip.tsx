@@ -143,7 +143,7 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
 export function EmptyDreBlock() {
   return (
     <div className="border-y border-border px-5 py-10 text-center">
-      <FileSpreadsheet className="mx-auto h-6 w-6 text-primary" strokeWidth={1.5} />
+      <FileSpreadsheet className="mx-auto h-6 w-6 text-primary-text" strokeWidth={1.5} />
       <h2 className="mt-3 font-display text-xl font-semibold">Todavía no cargaste ningún mes</h2>
       <p className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
         Cargá tu primer mes en el DRE y acá vas a ver, en lenguaje llano, cuánta ganancia limpia te queda y qué palanca

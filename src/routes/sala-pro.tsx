@@ -43,7 +43,7 @@ function SalaProPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
-        <Loader2 className="h-7 w-7 animate-spin text-primary" />
+        <Loader2 className="h-7 w-7 animate-spin text-primary-text" />
       </div>
     );
   }
@@ -66,7 +66,7 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
     <div className="min-h-screen pt-24 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6">
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-4">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary-text text-xs font-medium mb-4">
             <Lock className="w-3.5 h-3.5" /> Exclusivo Academy Pro
           </div>
           <h1 className="text-3xl sm:text-4xl font-bold font-display mb-3">Sala Pro</h1>
@@ -78,7 +78,7 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
         <div className="grid sm:grid-cols-2 gap-4 mb-10">
           {perks.map((p) => (
             <div key={p.title} className="rounded-2xl border border-border bg-card p-5">
-              <p.icon className="w-5 h-5 text-primary mb-3" strokeWidth={1.6} />
+              <p.icon className="w-5 h-5 text-primary-text mb-3" strokeWidth={1.6} />
               <h2 className="font-semibold mb-1">{p.title}</h2>
               <p className="text-sm text-muted-foreground">{p.desc}</p>
             </div>
@@ -86,7 +86,7 @@ function ProTeaser({ isAuthenticated }: { isAuthenticated: boolean }) {
         </div>
 
         <div className="rounded-2xl border border-primary/30 bg-primary/5 p-6 text-center">
-          <Crown className="w-6 h-6 text-primary mx-auto mb-3" strokeWidth={1.6} />
+          <Crown className="w-6 h-6 text-primary-text mx-auto mb-3" strokeWidth={1.6} />
           <h2 className="text-xl font-semibold font-display mb-2">
             {isAuthenticated ? "Tu plan actual no incluye la Sala Pro" : "Ingresá con tu cuenta Academy Pro"}
           </h2>
@@ -146,7 +146,7 @@ function ProContent() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center pt-20">
-        <Loader2 className="h-7 w-7 animate-spin text-primary" />
+        <Loader2 className="h-7 w-7 animate-spin text-primary-text" />
       </div>
     );
   }
@@ -155,7 +155,7 @@ function ProContent() {
     <div className="min-h-screen pt-24 pb-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 space-y-12">
         <header>
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-xs font-medium mb-3">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary-text text-xs font-medium mb-3">
             <Crown className="w-3.5 h-3.5" /> Academy Pro
           </div>
           <h1 className="text-3xl font-bold font-display">Sala Pro</h1>
@@ -167,11 +167,11 @@ function ProContent() {
         {/* Reunión semanal */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <CalendarClock className="w-5 h-5 text-primary" /> Reunión semanal de implementación
+            <CalendarClock className="w-5 h-5 text-primary-text" /> Reunión semanal de implementación
           </h2>
           {session ? (
             <div className="rounded-2xl border border-primary/30 bg-card p-6">
-              <p className="text-xs uppercase tracking-wide text-primary mb-2">
+              <p className="text-xs uppercase tracking-wide text-primary-text mb-2">
                 {nextIsUpcoming ? "Próxima sesión" : "Última sesión"}
               </p>
               <h3 className="text-lg font-semibold mb-1">{session.title}</h3>
@@ -197,7 +197,7 @@ function ProContent() {
         {/* Grabaciones */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <PlayCircle className="w-5 h-5 text-primary" /> Grabaciones anteriores
+            <PlayCircle className="w-5 h-5 text-primary-text" /> Grabaciones anteriores
           </h2>
           {recordings.length === 0 ? (
             <EmptyBox text="Todavía no hay grabaciones publicadas." />
@@ -217,7 +217,7 @@ function ProContent() {
                           {new Date(`${rec.session_date}T12:00:00`).toLocaleDateString("es-AR", { day: "2-digit", month: "long", year: "numeric" })}
                         </span>
                       </span>
-                      <PlayCircle className={`w-5 h-5 shrink-0 ${open ? "text-primary" : "text-muted-foreground"}`} />
+                      <PlayCircle className={`w-5 h-5 shrink-0 ${open ? "text-primary-text" : "text-muted-foreground"}`} />
                     </button>
                     {open && (
                       <div className="p-4 pt-0 space-y-3">
@@ -242,14 +242,14 @@ function ProContent() {
         {/* Caso Real del Mes */}
         <section>
           <h2 className="text-xl font-semibold font-display mb-4 flex items-center gap-2">
-            <Sparkles className="w-5 h-5 text-primary" /> Caso Real del Mes
+            <Sparkles className="w-5 h-5 text-primary-text" /> Caso Real del Mes
           </h2>
           {!featured ? (
             <EmptyBox text="El primer caso llega este mes." />
           ) : (
             <div className="space-y-6">
               <article className="rounded-2xl border border-primary/30 bg-card p-6">
-                <p className="text-xs uppercase tracking-wide text-primary mb-2">{monthLabel(featured.month, featured.year)}</p>
+                <p className="text-xs uppercase tracking-wide text-primary-text mb-2">{monthLabel(featured.month, featured.year)}</p>
                 <h3 className="text-xl font-semibold font-display mb-2">{featured.title}</h3>
                 {featured.description && (
                   <p className="text-sm text-muted-foreground whitespace-pre-line mb-4">{featured.description}</p>
@@ -261,8 +261,8 @@ function ProContent() {
                         <p className="text-xs text-muted-foreground mb-1">{m.label}</p>
                         <p className="text-sm">
                           <span className="text-muted-foreground line-through">{m.before}</span>
-                          <span className="mx-2 text-primary">→</span>
-                          <span className="font-semibold text-primary">{m.after}</span>
+                          <span className="mx-2 text-primary-text">→</span>
+                          <span className="font-semibold text-primary-text">{m.after}</span>
                         </p>
                       </div>
                     ))}
@@ -291,7 +291,7 @@ function ProContent() {
                       hash={c.id}
                       className="rounded-2xl border border-border bg-card p-5 hover:border-primary/40 transition-colors"
                     >
-                      <p className="text-xs uppercase tracking-wide text-primary mb-1">{monthLabel(c.month, c.year)}</p>
+                      <p className="text-xs uppercase tracking-wide text-primary-text mb-1">{monthLabel(c.month, c.year)}</p>
                       <p className="font-medium mb-1">{c.title}</p>
                       {c.metrics[0] && (
                         <p className="text-xs text-muted-foreground">
