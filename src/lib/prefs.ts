@@ -8,6 +8,9 @@ export const THEME_COOKIE = "gps-theme";
 export const LANG_COOKIE = "gps-lang";
 
 export const DEFAULT_THEME: Theme = "dark";
+/** Tanda 2 enables the light palette. Until then every visitor stays dark,
+ *  so the OS preference is detected but not honoured yet. */
+export const LIGHT_THEME_ENABLED = false;
 export const DEFAULT_LANG: LangCode = "es";
 
 const ONE_YEAR = 60 * 60 * 24 * 365;
@@ -22,6 +25,7 @@ function readCookie(header: string | undefined, name: string): string | undefine
 }
 
 function normalizeTheme(value: string | undefined): Theme {
+  if (!LIGHT_THEME_ENABLED) return DEFAULT_THEME;
   return value === "light" || value === "dark" ? value : DEFAULT_THEME;
 }
 
@@ -65,4 +69,4 @@ export function applyThemeClass(theme: Theme) {
  * Runs before hydration. When there is no cookie yet, follows the OS preference
  * so the very first paint already matches what the user will end up seeing.
  */
-export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var m=document.cookie.match(/(?:^|; )${THEME_COOKIE}=([^;]*)/);var t=m?decodeURIComponent(m[1]):null;if(t!=="light"&&t!=="dark"){t=window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"${DEFAULT_THEME}";}var r=document.documentElement;r.classList.toggle("dark",t==="dark");r.style.colorScheme=t;}catch(e){}})();`;
+export const THEME_BOOTSTRAP_SCRIPT = `(function(){try{var k="${THEME_COOKIE}";var m=document.cookie.match(new RegExp("(?:^|; )"+k+"=([^;]*)"));var m2=m?decodeURIComponent(m[1]):null;var t=m2==="light"||m2==="dark"?m2:(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches?"light":"${DEFAULT_THEME}");if(!${LIGHT_THEME_ENABLED})t="${DEFAULT_THEME}";if(m2!==t){document.cookie=k+"="+t+"; path=/; max-age=${ONE_YEAR}; SameSite=Lax";}var r=document.documentElement;r.classList.toggle("dark",t==="dark");r.style.colorScheme=t;}catch(e){}})();`;

@@ -20,7 +20,7 @@ export function HeroBanner({ title, description, instructor, category }: HeroBan
       {/* Pattern background */}
       <div className="absolute inset-0 opacity-[0.07]">
         <div className="absolute inset-0" style={{
-          backgroundImage: `radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--primary) 40%, transparent) 1px, transparent 0)`,
+          backgroundImage: `radial-gradient(circle at 1px 1px, oklch(0.70 0.18 45 / 40%) 1px, transparent 0)`,
           backgroundSize: '48px 48px'
         }} />
       </div>

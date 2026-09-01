@@ -494,10 +494,16 @@ interface I18nContextType {
 
 const I18nContext = createContext<I18nContextType | null>(null);
 
-export function I18nProvider({ children }: { children: ReactNode }) {
-  // Read from the cookie on both sides of the render, so the server already
-  // emits the right language and there is no flash after hydration.
-  const [lang, setLang] = useState<Lang>(() => readPrefs().lang);
+export function I18nProvider({
+  children,
+  initialLang,
+}: {
+  children: ReactNode;
+  /** Comes from the root router context (cookie-backed), so the first render
+   *  is already in the right language — server and client alike. */
+  initialLang?: Lang;
+}) {
+  const [lang, setLang] = useState<Lang>(() => initialLang ?? readPrefs().lang);
 
   // One-time migration for users whose language was stored in localStorage.
   useEffect(() => {

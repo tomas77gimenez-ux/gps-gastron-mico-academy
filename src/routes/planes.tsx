@@ -305,7 +305,7 @@ function PlanesPage() {
                 transition={{ delay: i * 0.1 }}
                 className={`relative rounded-2xl border p-7 flex flex-col ${
                   plan.featured
-                    ? "border-primary bg-primary/5 shadow-[0_0_40px_color-mix(in_oklab,var(--primary)_14%,transparent)] md:scale-[1.04] md:z-10"
+                    ? "border-primary bg-primary/5 shadow-[0_0_40px_oklch(0.70_0.18_45/12%)] md:scale-[1.04] md:z-10"
                     : "border-border bg-card"
                 } ${isCurrent ? "ring-2 ring-primary" : ""}`}
               >
