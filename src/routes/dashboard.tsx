@@ -15,6 +15,8 @@ import { MetricsStrip, EmptyDreBlock } from "@/components/dashboard/MetricsStrip
 import { ProximoEnVivoCard } from "@/components/dashboard/ProximoEnVivoCard";
 import { NovedadesSection } from "@/components/dashboard/NovedadesSection";
 import { money } from "@/lib/tools-format";
+import { useI18n, tFor, type TranslationKey } from "@/lib/i18n";
+import { readPrefs } from "@/lib/prefs";
 
 export const Route = createFileRoute("/dashboard")({
   ssr: false,
@@ -23,20 +25,24 @@ export const Route = createFileRoute("/dashboard")({
     if (!data.user) throw redirect({ to: "/login" });
   },
   component: DashboardPage,
-  head: () => ({
+  head: () => {
+    const th = tFor(readPrefs().lang);
+    return {
     meta: [
-      { title: "Mi tablero — GPS Gastronômico" },
-      { name: "description", content: "Tu tablero de operación: resultado del mes, avance de la mentoría y estado de tus herramientas." },
-      { property: "og:title", content: "Mi tablero — GPS Gastronômico" },
-      { property: "og:description", content: "Resultado del mes, avance de la mentoría y estado de tus herramientas." },
+      { title: th("dash.head.title") },
+      { name: "description", content: th("dash.head.desc") },
+      { property: "og:title", content: th("dash.head.title") },
+      { property: "og:description", content: th("dash.head.ogDesc") },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "robots", content: "noindex,nofollow" },
     ],
-  }),
+    };
+  },
 });
 
 function DashboardPage() {
+  const { t } = useI18n();
   const { user } = useAuthSession();
   const dre = useDreMetrics();
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
@@ -62,31 +68,26 @@ function DashboardPage() {
         ) : selected ? (
           <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">Tu tablero</p>
+              <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">{t("dash.tuTablero")}</p>
               <h1 className="mt-2 max-w-3xl font-display text-3xl font-bold leading-tight sm:text-4xl">
-                En {selected.label} te quedó{" "}
-                <span className="text-primary-text">{selected.netPct.toFixed(1).replace(".", ",")}%</span> de ganancia limpia
+                {t("dash.headline")
+                  .replace("{month}", selected.label)
+                  .replace("{pct}", selected.netPct.toFixed(1).replace(".", ","))}
               </h1>
               <p className="mt-3 text-sm text-muted-foreground">
-                Vendiste {money(selected.sales)} en el mes.{" "}
-                {deltaNet === null ? (
-                  <>Es el primer mes que cargás, así que todavía no hay con qué comparar.</>
-                ) : Math.abs(deltaNet) < 0.05 ? (
-                  <>Quedaste igual que en {prev!.label}.</>
-                ) : deltaNet > 0 ? (
-                  <>
-                    Mejoraste {Math.abs(deltaNet).toFixed(1).replace(".", ",")} puntos contra {prev!.label}.
-                  </>
-                ) : (
-                  <>
-                    Bajaste {Math.abs(deltaNet).toFixed(1).replace(".", ",")} puntos contra {prev!.label}.
-                  </>
-                )}
+                {t("dash.vendisteMes").replace("{amount}", money(selected.sales))}{" "}
+                {deltaNet === null
+                  ? t("dash.compFirstMonth")
+                  : Math.abs(deltaNet) < 0.05
+                    ? t("dash.compEqual").replace("{month}", prev!.label)
+                    : (deltaNet > 0 ? t("dash.compUp") : t("dash.compDown"))
+                        .replace("{points}", Math.abs(deltaNet).toFixed(1).replace(".", ","))
+                        .replace("{month}", prev!.label)}
               </p>
             </div>
             {lastThree.length > 1 && (
               <label className="flex shrink-0 items-center gap-2 text-xs text-muted-foreground">
-                Mes
+                {t("dash.mesLabel")}
                 <select
                   value={selected.month}
                   onChange={(e) => setSelectedMonth(e.target.value)}
@@ -103,8 +104,8 @@ function DashboardPage() {
           </div>
         ) : (
           <div>
-            <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">Tu tablero</p>
-            <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">Empecemos por saber dónde estás</h1>
+            <p className="text-[0.7rem] font-semibold uppercase tracking-wider text-muted-foreground">{t("dash.tuTablero")}</p>
+            <h1 className="mt-2 font-display text-3xl font-bold sm:text-4xl">{t("dash.empezarTitulo")}</h1>
           </div>
         )}
       </header>
@@ -142,6 +143,7 @@ function DashboardPage() {
 /* ---------------- Donde quedaste ---------------- */
 
 function ResumeBlock() {
+  const { t } = useI18n();
   const { loading, resume } = useMemberProgress();
 
   if (loading) return <div className="h-32 animate-pulse rounded-xl bg-secondary/30" />;
@@ -149,7 +151,7 @@ function ResumeBlock() {
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <PlayCircle className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Donde quedaste
+        <PlayCircle className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> {t("dash.dondeQuedaste")}
       </h2>
       {resume ? (
         <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4 sm:flex-row sm:items-center">
@@ -166,8 +168,8 @@ function ResumeBlock() {
             <p className="text-xs uppercase tracking-wider text-muted-foreground">{resume.courseTitle}</p>
             <p className="mt-1 font-display text-base font-semibold">{resume.lessonTitle}</p>
             <p className="mt-1 text-sm text-muted-foreground">
-              {resume.minutesLeft !== null ? `Te quedan ${resume.minutesLeft} min de la clase · ` : ""}
-              {resume.modulePct}% del módulo completado
+              {resume.minutesLeft !== null ? t("dash.minRestantes").replace("{min}", String(resume.minutesLeft)) : ""}
+              {t("dash.moduloCompletado").replace("{pct}", String(resume.modulePct))}
             </p>
           </div>
           <Link
@@ -175,19 +177,19 @@ function ResumeBlock() {
             params={{ id: resume.courseId }}
             className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
           >
-            <Play className="h-4 w-4" strokeWidth={2} /> Seguir viendo
+            <Play className="h-4 w-4" strokeWidth={2} /> {t("dash.seguirViendo")}
           </Link>
         </div>
       ) : (
         <div className="mt-4 border-t border-border pt-4">
           <p className="text-sm text-muted-foreground">
-            Todavía no empezaste ninguna clase. Arrancá por el primer módulo de la mentoría.
+            {t("dash.sinEmpezar")}
           </p>
           <Link
             to="/cursos"
             className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
           >
-            Empezar el primer módulo
+            {t("dash.empezarPrimerModulo")}
           </Link>
         </div>
       )}
@@ -198,6 +200,7 @@ function ResumeBlock() {
 /* ---------------- Tu ruta ---------------- */
 
 function RouteBlock() {
+  const { t } = useI18n();
   const { loading, route } = useMemberProgress();
   const [active, setActive] = useState<string | null>(null);
 
@@ -210,14 +213,14 @@ function RouteBlock() {
     c.state === "done" ? "bg-primary/40" : c.state === "active" ? "bg-primary" : "bg-muted";
 
   const stateWord = (c: RouteCourse) =>
-    c.state === "done" ? "Completado" : c.state === "active" ? "En curso" : "Pendiente";
+    c.state === "done" ? t("dash.estado.completado") : c.state === "active" ? t("dash.estado.enCurso") : t("dash.estado.pendiente");
 
-  const cta = (c: RouteCourse) => (c.state === "done" ? "Repasar" : c.state === "active" ? "Continuar" : "Empezar");
+  const cta = (c: RouteCourse) => (c.state === "done" ? t("dash.cta.repasar") : c.state === "active" ? t("dash.cta.continuar") : t("dash.cta.empezar"));
 
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <RouteIcon className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Tu ruta
+        <RouteIcon className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> {t("dash.tuRuta")}
       </h2>
       <div className="mt-4 flex gap-1.5 border-t border-border pt-4">
         {route.map((c) => (
@@ -241,8 +244,10 @@ function RouteBlock() {
         <div>
           <p className="font-display text-base font-semibold">{current.title}</p>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            {current.lessonCount} {current.lessonCount === 1 ? "clase" : "clases"} · {stateWord(current)}
-            {current.state === "active" ? ` · ${current.completedCount} de ${current.lessonCount} vistas` : ""}
+            {current.lessonCount} {current.lessonCount === 1 ? t("dash.clase") : t("dash.clases")} · {stateWord(current)}
+            {current.state === "active"
+              ? ` · ${t("dash.vistas").replace("{completed}", String(current.completedCount)).replace("{total}", String(current.lessonCount))}`
+              : ""}
           </p>
         </div>
         <Link
@@ -267,6 +272,7 @@ const PILL_CLASS: Record<ToolStatusKind, string> = {
 };
 
 function ToolsBlock() {
+  const { t } = useI18n();
   const { loading, rows } = useToolsStatus();
 
   if (loading) return <div className="h-40 animate-pulse rounded-xl bg-secondary/30" />;
@@ -274,7 +280,7 @@ function ToolsBlock() {
   return (
     <section>
       <h2 className="flex items-center gap-2 font-display text-lg font-semibold">
-        <Wrench className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> Tus herramientas
+        <Wrench className="h-4 w-4 text-primary-text" strokeWidth={1.5} /> {t("dash.tusHerramientas")}
       </h2>
       <div className="mt-4 border-t border-border">
         {rows.map((r) => (
@@ -292,7 +298,7 @@ function ToolsBlock() {
               to={r.to}
               className="inline-flex shrink-0 items-center justify-center rounded-xl border border-border-strong px-4 py-2 text-sm font-semibold text-foreground transition-colors hover:border-primary hover:text-primary-text"
             >
-              Abrir
+              {t("dash.abrir")}
             </Link>
           </div>
         ))}
@@ -304,6 +310,7 @@ function ToolsBlock() {
 /* ---------------- Próximo en vivo ---------------- */
 
 function LiveColumn() {
+  const { t } = useI18n();
   const pro = useProAccess();
 
   if (pro.loading) return <div className="h-32 animate-pulse rounded-xl bg-secondary/30" />;
@@ -312,17 +319,17 @@ function LiveColumn() {
     return (
       <section className="rounded-2xl border border-primary/30 bg-primary/[0.06] p-6">
         <span className="inline-flex items-center gap-2 rounded-full bg-primary/15 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-wider text-primary-text">
-          <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> Próximo en vivo
+          <Radio className="h-3.5 w-3.5" strokeWidth={1.5} /> {t("dash.proximoEnVivo")}
         </span>
-        <h2 className="mt-3 font-display text-xl font-bold">Las clases en vivo son de Academy Pro</h2>
+        <h2 className="mt-3 font-display text-xl font-bold">{t("dash.liveTitleLocked")}</h2>
         <p className="mt-2 text-sm text-muted-foreground">
-          Sumá Academy Pro y entrá a las sesiones en vivo, las grabaciones y los casos del mes.
+          {t("dash.liveDescLocked")}
         </p>
         <Link
           to="/planes"
           className="mt-4 inline-flex items-center justify-center rounded-xl bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary-hover"
         >
-          Sumar a mi plan · Academy Pro
+          {t("dash.sumarPlan")}
         </Link>
       </section>
     );
