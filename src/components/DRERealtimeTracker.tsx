@@ -215,9 +215,10 @@ export function DRERealtimeTracker() {
           </p>
         </div>
         <DREQuestionnaire
-          initialData={existing?.data ?? {}}
+          currency="USD"
+          initial={{ data: existing?.data ?? {}, sources: [], customLines: [] }}
           submitLabelKey="dre.verDashboard"
-          onComplete={(data) => void saveWeek(editingWeek, data)}
+          onComplete={(payload) => void saveWeek(editingWeek, payload.data)}
         />
         {saving && <p className="text-center text-xs text-muted-foreground mt-4">{t("rt.guardando")}</p>}
       </div>
