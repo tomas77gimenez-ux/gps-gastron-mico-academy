@@ -149,14 +149,14 @@ export async function updateSheet(
     fxNote: FxNote | null;
   }>,
 ): Promise<DreSheet> {
-  const row: Record<string, unknown> = {};
+  const row: TablesUpdate<"dre_sheets"> = {};
   if (patch.name !== undefined) row.name = patch.name;
   if (patch.currency !== undefined) row.currency = patch.currency;
   if (patch.pinned !== undefined) row.pinned = patch.pinned;
-  if (patch.data !== undefined) row.data = patch.data;
-  if (patch.sources !== undefined) row.revenue_sources = patch.sources;
-  if (patch.customLines !== undefined) row.custom_lines = patch.customLines;
-  if (patch.fxNote !== undefined) row.fx_note = patch.fxNote;
+  if (patch.data !== undefined) row.data = patch.data as unknown as Json;
+  if (patch.sources !== undefined) row.revenue_sources = patch.sources as unknown as Json;
+  if (patch.customLines !== undefined) row.custom_lines = patch.customLines as unknown as Json;
+  if (patch.fxNote !== undefined) row.fx_note = patch.fxNote as unknown as Json;
 
   const { data, error } = await supabase.from("dre_sheets").update(row).eq("id", id).select(SHEET_COLUMNS).single();
   if (error) throw error;
