@@ -125,9 +125,9 @@ export async function createSheet(
       currency: input.currency,
       period_months: input.periodMonths,
       period_start: input.periodStart,
-      data: input.data,
-      revenue_sources: input.sources,
-      custom_lines: input.customLines,
+      data: input.data as unknown as Json,
+      revenue_sources: input.sources as unknown as Json,
+      custom_lines: input.customLines as unknown as Json,
     })
     .select(SHEET_COLUMNS)
     .single();
