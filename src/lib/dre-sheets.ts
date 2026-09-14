@@ -1,4 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
+import type { Json } from "@/integrations/supabase/types";
+import type { TablesUpdate } from "@/integrations/supabase/types";
 import { isCurrencyCode, type CurrencyCode } from "./dre-currency";
 import { NON_MONETARY_FIELDS, type CustomLine, type DREData, type RevenueSource } from "./dre-questions";
 import type { Lang } from "./i18n";
