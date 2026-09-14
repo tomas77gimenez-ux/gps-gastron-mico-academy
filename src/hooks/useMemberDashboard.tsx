@@ -110,9 +110,9 @@ export function useDreMetrics(): DreState {
       const months: DreMonthMetrics[] = ordered.map((sheet) => {
         const r = calculateDRE(sheet.data, sheet.sources, sheet.customLines);
         const sales = r.netRevenue;
-        const personal = r.payrollTotal;
-        const fijos = r.fixedTotal;
-        const otros = Math.max(0, r.totalOPEX - personal - fijos);
+        const personal = r.personalTotal;
+        const fijos = r.fijosTotal;
+        const otros = Math.max(0, r.otrosTotal);
         return {
           month: sheet.id,
           label: sheet.name,
