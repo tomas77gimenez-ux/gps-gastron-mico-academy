@@ -1,309 +1,437 @@
-// Financial questionnaire structure based on DRE Master spreadsheet
+/* Estructura del cuestionario de DRE (planilla del método GPS) y sus cálculos. */
+
+export type FieldType = "currency" | "number";
 
 export interface QuestionField {
   id: string;
-  label: string;
-  placeholder?: string;
-  type: "currency" | "percentage" | "number";
-  helpText?: string;
+  type: FieldType;
+  /** Muestra el ícono "?" con la explicación (clave `field.<id>.help`). */
+  help?: boolean;
+  /** Agrupación visual dentro de la sección (Marketing). */
+  group?: string;
+  optional?: boolean;
 }
 
 export interface QuestionSection {
   id: string;
-  title: string;
-  description: string;
-  icon: string;
   fields: QuestionField[];
-  referenceRange?: string; // e.g. "6-10%"
+  /** Franja de referencia del método, en % de la venta neta. */
+  reference?: [number, number];
+  /** Subtítulos de grupo, en orden. */
+  groups?: string[];
+  /** Permite agregar líneas "Otro". */
+  allowCustom?: boolean;
 }
 
 export interface QuestionStep {
   id: string;
-  title: string;
-  subtitle: string;
   sections: QuestionSection[];
+  /** Muestra el "?" en el título del paso (clave `step.<id>.help`). */
+  help?: boolean;
 }
 
+/* ------------------------------------------------------------------ */
+/* Fuentes de venta                                                    */
+/* ------------------------------------------------------------------ */
+
+export const OPTIONAL_SOURCE_KINDS = ["cafeteria", "events", "delivery", "catering", "custom"] as const;
+export type SourceKind = (typeof OPTIONAL_SOURCE_KINDS)[number];
+
+export interface RevenueSource {
+  id: string;
+  kind: SourceKind;
+  /** Sólo para `custom`. */
+  name?: string;
+}
+
+export const FIXED_SOURCES = ["kitchen", "bar"] as const;
+
+export function salesFieldId(sourceId: string): string {
+  return `${sourceId}_net_sales`;
+}
+export function cmvFieldId(sourceId: string): string {
+  return `${sourceId}_cmv`;
+}
+
+export interface CustomLine {
+  id: string;
+  sectionId: string;
+  label: string;
+}
+
+/* ------------------------------------------------------------------ */
+/* Pasos                                                              */
+/* ------------------------------------------------------------------ */
+
+export const REVENUE_STEP: QuestionStep = {
+  id: "revenue",
+  sections: [
+    {
+      id: "kitchen",
+      fields: [
+        { id: salesFieldId("kitchen"), type: "currency", help: true },
+        { id: cmvFieldId("kitchen"), type: "currency", help: true },
+      ],
+    },
+    {
+      id: "bar",
+      fields: [
+        { id: salesFieldId("bar"), type: "currency" },
+        { id: cmvFieldId("bar"), type: "currency" },
+      ],
+    },
+  ],
+};
+
 export const questionnaireSteps: QuestionStep[] = [
+  REVENUE_STEP,
   {
-    id: "revenue",
-    title: "Facturación",
-    subtitle: "Ingresa las ventas brutas de tu operación por canal",
-    sections: [
-      {
-        id: "kitchen",
-        title: "Venta Cocina",
-        description: "Ingresos generados por la venta de alimentos",
-        icon: "🍳",
-        fields: [
-          { id: "kitchen_gross_sales", label: "Venta Bruta Cocina", type: "currency", placeholder: "0.00" },
-          { id: "kitchen_cmv", label: "CMV Cocina (Costo de Mercadería Vendida)", type: "currency", placeholder: "0.00", helpText: "Costo directo de los insumos de cocina" },
-        ],
-      },
-      {
-        id: "bar",
-        title: "Venta Bar",
-        description: "Ingresos generados por bebidas",
-        icon: "🍸",
-        fields: [
-          { id: "bar_gross_sales", label: "Venta Bruta Bar", type: "currency", placeholder: "0.00" },
-          { id: "bar_cmv", label: "CMV Bar", type: "currency", placeholder: "0.00" },
-        ],
-      },
-      {
-        id: "cafeteria",
-        title: "Cafetería",
-        description: "Ingresos de cafetería u otros puntos de venta",
-        icon: "☕",
-        fields: [
-          { id: "cafeteria_gross_sales", label: "Venta Bruta Cafetería", type: "currency", placeholder: "0.00" },
-          { id: "cafeteria_cmv", label: "CMV Cafetería", type: "currency", placeholder: "0.00" },
-        ],
-      },
-      {
-        id: "events",
-        title: "Eventos",
-        description: "Ingresos por eventos y catering",
-        icon: "🎉",
-        fields: [
-          { id: "events_gross_sales", label: "Venta Bruta Eventos", type: "currency", placeholder: "0.00" },
-          { id: "events_cmv", label: "CMV Eventos", type: "currency", placeholder: "0.00" },
-        ],
-      },
-    ],
-  },
-  {
-    id: "fixed_costs",
-    title: "Costos Fijos",
-    subtitle: "Gastos que no varían con el nivel de ventas",
+    id: "operating",
+    help: true,
     sections: [
       {
         id: "rent",
-        title: "Alquiler / Renta",
-        description: "Costo mensual de alquiler del local",
-        icon: "🏠",
-        referenceRange: "6-10%",
+        reference: [6, 10],
+        allowCustom: true,
         fields: [
-          { id: "rent_fixed", label: "Alquiler Mensual", type: "currency", placeholder: "0.00" },
+          { id: "rent_fixed", type: "currency" },
+          { id: "rent_insurance", type: "currency" },
+          { id: "rent_condo", type: "currency" },
+          { id: "rent_property_tax", type: "currency" },
+          { id: "rent_storage", type: "currency" },
+          { id: "rent_parking", type: "currency" },
         ],
       },
       {
         id: "utilities",
-        title: "Servicios Públicos",
-        description: "Electricidad, agua, gas, internet, teléfono",
-        icon: "💡",
-        referenceRange: "4-6%",
+        reference: [4, 6],
+        allowCustom: true,
         fields: [
-          { id: "electricity", label: "Electricidad", type: "currency", placeholder: "0.00" },
-          { id: "water", label: "Agua", type: "currency", placeholder: "0.00" },
-          { id: "gas", label: "Gas", type: "currency", placeholder: "0.00" },
-          { id: "internet_phone", label: "Internet / Teléfono", type: "currency", placeholder: "0.00" },
+          { id: "electricity", type: "currency" },
+          { id: "water", type: "currency" },
+          { id: "gas", type: "currency" },
+          { id: "internet_phone", type: "currency" },
+          { id: "pos_system", type: "currency" },
         ],
       },
       {
         id: "payroll",
-        title: "Nómina / Salarios",
-        description: "Todos los costos de personal incluyendo comisiones",
-        icon: "👥",
-        referenceRange: "25-30%",
+        reference: [25, 30],
+        allowCustom: true,
         fields: [
-          { id: "salaries_kitchen", label: "Salarios Cocina", type: "currency", placeholder: "0.00" },
-          { id: "salaries_service", label: "Salarios Servicio/Sala", type: "currency", placeholder: "0.00" },
-          { id: "salaries_admin", label: "Salarios Administración", type: "currency", placeholder: "0.00" },
-          { id: "salaries_commissions", label: "Comisiones", type: "currency", placeholder: "0.00" },
-          { id: "salaries_benefits", label: "Beneficios / Cargas Sociales", type: "currency", placeholder: "0.00" },
+          { id: "salaries_kitchen", type: "currency" },
+          { id: "salaries_service", type: "currency" },
+          { id: "salaries_admin", type: "currency" },
+          { id: "salaries_commissions", type: "currency" },
+          { id: "salaries_benefits", type: "currency" },
+          { id: "staff_meals", type: "currency" },
+          { id: "staff_training", type: "currency" },
+          { id: "staff_uniforms", type: "currency" },
+          { id: "pro_labore", type: "currency", help: true },
         ],
       },
     ],
   },
   {
-    id: "variable_costs",
-    title: "Costos Variables y Otros",
-    subtitle: "Gastos operacionales adicionales",
+    id: "operating_more",
     sections: [
       {
-        id: "services",
-        title: "Prestadores de Servicios / Tercerizados",
-        description: "Honorarios profesionales y servicios tercerizados",
-        icon: "📋",
-        referenceRange: "1-3%",
+        id: "providers",
+        reference: [1, 3],
+        allowCustom: true,
         fields: [
-          { id: "accounting", label: "Contabilidad", type: "currency", placeholder: "0.00" },
-          { id: "legal", label: "Legal", type: "currency", placeholder: "0.00" },
-          { id: "other_services", label: "Otros Servicios Tercerizados", type: "currency", placeholder: "0.00" },
+          { id: "accounting", type: "currency" },
+          { id: "legal", type: "currency" },
+          { id: "consulting", type: "currency" },
+          { id: "cleaning_service", type: "currency" },
+          { id: "other_services", type: "currency" },
         ],
       },
       {
         id: "taxes",
-        title: "Impuestos y Cargos",
-        description: "Impuestos operacionales y tasas",
-        icon: "🏛️",
-        referenceRange: "5-8%",
+        reference: [5, 8],
+        allowCustom: true,
         fields: [
-          { id: "taxes_municipal", label: "Impuestos Municipales", type: "currency", placeholder: "0.00" },
-          { id: "taxes_state", label: "Impuestos Estatales/Nacionales", type: "currency", placeholder: "0.00" },
-          { id: "taxes_other", label: "Otros Cargos/Tasas", type: "currency", placeholder: "0.00" },
+          { id: "taxes_municipal", type: "currency" },
+          { id: "taxes_licenses", type: "currency" },
+          { id: "taxes_other", type: "currency" },
         ],
       },
       {
         id: "marketing",
-        title: "Marketing",
-        description: "Inversión en publicidad y marketing",
-        icon: "📣",
-        referenceRange: "4-8%",
+        reference: [4, 8],
+        allowCustom: true,
+        groups: ["digital", "print"],
         fields: [
-          { id: "marketing_digital", label: "Marketing Digital", type: "currency", placeholder: "0.00" },
-          { id: "marketing_traditional", label: "Marketing Tradicional", type: "currency", placeholder: "0.00" },
-          { id: "marketing_events", label: "Eventos Promocionales", type: "currency", placeholder: "0.00" },
+          { id: "marketing_ads", type: "currency", group: "digital" },
+          { id: "marketing_agency", type: "currency", group: "digital" },
+          { id: "marketing_social", type: "currency", group: "digital" },
+          { id: "marketing_branding", type: "currency", group: "digital" },
+          { id: "marketing_flyers", type: "currency", group: "print" },
+          { id: "marketing_print", type: "currency", group: "print" },
+          { id: "marketing_signage", type: "currency", group: "print" },
+          { id: "marketing_events", type: "currency" },
         ],
       },
       {
         id: "maintenance",
-        title: "Mantenimiento y Reparaciones",
-        description: "Gastos de mantenimiento del local y equipos",
-        icon: "🔧",
+        allowCustom: true,
         fields: [
-          { id: "maintenance_building", label: "Mantenimiento Local", type: "currency", placeholder: "0.00" },
-          { id: "maintenance_equipment", label: "Mantenimiento Equipos", type: "currency", placeholder: "0.00" },
+          { id: "maintenance_building", type: "currency" },
+          { id: "maintenance_equipment", type: "currency" },
         ],
       },
       {
         id: "financial",
-        title: "Gastos Financieros",
-        description: "Intereses, comisiones bancarias, etc.",
-        icon: "🏦",
+        allowCustom: true,
         fields: [
-          { id: "bank_fees", label: "Comisiones Bancarias", type: "currency", placeholder: "0.00" },
-          { id: "loan_interest", label: "Intereses de Préstamos", type: "currency", placeholder: "0.00" },
-          { id: "cc_fees", label: "Comisiones Tarjetas de Crédito", type: "currency", placeholder: "0.00" },
+          { id: "bank_fees", type: "currency" },
+          { id: "loan_payments", type: "currency" },
+          { id: "cc_fees", type: "currency" },
+          { id: "delivery_app_fees", type: "currency" },
+          { id: "financial_other", type: "currency" },
         ],
       },
       {
         id: "purchases",
-        title: "Compras / Bienes de Uso / Gastos Varios",
-        description: "Utensilios, limpieza, equipos menores",
-        icon: "🛒",
+        allowCustom: true,
         fields: [
-          { id: "supplies_cleaning", label: "Limpieza e Insumos", type: "currency", placeholder: "0.00" },
-          { id: "supplies_utensils", label: "Utensilios", type: "currency", placeholder: "0.00" },
-          { id: "supplies_misc", label: "Gastos Varios", type: "currency", placeholder: "0.00" },
+          { id: "supplies_cleaning", type: "currency" },
+          { id: "supplies_utensils", type: "currency" },
+          { id: "supplies_disposables", type: "currency" },
+          { id: "capex_purchases", type: "currency" },
+          { id: "supplies_misc", type: "currency" },
         ],
       },
     ],
   },
   {
     id: "averages",
-    title: "Promedios Operativos",
-    subtitle: "Información sobre tu operación diaria",
     sections: [
       {
         id: "operation",
-        title: "Datos de Operación",
-        description: "Promedios diarios y semanales",
-        icon: "📊",
         fields: [
-          { id: "avg_ticket", label: "Ticket Medio", type: "currency", placeholder: "0.00", helpText: "Gasto promedio por cliente" },
-          { id: "avg_customers_weekday", label: "Clientes Promedio (Días de Semana)", type: "number", placeholder: "0" },
-          { id: "avg_customers_weekend", label: "Clientes Promedio (Fin de Semana)", type: "number", placeholder: "0" },
-          { id: "days_open_per_week", label: "Días Abiertos por Semana", type: "number", placeholder: "5" },
-          { id: "total_seats", label: "Capacidad Total (Asientos)", type: "number", placeholder: "0" },
+          { id: "avg_ticket", type: "currency", help: true },
+          { id: "days_open_per_week", type: "number" },
+          { id: "total_seats", type: "number", optional: true },
         ],
       },
     ],
   },
 ];
 
+/** Secciones de gasto operativo, en el orden en que se muestran. */
+export const EXPENSE_SECTIONS: QuestionSection[] = questionnaireSteps
+  .filter((s) => s.id === "operating" || s.id === "operating_more")
+  .flatMap((s) => s.sections);
+
+/** Campos que NO son montos de dinero (no se convierten al cambiar moneda). */
+export const NON_MONETARY_FIELDS = ["days_open_per_week", "total_seats"];
+
+/* ------------------------------------------------------------------ */
+/* Cálculos                                                           */
+/* ------------------------------------------------------------------ */
+
 export interface DREData {
   [key: string]: number;
 }
 
+export const WEEKS_PER_MONTH = 4.33;
+
+export type StatusKind = "success" | "warning" | "destructive";
+
+export interface StatusInfo {
+  /** Clave de traducción de la pastilla. */
+  key: string;
+  kind: StatusKind;
+  /** Ayuda opcional. */
+  hintKey?: string;
+}
+
+export interface ChannelResult {
+  id: string;
+  /** Nombre libre para fuentes personalizadas. */
+  customName?: string;
+  kind: "kitchen" | "bar" | SourceKind;
+  value: number;
+  cmv: number;
+  cmvPercent: number;
+}
+
+export interface ExpenseResult {
+  id: string;
+  value: number;
+  percent: number;
+  reference: [number, number] | null;
+  status: StatusInfo | null;
+}
+
 export interface DREResults {
-  grossRevenue: number;
+  netRevenue: number;
   totalCMV: number;
   cmvPercent: number;
+  contributionMargin: number;
+  contributionMarginPercent: number;
   totalOPEX: number;
   opexPercent: number;
-  grossOperatingProfit: number;
-  gopPercent: number;
   netProfit: number;
   netProfitPercent: number;
   breakEvenPoint: number;
-  contributionMargin: number;
-  contributionMarginPercent: number;
   avgTicket: number;
-  revenueByChannel: { name: string; value: number; cmv: number; cmvPercent: number }[];
-  expensesByCategory: { name: string; value: number; percent: number; reference: string }[];
+  daysOpenPerWeek: number;
+  seats: number;
+  customersPerMonth: number | null;
+  customersPerDay: number | null;
+  salesPerDay: number | null;
+  customersForBreakEven: number | null;
+  tableTurns: number | null;
+  revenueByChannel: ChannelResult[];
+  expensesByCategory: ExpenseResult[];
+  /** Correspondencias para el tablero del inicio. */
+  personalTotal: number;
+  fijosTotal: number;
+  otrosTotal: number;
+  cmvStatus: StatusInfo;
+  contributionStatus: StatusInfo;
+  netStatus: StatusInfo;
+  breakEvenStatus: StatusInfo;
 }
 
-export function calculateDRE(data: DREData): DREResults {
-  const kitchenSales = data.kitchen_gross_sales || 0;
-  const barSales = data.bar_gross_sales || 0;
-  const cafeteriaSales = data.cafeteria_gross_sales || 0;
-  const eventsSales = data.events_gross_sales || 0;
-  const grossRevenue = kitchenSales + barSales + cafeteriaSales + eventsSales;
+export function expenseStatus(pct: number, reference: [number, number] | null, sectionId: string): StatusInfo | null {
+  if (!reference) return null;
+  if (sectionId === "marketing") {
+    if (pct < reference[0]) return { key: "status.investLittle", kind: "warning" };
+    if (pct <= reference[1]) return { key: "status.onTarget", kind: "success" };
+    return { key: "status.checkReturn", kind: "warning" };
+  }
+  if (pct <= reference[1]) return { key: "status.underControl", kind: "success" };
+  return { key: "status.above", kind: "warning", hintKey: "status.reviewExpense" };
+}
 
-  const kitchenCMV = data.kitchen_cmv || 0;
-  const barCMV = data.bar_cmv || 0;
-  const cafeteriaCMV = data.cafeteria_cmv || 0;
-  const eventsCMV = data.events_cmv || 0;
-  const totalCMV = kitchenCMV + barCMV + cafeteriaCMV + eventsCMV;
+export function cmvStatus(pct: number): StatusInfo {
+  if (pct < 20) return { key: "status.checkData", kind: "warning" };
+  if (pct <= 30) return { key: "status.underControl", kind: "success" };
+  return { key: "status.above", kind: "warning", hintKey: "status.reviewExpense" };
+}
 
-  const rent = data.rent_fixed || 0;
-  const utilities = (data.electricity || 0) + (data.water || 0) + (data.gas || 0) + (data.internet_phone || 0);
-  const payroll = (data.salaries_kitchen || 0) + (data.salaries_service || 0) + (data.salaries_admin || 0) + (data.salaries_commissions || 0) + (data.salaries_benefits || 0);
-  const services = (data.accounting || 0) + (data.legal || 0) + (data.other_services || 0);
-  const taxes = (data.taxes_municipal || 0) + (data.taxes_state || 0) + (data.taxes_other || 0);
-  const marketing = (data.marketing_digital || 0) + (data.marketing_traditional || 0) + (data.marketing_events || 0);
-  const maintenance = (data.maintenance_building || 0) + (data.maintenance_equipment || 0);
-  const financial = (data.bank_fees || 0) + (data.loan_interest || 0) + (data.cc_fees || 0);
-  const purchases = (data.supplies_cleaning || 0) + (data.supplies_utensils || 0) + (data.supplies_misc || 0);
+export function contributionStatus(pct: number): StatusInfo {
+  return pct >= 70 ? { key: "status.onTarget", kind: "success" } : { key: "status.belowTarget", kind: "warning" };
+}
 
-  // Sum all custom fields (they start with "custom_")
-  const customTotal = Object.entries(data)
-    .filter(([key]) => key.startsWith("custom_"))
-    .reduce((sum, [, val]) => sum + (val || 0), 0);
+export function netStatus(pct: number): StatusInfo {
+  if (pct < 0) return { key: "status.loss", kind: "destructive" };
+  if (pct < 10) return { key: "status.belowTarget", kind: "warning" };
+  return { key: "status.onTarget", kind: "success" };
+}
 
-  const totalOPEX = rent + utilities + payroll + services + taxes + marketing + maintenance + financial + purchases + customTotal;
-  const gop = grossRevenue - totalCMV - totalOPEX;
-  const netProfit = gop;
-  const contributionMargin = grossRevenue - totalCMV;
+export const CMV_REFERENCE: [number, number] = [28, 30];
+export const CONTRIBUTION_REFERENCE: [number, number] = [70, 72];
 
-  const pct = (v: number) => grossRevenue > 0 ? (v / grossRevenue) * 100 : 0;
+function sum(data: DREData, ids: string[]): number {
+  return ids.reduce((acc, id) => acc + (Number(data[id]) || 0), 0);
+}
 
-  const breakEven = contributionMargin > 0 && grossRevenue > 0
-    ? totalOPEX / (contributionMargin / grossRevenue)
-    : 0;
+export function calculateDRE(data: DREData, sources: RevenueSource[] = [], customLines: CustomLine[] = []): DREResults {
+  const channels: ChannelResult[] = [];
+
+  for (const fixed of FIXED_SOURCES) {
+    const value = Number(data[salesFieldId(fixed)]) || 0;
+    const cmv = Number(data[cmvFieldId(fixed)]) || 0;
+    channels.push({ id: fixed, kind: fixed, value, cmv, cmvPercent: value > 0 ? (cmv / value) * 100 : 0 });
+  }
+  for (const s of sources) {
+    const value = Number(data[salesFieldId(s.id)]) || 0;
+    const cmv = Number(data[cmvFieldId(s.id)]) || 0;
+    channels.push({
+      id: s.id,
+      kind: s.kind,
+      customName: s.kind === "custom" ? s.name : undefined,
+      value,
+      cmv,
+      cmvPercent: value > 0 ? (cmv / value) * 100 : 0,
+    });
+  }
+
+  const netRevenue = channels.reduce((a, c) => a + c.value, 0);
+  const totalCMV = channels.reduce((a, c) => a + c.cmv, 0);
+  const pct = (v: number) => (netRevenue > 0 ? (v / netRevenue) * 100 : 0);
+
+  const expensesByCategory: ExpenseResult[] = EXPENSE_SECTIONS.map((section) => {
+    const base = sum(
+      data,
+      section.fields.map((f) => f.id),
+    );
+    const custom = sum(
+      data,
+      customLines.filter((l) => l.sectionId === section.id).map((l) => l.id),
+    );
+    const value = base + custom;
+    const percent = pct(value);
+    return {
+      id: section.id,
+      value,
+      percent,
+      reference: section.reference ?? null,
+      status: value > 0 || section.reference ? expenseStatus(percent, section.reference ?? null, section.id) : null,
+    };
+  });
+
+  const totalOPEX = expensesByCategory.reduce((a, e) => a + e.value, 0);
+  const contributionMargin = netRevenue - totalCMV;
+  const netProfit = contributionMargin - totalOPEX;
+  const contributionRatio = netRevenue > 0 ? contributionMargin / netRevenue : 0;
+  const breakEvenPoint = contributionRatio > 0 ? totalOPEX / contributionRatio : 0;
+
+  const catValue = (id: string) => expensesByCategory.find((e) => e.id === id)?.value ?? 0;
+  const personalTotal = catValue("payroll");
+  const fijosTotal = catValue("rent") + catValue("utilities");
+  const otrosTotal = totalOPEX - personalTotal - fijosTotal;
+
+  const avgTicket = Number(data.avg_ticket) || 0;
+  const daysOpenPerWeek = Number(data.days_open_per_week) || 0;
+  const seats = Number(data.total_seats) || 0;
+  const openDaysPerMonth = daysOpenPerWeek > 0 ? daysOpenPerWeek * WEEKS_PER_MONTH : 0;
+
+  const customersPerMonth = avgTicket > 0 && netRevenue > 0 ? netRevenue / avgTicket : null;
+  const customersPerDay = customersPerMonth !== null && openDaysPerMonth > 0 ? customersPerMonth / openDaysPerMonth : null;
+  const salesPerDay = openDaysPerMonth > 0 && netRevenue > 0 ? netRevenue / openDaysPerMonth : null;
+  const customersForBreakEven = avgTicket > 0 && breakEvenPoint > 0 ? breakEvenPoint / avgTicket : null;
+  const tableTurns = customersPerDay !== null && seats > 0 ? customersPerDay / seats : null;
+
+  const cmvPercent = pct(totalCMV);
+  const contributionMarginPercent = pct(contributionMargin);
+  const netProfitPercent = pct(netProfit);
 
   return {
-    grossRevenue,
+    netRevenue,
     totalCMV,
-    cmvPercent: pct(totalCMV),
+    cmvPercent,
+    contributionMargin,
+    contributionMarginPercent,
     totalOPEX,
     opexPercent: pct(totalOPEX),
-    grossOperatingProfit: gop,
-    gopPercent: pct(gop),
     netProfit,
-    netProfitPercent: pct(netProfit),
-    breakEvenPoint: breakEven,
-    contributionMargin,
-    contributionMarginPercent: pct(contributionMargin),
-    avgTicket: data.avg_ticket || 0,
-    revenueByChannel: [
-      { name: "Cocina", value: kitchenSales, cmv: kitchenCMV, cmvPercent: kitchenSales > 0 ? (kitchenCMV / kitchenSales) * 100 : 0 },
-      { name: "Bar", value: barSales, cmv: barCMV, cmvPercent: barSales > 0 ? (barCMV / barSales) * 100 : 0 },
-      { name: "Cafetería", value: cafeteriaSales, cmv: cafeteriaCMV, cmvPercent: cafeteriaSales > 0 ? (cafeteriaCMV / cafeteriaSales) * 100 : 0 },
-      { name: "Eventos", value: eventsSales, cmv: eventsCMV, cmvPercent: eventsSales > 0 ? (eventsCMV / eventsSales) * 100 : 0 },
-    ],
-    expensesByCategory: [
-      { name: "Alquiler", value: rent, percent: pct(rent), reference: "6-10%" },
-      { name: "Servicios Públicos", value: utilities, percent: pct(utilities), reference: "4-6%" },
-      { name: "Nómina", value: payroll, percent: pct(payroll), reference: "25-30%" },
-      { name: "Tercerizados", value: services, percent: pct(services), reference: "1-3%" },
-      { name: "Impuestos", value: taxes, percent: pct(taxes), reference: "5-8%" },
-      { name: "Marketing", value: marketing, percent: pct(marketing), reference: "4-8%" },
-      { name: "Mantenimiento", value: maintenance, percent: pct(maintenance), reference: "-" },
-      { name: "Financieros", value: financial, percent: pct(financial), reference: "-" },
-      { name: "Compras/Varios", value: purchases, percent: pct(purchases), reference: "-" },
-    ],
+    netProfitPercent,
+    breakEvenPoint,
+    avgTicket,
+    daysOpenPerWeek,
+    seats,
+    customersPerMonth,
+    customersPerDay,
+    salesPerDay,
+    customersForBreakEven,
+    tableTurns,
+    revenueByChannel: channels,
+    expensesByCategory,
+    personalTotal,
+    fijosTotal,
+    otrosTotal,
+    cmvStatus: cmvStatus(cmvPercent),
+    contributionStatus: contributionStatus(contributionMarginPercent),
+    netStatus: netStatus(netProfitPercent),
+    breakEvenStatus:
+      netRevenue >= breakEvenPoint
+        ? { key: "status.covered", kind: "success" }
+        : { key: "status.notCovered", kind: "destructive" },
   };
 }
