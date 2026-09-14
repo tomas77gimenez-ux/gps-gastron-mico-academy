@@ -215,9 +215,10 @@ export function DRERealtimeTracker() {
           </p>
         </div>
         <DREQuestionnaire
-          initialData={existing?.data ?? {}}
+          currency="USD"
+          initial={{ data: existing?.data ?? {}, sources: [], customLines: [] }}
           submitLabelKey="dre.verDashboard"
-          onComplete={(data) => void saveWeek(editingWeek, data)}
+          onComplete={(payload) => void saveWeek(editingWeek, payload.data)}
         />
         {saving && <p className="text-center text-xs text-muted-foreground mt-4">{t("rt.guardando")}</p>}
       </div>
@@ -244,7 +245,7 @@ export function DRERealtimeTracker() {
         </div>
         <DashboardResults
           results={calculateDRE(sumData(item.entries))}
-          onReset={() => setViewingHistoryId(null)}
+          onEdit={() => setViewingHistoryId(null)}
         />
       </div>
     );
@@ -259,7 +260,7 @@ export function DRERealtimeTracker() {
         >
           <ArrowLeft className="w-4 h-4" /> {t("rt.volverCiclo")}
         </button>
-        <DashboardResults results={calculateDRE(accumulated)} onReset={() => setShowResults(false)} />
+        <DashboardResults results={calculateDRE(accumulated)} onEdit={() => setShowResults(false)} />
       </div>
     );
   }

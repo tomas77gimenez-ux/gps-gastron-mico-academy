@@ -1,20 +1,23 @@
-export function money(v: number): string {
-  if (!Number.isFinite(v)) return "$0";
-  return new Intl.NumberFormat("es-MX", {
+import { CURRENCY_LOCALE, currencyDecimals, type CurrencyCode } from "./dre-currency";
+
+export function money(v: number, currency: CurrencyCode = "USD"): string {
+  if (!Number.isFinite(v)) v = 0;
+  return new Intl.NumberFormat(CURRENCY_LOCALE[currency], {
     style: "currency",
-    currency: "USD",
+    currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   }).format(v);
 }
 
-export function money2(v: number): string {
-  if (!Number.isFinite(v)) return "$0.00";
-  return new Intl.NumberFormat("es-MX", {
+export function money2(v: number, currency: CurrencyCode = "USD"): string {
+  if (!Number.isFinite(v)) v = 0;
+  const d = currencyDecimals(currency);
+  return new Intl.NumberFormat(CURRENCY_LOCALE[currency], {
     style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
+    currency,
+    minimumFractionDigits: d,
+    maximumFractionDigits: d,
   }).format(v);
 }
 
