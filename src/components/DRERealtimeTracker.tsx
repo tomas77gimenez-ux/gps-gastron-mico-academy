@@ -260,7 +260,7 @@ export function DRERealtimeTracker() {
         >
           <ArrowLeft className="w-4 h-4" /> {t("rt.volverCiclo")}
         </button>
-        <DashboardResults results={calculateDRE(accumulated)} onReset={() => setShowResults(false)} />
+        <DashboardResults results={calculateDRE(accumulated)} onEdit={() => setShowResults(false)} />
       </div>
     );
   }
