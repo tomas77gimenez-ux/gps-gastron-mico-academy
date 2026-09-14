@@ -245,7 +245,7 @@ export function DRERealtimeTracker() {
         </div>
         <DashboardResults
           results={calculateDRE(sumData(item.entries))}
-          onReset={() => setViewingHistoryId(null)}
+          onEdit={() => setViewingHistoryId(null)}
         />
       </div>
     );
