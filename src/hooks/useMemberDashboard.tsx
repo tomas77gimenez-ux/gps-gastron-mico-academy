@@ -76,7 +76,6 @@ interface DreState {
 }
 
 export function useDreMetrics(): DreState {
-  const { lang } = useI18n();
   const { isReady, user } = useAuthSession();
   const [state, setState] = useState<DreState>({ loading: true, months: [] });
 
@@ -89,54 +88,44 @@ export function useDreMetrics(): DreState {
     let cancelled = false;
 
     async function load(userId: string) {
-      const { data: monthRows } = await supabase
-        .from("dre_months")
-        .select("id, month, sales, cmv_purchases")
-        .eq("user_id", userId)
-        .order("month", { ascending: true });
-
-      const rows = monthRows ?? [];
-      if (rows.length === 0) {
+      let sheets: DreSheet[] = [];
+      try {
+        sheets = await listSheets(userId);
+      } catch {
+        sheets = [];
+      }
+      if (sheets.length === 0) {
         if (!cancelled) setState({ loading: false, months: [] });
         return;
       }
 
-      const { data: expenses } = await supabase
-        .from("dre_expenses")
-        .select("dre_month_id, category, amount")
-        .in("dre_month_id", rows.map((r) => r.id));
-
-      const byMonth = new Map<string, { personal: number; fijos: number; otros: number; opex: number }>();
-      for (const e of expenses ?? []) {
-        const acc = byMonth.get(e.dre_month_id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
-        const amount = Number(e.amount ?? 0);
-        acc.opex += amount;
-        if (e.category === "personal") acc.personal += amount;
-        else if (e.category === "fijos") acc.fijos += amount;
-        else acc.otros += amount;
-        byMonth.set(e.dre_month_id, acc);
+      // Más antiguas primero; la fijada queda al final para que sea la elegida por defecto.
+      const ordered = [...sheets].reverse();
+      const pinnedIdx = ordered.findIndex((s) => s.pinned);
+      if (pinnedIdx >= 0) {
+        const [pinned] = ordered.splice(pinnedIdx, 1);
+        ordered.push(pinned);
       }
 
-      const months: DreMonthMetrics[] = rows.map((r) => {
-        const sales = Number(r.sales ?? 0);
-        const cmv = Number(r.cmv_purchases ?? 0);
-        const { personal, fijos, otros, opex } = byMonth.get(r.id) ?? { personal: 0, fijos: 0, otros: 0, opex: 0 };
-        const cmvPct = sales > 0 ? (cmv / sales) * 100 : 0;
-        const contributionRatio = 1 - cmvPct / 100;
-        const netPct = sales > 0 ? ((sales - cmv - opex) / sales) * 100 : 0;
+      const months: DreMonthMetrics[] = ordered.map((sheet) => {
+        const r = calculateDRE(sheet.data, sheet.sources, sheet.customLines);
+        const sales = r.netRevenue;
+        const personal = r.payrollTotal;
+        const fijos = r.fixedTotal;
+        const otros = Math.max(0, r.totalOPEX - personal - fijos);
         return {
-          month: r.month,
-          label: monthLabel(r.month, false, lang),
-          labelLong: monthLabel(r.month, true, lang),
+          month: sheet.id,
+          label: sheet.name,
+          labelLong: sheet.name,
+          currency: sheet.currency,
           sales,
-          cmvPct,
+          cmvPct: r.cmvPercent,
           personalPct: sales > 0 ? (personal / sales) * 100 : 0,
-          netPct,
-          breakEven: contributionRatio > 0 ? opex / contributionRatio : 0,
-          signals: detectSignals({ sales, cmvPct, netPct, personal, fijos, otros }),
+          netPct: r.netProfitPercent,
+          breakEven: r.breakEvenPoint,
+          signals: detectSignals({ sales, cmvPct: r.cmvPercent, netPct: r.netProfitPercent, personal, fijos, otros }),
         };
       });
-
 
       if (!cancelled) setState({ loading: false, months });
     }
@@ -145,7 +134,7 @@ export function useDreMetrics(): DreState {
     return () => {
       cancelled = true;
     };
-  }, [isReady, user?.id, lang]);
+  }, [isReady, user?.id]);
 
   return state;
 }
