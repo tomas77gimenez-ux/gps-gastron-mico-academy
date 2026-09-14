@@ -2,6 +2,7 @@ import { Outlet, Link, createRootRoute, HeadContent, Scripts, useRouterState } f
 import { useEffect } from "react";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
+import { Toaster } from "@/components/ui/sonner";
 import { I18nProvider } from "@/lib/i18n";
 import { ThemeProvider } from "@/lib/theme";
 import { DEFAULT_THEME, readPrefs, THEME_BOOTSTRAP_SCRIPT } from "@/lib/prefs";
@@ -181,6 +182,7 @@ function RootComponent() {
           <Outlet />
         </div>
         <Footer />
+        <Toaster />
       </I18nProvider>
     </ThemeProvider>
   );

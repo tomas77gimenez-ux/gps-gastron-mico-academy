@@ -76,6 +76,7 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
   const prev = idx > 0 ? months[idx - 1] : null;
   const upTo = months.slice(0, idx + 1);
 
+  const cur = selected.currency;
   const cmvGone = Math.round(selected.cmvPct);
   const personalGone = Math.round(selected.personalPct);
 
@@ -105,20 +106,20 @@ export function MetricsStrip({ months, selected }: { months: DreMonthMetrics[]; 
       lowerIsBetter: false,
       plain:
         selected.netPct >= 0
-          ? t("dash.plainNetPos").replace("{amount}", money((selected.sales * selected.netPct) / 100))
-          : t("dash.plainNetNeg").replace("{amount}", money(Math.abs((selected.sales * selected.netPct) / 100))),
+          ? t("dash.plainNetPos").replace("{amount}", money((selected.sales * selected.netPct) / 100, cur))
+          : t("dash.plainNetNeg").replace("{amount}", money(Math.abs((selected.sales * selected.netPct) / 100), cur)),
       ideal: t("dash.idealMargen"),
       trend: upTo.map((m) => m.netPct),
     },
     {
       name: t("dash.metric.puntoEquilibrio"),
-      value: money(selected.breakEven),
+      value: money(selected.breakEven, cur),
       deltaPoints: null,
       lowerIsBetter: true,
       plain:
         selected.sales >= selected.breakEven
-          ? t("dash.plainBePos").replace("{amount}", money(selected.sales - selected.breakEven))
-          : t("dash.plainBeNeg").replace("{amount}", money(selected.breakEven - selected.sales)),
+          ? t("dash.plainBePos").replace("{amount}", money(selected.sales - selected.breakEven, cur))
+          : t("dash.plainBeNeg").replace("{amount}", money(selected.breakEven - selected.sales, cur)),
       ideal: t("dash.idealBe"),
       trend: upTo.map((m) => m.breakEven),
     },

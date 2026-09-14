@@ -77,7 +77,7 @@ function DashboardPage() {
                 {hasSignals
                   ? t("dq.headlineNeutral")
                       .replace("{month}", selected.label)
-                      .replace("{amount}", money(selected.sales))
+                      .replace("{amount}", money(selected.sales, selected.currency))
                   : t("dash.headline")
                       .replace("{month}", selected.label)
                       .replace("{pct}", selected.netPct.toFixed(1).replace(".", ","))}
@@ -85,7 +85,7 @@ function DashboardPage() {
               <p className="mt-3 text-sm text-muted-foreground">
                 {hasSignals
                   ? t("dq.headlineSubNeutral")
-                  : `${t("dash.vendisteMes").replace("{amount}", money(selected.sales))} ${
+                  : `${t("dash.vendisteMes").replace("{amount}", money(selected.sales, selected.currency))} ${
                       deltaNet === null
                         ? t("dash.compFirstMonth")
                         : Math.abs(deltaNet) < 0.05

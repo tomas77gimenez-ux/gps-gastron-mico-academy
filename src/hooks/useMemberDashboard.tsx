@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuthSession } from "@/hooks/useAuthSession";
 import { useI18n } from "@/lib/i18n";
+import { listSheets, type DreSheet } from "@/lib/dre-sheets";
+import { calculateDRE } from "@/lib/dre-questions";
+import type { CurrencyCode } from "@/lib/dre-currency";
 import type { TranslationKey } from "@/lib/i18n";
 import type { Lang } from "@/lib/i18n";
 
@@ -21,6 +24,8 @@ export interface DreMonthMetrics {
   month: string; // "2026-05"
   label: string; // "mayo"
   labelLong: string; // "mayo 2026"
+  /** Moneda de la planilla. */
+  currency: CurrencyCode;
   sales: number;
   cmvPct: number;
   personalPct: number;
@@ -257,6 +262,7 @@ export interface ToolStatusRow {
   key: string;
   name: string;
   to:
+    | "/herramientas/dre"
     | "/herramientas/dre-mensual"
     | "/herramientas/monitor-cmv"
     | "/herramientas/control-caja"
@@ -287,7 +293,7 @@ export function useToolsStatus() {
 
   const load = useCallback(async (userId: string) => {
     const [dre, cmv, cash, be, dishes, ingredients] = await Promise.all([
-      supabase.from("dre_months").select("month").eq("user_id", userId).order("month", { ascending: false }).limit(1),
+      supabase.from("dre_sheets").select("updated_at").eq("user_id", userId).order("updated_at", { ascending: false }).limit(1),
       supabase.from("cmv_weeks").select("month, week").eq("user_id", userId).order("month", { ascending: false }),
       supabase.from("cash_sessions").select("session_date, status").eq("user_id", userId).order("session_date", { ascending: false }).limit(1),
       supabase.from("breakeven_inputs").select("updated_at, fixed_costs").eq("user_id", userId).maybeSingle(),
@@ -297,15 +303,16 @@ export function useToolsStatus() {
 
     const out: ToolStatusRow[] = [];
 
-    // DRE mensual — dre_months
+    // DRE — planillas guardadas (dre_sheets), la más reciente por updated_at
     const dreName = t("dash.tool.dre");
-    const lastDre = dre.data?.[0]?.month ?? null;
+    const lastUpdated = dre.data?.[0]?.updated_at ?? null;
+    const lastDre = lastUpdated ? lastUpdated.slice(0, 7) : null;
     if (!lastDre) {
-      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "unused", detail: t("dash.dre.empty") });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre", status: "unused", detail: t("dash.dre.empty") });
     } else if (lastDre === currentMonthKey(0) || lastDre === currentMonthKey(1)) {
-      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "ok", detail: t("dash.dre.ok").replace("{month}", monthLabel(lastDre, true, lang)) });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre", status: "ok", detail: t("dash.dre.ok").replace("{month}", monthLabel(lastDre, true, lang)) });
     } else {
-      out.push({ key: "dre", name: dreName, to: "/herramientas/dre-mensual", status: "late", detail: t("dash.dre.late").replace("{month}", monthLabel(lastDre, true, lang)) });
+      out.push({ key: "dre", name: dreName, to: "/herramientas/dre", status: "late", detail: t("dash.dre.late").replace("{month}", monthLabel(lastDre, true, lang)) });
     }
 
     // Monitor de CMV — cmv_weeks

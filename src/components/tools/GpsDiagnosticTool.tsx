@@ -347,7 +347,7 @@ export function GpsDiagnosticTool() {
                 {active.fxNote && (
                   <p className="text-xs text-muted-foreground">
                     {dreT("dre.fxNota", lang)
-                      .replace("{from}", active.fxNote.from)
+                      .replace(/\{from\}/g, active.fxNote.from)
                       .replace(/\{to\}/g, active.fxNote.to)
                       .replace("{rate}", formatNumber(inverse, active.fxNote.from, 2))
                       .replace("{date}", new Date(active.fxNote.date).toLocaleDateString())}
