@@ -503,8 +503,18 @@ export function DREQuestionnaire({
                 const section: QuestionSection = {
                   id: s.id,
                   fields: [
-                    { id: salesFieldId(s.id), type: "currency" },
-                    { id: cmvFieldId(s.id), type: "currency" },
+                    {
+                      id: salesFieldId(s.id),
+                      type: "currency",
+                      label: sourceFieldLabel("net_sales", s.kind, lang, s.name),
+                      helpKey: "field.kitchen_net_sales.help",
+                    },
+                    {
+                      id: cmvFieldId(s.id),
+                      type: "currency",
+                      label: sourceFieldLabel("cmv", s.kind, lang, s.name),
+                      helpKey: "field.kitchen_cmv.help",
+                    },
                   ],
                 };
                 const title = s.kind === "custom" ? (s.name || dreT("section.custom.title", lang)) : dreT(`section.${s.kind}.title`, lang);
