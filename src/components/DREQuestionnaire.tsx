@@ -188,7 +188,11 @@ function FieldRow({
 }) {
   return (
     <label className="block">
-      <FieldLabel label={label} helpKey={field.help ? `field.${field.id}.help` : undefined} optional={field.optional} />
+      <FieldLabel
+        label={label}
+        helpKey={field.helpKey ?? (field.help ? `field.${field.id}.help` : undefined)}
+        optional={field.optional}
+      />
       {field.type === "currency" ? (
         <MoneyInput value={value} currency={currency} onChange={onChange} />
       ) : (
