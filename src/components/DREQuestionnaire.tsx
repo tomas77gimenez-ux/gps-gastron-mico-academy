@@ -367,7 +367,7 @@ export function DREQuestionnaire({
                       <FieldRow
                         key={f.id}
                         field={f}
-                        label={dreT(`field.${f.id}`, lang)}
+                        label={f.label ?? dreT(`field.${f.id}`, lang)}
                         value={data[f.id] ?? 0}
                         currency={currency}
                         onChange={(v) => updateField(f.id, v)}
@@ -382,7 +382,7 @@ export function DREQuestionnaire({
                   <FieldRow
                     key={f.id}
                     field={f}
-                    label={dreT(`field.${f.id}`, lang)}
+                    label={f.label ?? dreT(`field.${f.id}`, lang)}
                     value={data[f.id] ?? 0}
                     currency={currency}
                     onChange={(v) => updateField(f.id, v)}
@@ -397,7 +397,7 @@ export function DREQuestionnaire({
               <FieldRow
                 key={f.id}
                 field={f}
-                label={dreT(`field.${f.id}`, lang)}
+                label={f.label ?? dreT(`field.${f.id}`, lang)}
                 value={data[f.id] ?? 0}
                 currency={currency}
                 onChange={(v) => updateField(f.id, v)}
