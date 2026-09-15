@@ -41,7 +41,7 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
-import { dreT, refLabel } from "@/lib/dre-i18n";
+import { dreT, refLabel, sourceFieldLabel } from "@/lib/dre-i18n";
 import {
   currencySymbol,
   formatMoneyAuto,
