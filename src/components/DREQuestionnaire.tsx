@@ -41,7 +41,7 @@ import {
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useI18n } from "@/lib/i18n";
-import { dreT, refLabel } from "@/lib/dre-i18n";
+import { dreT, refLabel, sourceFieldLabel } from "@/lib/dre-i18n";
 import {
   currencySymbol,
   formatMoneyAuto,
@@ -188,7 +188,11 @@ function FieldRow({
 }) {
   return (
     <label className="block">
-      <FieldLabel label={label} helpKey={field.help ? `field.${field.id}.help` : undefined} optional={field.optional} />
+      <FieldLabel
+        label={label}
+        helpKey={field.helpKey ?? (field.help ? `field.${field.id}.help` : undefined)}
+        optional={field.optional}
+      />
       {field.type === "currency" ? (
         <MoneyInput value={value} currency={currency} onChange={onChange} />
       ) : (
@@ -363,7 +367,7 @@ export function DREQuestionnaire({
                       <FieldRow
                         key={f.id}
                         field={f}
-                        label={dreT(`field.${f.id}`, lang)}
+                        label={f.label ?? dreT(`field.${f.id}`, lang)}
                         value={data[f.id] ?? 0}
                         currency={currency}
                         onChange={(v) => updateField(f.id, v)}
@@ -378,7 +382,7 @@ export function DREQuestionnaire({
                   <FieldRow
                     key={f.id}
                     field={f}
-                    label={dreT(`field.${f.id}`, lang)}
+                    label={f.label ?? dreT(`field.${f.id}`, lang)}
                     value={data[f.id] ?? 0}
                     currency={currency}
                     onChange={(v) => updateField(f.id, v)}
@@ -393,7 +397,7 @@ export function DREQuestionnaire({
               <FieldRow
                 key={f.id}
                 field={f}
-                label={dreT(`field.${f.id}`, lang)}
+                label={f.label ?? dreT(`field.${f.id}`, lang)}
                 value={data[f.id] ?? 0}
                 currency={currency}
                 onChange={(v) => updateField(f.id, v)}
@@ -499,8 +503,18 @@ export function DREQuestionnaire({
                 const section: QuestionSection = {
                   id: s.id,
                   fields: [
-                    { id: salesFieldId(s.id), type: "currency" },
-                    { id: cmvFieldId(s.id), type: "currency" },
+                    {
+                      id: salesFieldId(s.id),
+                      type: "currency",
+                      label: sourceFieldLabel("net_sales", s.kind, lang, s.name),
+                      helpKey: "field.kitchen_net_sales.help",
+                    },
+                    {
+                      id: cmvFieldId(s.id),
+                      type: "currency",
+                      label: sourceFieldLabel("cmv", s.kind, lang, s.name),
+                      helpKey: "field.kitchen_cmv.help",
+                    },
                   ],
                 };
                 const title = s.kind === "custom" ? (s.name || dreT("section.custom.title", lang)) : dreT(`section.${s.kind}.title`, lang);
