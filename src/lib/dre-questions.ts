@@ -7,6 +7,10 @@ export interface QuestionField {
   type: FieldType;
   /** Muestra el ícono "?" con la explicación (clave `field.<id>.help`). */
   help?: boolean;
+  /** Etiqueta ya resuelta (campos generados, como las fuentes opcionales). */
+  label?: string;
+  /** Clave de ayuda alternativa (para campos generados). */
+  helpKey?: string;
   /** Agrupación visual dentro de la sección (Marketing). */
   group?: string;
   optional?: boolean;
