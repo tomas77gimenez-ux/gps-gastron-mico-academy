@@ -285,12 +285,40 @@ const dreTranslations: Record<string, Entry> = {
   "results.referencias": { es: "Referencias del método", en: "Method benchmarks", pt: "Referências do método" },
   "results.ventaMinima": { es: "Venta mínima para no perder", en: "Minimum sales to break even", pt: "Venda mínima para não perder" },
   "results.sinReferencia": { es: "Sin referencia", en: "No benchmark", pt: "Sem referência" },
+
+  /* ---------------- Campos de fuentes opcionales (plantilla) ---------------- */
+  "field.net_sales.source": { es: "Venta neta {source}", en: "{source} net sales", pt: "Venda líquida {source}" },
+  "field.cmv.source": { es: "CMV {source}", en: "{source} COGS", pt: "CMV {source}" },
+  "dre.fuenteSinNombre": { es: "otra fuente", en: "other source", pt: "outra fonte" },
 };
+
+export const dreTranslationKeys: string[] = Object.keys(dreTranslations);
+
+export function hasDreKey(key: string): boolean {
+  return Object.prototype.hasOwnProperty.call(dreTranslations, key);
+}
 
 export function dreT(key: string, lang: Lang): string {
   const entry = dreTranslations[key];
-  if (!entry) return key;
+  if (!entry) {
+    if (import.meta.env?.DEV) console.warn(`[dre-i18n] clave faltante: ${key}`);
+    return key;
+  }
   return (entry as unknown as Record<string, string>)[lang] ?? entry.es ?? key;
+}
+
+/** Nombre de la fuente tal como se inserta en "Venta neta {source}". */
+export function sourceLabel(kind: string, lang: Lang, customName?: string): string {
+  if (kind === "custom") {
+    const name = (customName ?? "").trim();
+    return name || dreT("dre.fuenteSinNombre", lang);
+  }
+  const title = dreT(`section.${kind}.title`, lang);
+  return lang === "en" ? title : title.toLocaleLowerCase(lang === "pt" ? "pt-BR" : "es-AR");
+}
+
+export function sourceFieldLabel(type: "net_sales" | "cmv", kind: string, lang: Lang, customName?: string): string {
+  return dreT(`field.${type}.source`, lang).replace("{source}", sourceLabel(kind, lang, customName));
 }
 
 export function tChannel(id: string, lang: Lang): string {
